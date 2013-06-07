@@ -7,6 +7,8 @@
 
 class View extends Kohana_View
 {
+	static public $template_name = '';
+
 	static public $buffers = array();
 
 	public static function start_buffer($buffer_name, $html_piece='</body>')

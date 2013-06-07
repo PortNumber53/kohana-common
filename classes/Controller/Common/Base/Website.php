@@ -6,15 +6,24 @@
 
 class Controller_Common_Base_Website extends Controller_Template
 {
-	public $template = 'template/default/frontend';
+	public $template_name = '';
+	public $template_file = 'frontend';
+
 	public $auth_required = FALSE;
 	public $auth_actions = array();
 
 	public $output = null;
 
+	public static $settings = array();
 
 	public function __construct(Request $request, Response $response)
 	{
+		$session = Session::instance();
+		self::$settings = Kohana::$config->load('website');
+		Cookie::$salt = Arr::path(self::$settings, 'cookie_salt');
+		View::set_global('debug', Arr::path(self::$settings, 'debug', FALSE));
+
+
 		parent::__construct($request, $response);
 		//If a user is not logged in and authentication is required:
 		if ($this->auth_required && ! Auth::instance()->logged_in())
@@ -40,12 +49,64 @@ class Controller_Common_Base_Website extends Controller_Template
 
 	public function before()
 	{
+		if (empty($this->template_name))
+		{
+			$this->template_name = Website::get('template.selected', 'default');
+			//echo 'template_name'.$this->template_name;
+		}
+		Website::set_template($this->template_name);
+
+		if (empty($this->template_file))
+		{
+			$this->template_file = 'frontend';
+		}
+		Website::set_file($this->template_file);
+		$this->template = 'template/' . $this->template_name . '/' . $this->template_file;
+
 		parent::before();
+
+		if ($this->auto_render)
+		{
+			View::set_global('param', Request::current()->param());
+			View::$template_name = $this->template_name;
+			View::set_global('title', '');
+			View::set_global('content', '');
+			View::set_global('language', Kohana::$config->load('contentus.default_language'));
+			View::set_global('body_class', '');
+			View::set_global('meta', array());
+
+			View::set_global('styles', array());
+			View::set_global('scripts', array());
+			View::set_global('breadbrumbs', array());
+
+		}
 	}
 
 	public function after()
 	{
+		if ($this->auto_render)
+		{
+			View::bind_global('user', $this->user);
+			View::set_global('current_url', Url::site(Request::factory()->current()->uri(), true));
+
+			$styles = Website::template('style', array());
+			$scripts = Website::template('script', array());
+
+			$custom_styles = Website::template('style', array());
+			$custom_scripts = Website::template('script', array());
+
+			View::set_global('styles', array_merge($this->template->styles, $styles, $custom_styles));
+			View::set_global('scripts', array_keys(array_merge($this->template->scripts, $scripts, $custom_scripts)));
+
+			View::bind_global('site_settings', self::$settings);
+		}
+		else
+		{
+			$this->response->headers('Content-Type', 'application/json; charset=UTF-8');
+			$this->response->body(json_encode($this->output));
+		}
 		parent::after();
+
 	}
 
 }
