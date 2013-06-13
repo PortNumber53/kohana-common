@@ -87,7 +87,7 @@ class Controller_Common_Base_Website extends Controller_Template
 		if ($this->auto_render)
 		{
 			View::bind_global('user', $this->user);
-			View::set_global('current_url', Url::site(Request::factory()->current()->uri(), true));
+			View::set_global('current_url', URL::site(Request::factory()->current()->uri(), true));
 
 			$styles = Website::template('style', array());
 			$scripts = Website::template('script', array());
