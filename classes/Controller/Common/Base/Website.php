@@ -19,6 +19,7 @@ class Controller_Common_Base_Website extends Controller_Template
 	public function __construct(Request $request, Response $response)
 	{
 		$session = Session::instance();
+
 		self::$settings = Kohana::$config->load('website');
 		Cookie::$salt = Arr::path(self::$settings, 'cookie_salt');
 		View::set_global('debug', Arr::path(self::$settings, 'debug', FALSE));
@@ -61,7 +62,12 @@ class Controller_Common_Base_Website extends Controller_Template
 			$this->template_file = 'frontend';
 		}
 		Website::set_file($this->template_file);
-		$this->template = 'template/' . $this->template_name . '/' . $this->template_file;
+		$new_template = 'template/' . $this->template_name . '/' . $this->template_file;
+		if (! Kohana::find_file('views', $new_template))
+		{
+			$new_template = 'template/default/' . $this->template_file;
+		}
+		$this->template = $new_template;
 
 		parent::before();
 
@@ -102,8 +108,17 @@ class Controller_Common_Base_Website extends Controller_Template
 		}
 		else
 		{
-			$this->response->headers('Content-Type', 'application/json; charset=UTF-8');
-			$this->response->body(json_encode($this->output));
+			$this->response->headers('Content-Encoding', 'UTF-8');
+			$content_type = Arr::path($this->response->headers(), 'content-type', 'text/html');
+			switch ($content_type)
+			{
+				case 'application/json':
+					$this->response->body(json_encode($this->output));
+					break;
+				default:
+					$this->response->body($this->output);
+			}
+
 		}
 		parent::after();
 
