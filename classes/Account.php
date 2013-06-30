@@ -14,15 +14,6 @@ class Account
 		$obj = new self();
 		$obj::$data = array();
 
-		//$obj::$template_file = $template_file_name;
-		//echo $obj::$template_file;
-
-		//if (empty(self::$template_file))
-		//{
-		//	self::$template_file = 'frontend';
-		//}/
-		//$this->template = 'template/' . $this->template_name . '/' . $this->template_file;
-
 		return $obj;
 	}
 
@@ -35,11 +26,7 @@ class Account
 
 	static function login($username, $password, $remember_me = TRUE)
 	{
-		//$cookie = json_decode(Cookie::get('account'), TRUE);
-		//if (empty($_id))
-		//{
 		$_id = '/insertcoin.dev/' . $username;
-		//}
 		$account = new Model_Account();
 		$data = $account->get_by_id($_id);
 
