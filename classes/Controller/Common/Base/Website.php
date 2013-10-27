@@ -21,7 +21,7 @@ class Controller_Common_Base_Website extends Controller_Template
 		$session = Session::instance();
 
 		self::$settings = Kohana::$config->load('website');
-		Cookie::$salt = Arr::path(self::$settings, 'cookie_salt');
+		//Cookie::$salt = Arr::path(self::$settings, 'cookie_salt');
 		View::set_global('debug', Arr::path(self::$settings, 'debug', FALSE));
 
 
@@ -37,7 +37,7 @@ class Controller_Common_Base_Website extends Controller_Template
 				echo $this->request->action() . ' requires Authentication!';
 				$this->redirect('/login?url='.URL::site(Request::current()->uri()));
 			}
-			$this->template_file = 'backend';
+			//$this->template_file = 'backend';
 		};
 
 		if ($this->request->is_ajax())
@@ -53,7 +53,6 @@ class Controller_Common_Base_Website extends Controller_Template
 		if (empty($this->template_name))
 		{
 			$this->template_name = Website::get('template.selected', 'default');
-			//echo 'template_name'.$this->template_name;
 		}
 		Website::set_template($this->template_name);
 
@@ -74,7 +73,6 @@ class Controller_Common_Base_Website extends Controller_Template
 		if ($this->auto_render)
 		{
 			View::set_global('param', Request::current()->param());
-			View::$template_name = $this->template_name;
 			View::set_global('title', '');
 			View::set_global('content', '');
 			View::set_global('language', Kohana::$config->load('contentus.default_language'));
@@ -85,6 +83,16 @@ class Controller_Common_Base_Website extends Controller_Template
 			View::set_global('scripts', array());
 			View::set_global('breadbrumbs', array());
 
+			$sections = Website::get('template.'.$this->template_name.'.'.$this->template_file.'.sections', array());
+			$template_sections = array();
+			foreach ($sections as $section)
+			{
+				if ( ! empty($section['view']))
+				{
+					$template_sections[$section['name']] = $section['view'];
+				}
+			}
+			View::bind_global('template', $template_sections);
 		}
 	}
 

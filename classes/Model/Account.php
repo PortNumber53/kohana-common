@@ -14,11 +14,13 @@ class Model_Account extends Kohana_Model_Database
 		'_id'           => '',
 		'username'      => '',
 		'password'      => '',
-		'name'          => '',
 		'email'         => '',
-		'date_of_birth' => '',
-		'gender'        => '',
+		'name'          => '',
 		'hash'          => '',
+		'created_at'    => '',
+		'modified_at'   => '',
+		'extra_json'    => '',
+		'pk_id'         => '',
 	);
 
 	public function get_by_id($_id)

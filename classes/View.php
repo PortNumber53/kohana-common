@@ -74,6 +74,13 @@ class View extends Kohana_View
 				$rendered = str_replace($buffer['html_piece'], $buffer['content'] . $buffer['html_piece'], $rendered);
 			}
 		}
+
+		foreach (Masher::$instances as $instance_name=>$instance)
+		{
+			$rendered = str_replace($instance->identifier_css, Masher::instance($instance_name)->render_css(), $rendered);
+			$rendered = str_replace($instance->identifier_js, Masher::instance($instance_name)->render_js(), $rendered);
+		}
+
 		return $rendered;
 	}
 

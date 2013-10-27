@@ -33,7 +33,7 @@ class Controller_Common_Base_Account extends Controller_Common_Base_Website
 		{
 			if (Account::login($post['username'], $post['password']))
 			{
-				$this->redirect('/profile');
+				//$this->redirect('/profile');
 			}
 		}
 
@@ -60,7 +60,7 @@ class Controller_Common_Base_Account extends Controller_Common_Base_Website
 			}
 			if ($result = Account::signup($post, $error))
 			{
-				$this->redirect('/profile');
+				//$this->redirect('/profile');
 			}
 			//var_dump($error);
 		}

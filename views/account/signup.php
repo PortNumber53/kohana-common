@@ -26,5 +26,4 @@
 	<br />
 	<button name="btnaction" id="btnaction_signup" class="form_submit button blue flat"> Sign Up </button>
 
-
 </form>

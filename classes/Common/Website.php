@@ -14,6 +14,13 @@ class Common_Website
 	static public $template_file = '';
 	protected static $settings = array();
 
+	public static $environment = array(
+		Kohana::PRODUCTION  => 'production',
+		Kohana::STAGING     => 'staging',
+		Kohana::TESTING     => 'testing',
+		Kohana::DEVELOPMENT => 'development',
+	);
+
 	static function load_settings()
 	{
 		self::$settings = Kohana::$config->load('website')->as_array();
