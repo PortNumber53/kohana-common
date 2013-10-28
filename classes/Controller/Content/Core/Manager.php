@@ -7,7 +7,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-class Controller_Content_Base_Manager extends Controller_Common_Base_Website
+class Controller_Content_Core_Manager extends Controller_Common_Core_Website
 {
 
 	public $template = 'template/default/frontend';

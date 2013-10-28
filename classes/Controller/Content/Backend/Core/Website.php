@@ -5,7 +5,7 @@
  *
  */
 
-class Controller_Backend_Base_Website extends Controller_Common_Base_Website
+class Controller_Backend_Core_Website extends Controller_Common_Core_Website
 {
 
 	public $template = 'template/default/backend';

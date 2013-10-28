@@ -1,30 +1,17 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Date: 5/14/13
- * Time: 3:19 AM
+ * Date: 10/27/13
+ * Time: 5:34 PM
+ * Something meaningful about this file
  *
  */
 
-class Account extends Abstracted
+class Category
 {
 	const REMOVE_SENSITIVE = 'REMOVE_SENSITIVE';
 
 	protected static $data = array();
 
-
-	public function get_by_id($_id, &$options=array())
-	{
-		$oAccount = new Model_Account();
-		$result = $oAccount->get_by_id($_id);
-		return $result;
-	}
-
-	public function get_by_object_id($object_id, &$options=array())
-	{
-		$oAccount = new Model_Account();
-		$result = $oAccount->get_by_object_id($object_id);
-		return $result;
-	}
 
 	public static function factory()
 	{
@@ -34,33 +21,46 @@ class Account extends Abstracted
 		return $obj;
 	}
 
+	static public function get_by_id($_id)
+	{
+		$oCategory = new Model_Category();
+		$result = $oCategory->get_by_id($_id);
+		return $result;
+	}
+
+	static public function get_by_object_id($object_id)
+	{
+		$oCategory = new Model_Category();
+		$result = $oCategory->get_by_object_id($object_id);
+		return $result;
+	}
 
 	static public function is_logged_in()
 	{
-		$cookie_data = Cookie::get('account');
+		$cookie_data = Cookie::get('category');
 		return ! empty($cookie_data);
 	}
 
 	static public function logged_in()
 	{
-		$cookie_data = json_decode(Cookie::get('account'), TRUE);
+		$cookie_data = json_decode(Cookie::get('category'), TRUE);
 		return self::get_by_id($cookie_data['_id']);
 	}
 
 	static public function logout()
 	{
-		Cookie::delete('account');
+		Cookie::delete('category');
 		return TRUE;
 	}
 
 	static public function profile($_id = '', $options = array())
 	{
-		$cookie = json_decode(Cookie::get('account'), TRUE);
+		$cookie = json_decode(Cookie::get('category'), TRUE);
 		if (empty($_id))
 		{
 			$_id = '/' . DOMAINNAME . '/' . $cookie['email'];
 		}
-		$account = new Model_Account();
+		$account = new Model_Category();
 		$data = $account->get_by_id($_id);
 
 		if (empty($options[self::REMOVE_SENSITIVE]))
@@ -89,7 +89,7 @@ class Account extends Abstracted
 	static public function signup(&$data, &$error)
 	{
 		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
-		$account = new Model_Account();
+		$account = new Model_Category();
 
 		$data['username'] = $data['email'];
 		if ( ($data['password1'] === $data['password2']) && ( ! empty($data['password1'])) )
@@ -127,7 +127,7 @@ class Account extends Abstracted
 					'username' => $data['username'],
 					'email'    => $data['email'],
 				);
-				Cookie::set('account', json_encode($data_cookie));
+				Cookie::set('category', json_encode($data_cookie));
 			}
 		}
 	}
@@ -135,7 +135,7 @@ class Account extends Abstracted
 	static public function update(&$data, &$error)
 	{
 		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
-		$account = new Model_Account();
+		$account = new Model_Category();
 
 		if (! $exists = self::profile($data['_id']))
 		{
@@ -156,7 +156,7 @@ class Account extends Abstracted
 	static public function reset($data, &$error)
 	{
 		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
-		$account = new Model_Account();
+		$account = new Model_Category();
 
 		if (! $exists = self::profile($data['_id']))
 		{
@@ -180,7 +180,7 @@ class Account extends Abstracted
 	{
 		// TODO: Implement _login() method.
 		$_id = '/' . DOMAINNAME . '/' . $data['username'];
-		$account = new Model_Account();
+		$account = new Model_Category();
 		$account_row = $account->get_by_id($_id);
 		//var_dump($account_row);
 
@@ -197,7 +197,7 @@ class Account extends Abstracted
 				);
 				if ($data['remember_me'])
 				{
-					Cookie::set('account', json_encode($data_cookie));
+					Cookie::set('category', json_encode($data_cookie));
 					$error = FALSE;
 				}
 				return TRUE;
@@ -218,7 +218,7 @@ class Account extends Abstracted
 				'message' => 'Account not found',
 			);
 		}
-		//Cookie::delete('account');
+		//Cookie::delete('category');
 		return FALSE;
 	}
 

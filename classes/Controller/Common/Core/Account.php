@@ -1,0 +1,216 @@
+<?php defined('SYSPATH') or die('No direct script access.');
+/**
+ * Date: 5/14/13
+ * Time: 3:12 AM
+ *
+ */
+
+class Controller_Common_Core_Account extends Controller_Common_Core_Website
+{
+	public $auth_actions = array('profile', 'settings');
+
+	public function action_login()
+	{
+		if ($post = $this->request->post())
+		{
+			if (Account::login($post['username'], $post['password']))
+			{
+				//$this->redirect('/profile');
+			}
+		}
+
+		$main = 'account/login';
+		View::bind_global('main', $main);
+	}
+
+	public function action_logout()
+	{
+		Account::logout();
+
+		$main = 'account/logout';
+		View::bind_global('main', $main);
+	}
+
+	public function action_signup()
+	{
+		if ($post = $this->request->post())
+		{
+			if ($post['password1'] == $post['password2'])
+			{
+				$post['password'] = $post['password1'];
+				unset($post['password1'], $post['password2']);
+			}
+			if ($result = Account::signup($post, $error))
+			{
+				//$this->redirect('/profile');
+			}
+			//var_dump($error);
+		}
+
+		$main = 'account/signup';
+		View::bind_global('main', $main);
+	}
+
+	public function action_ajax_signup()
+	{
+		$this->output = array(
+			'posted' => $_POST,
+		);
+		$error = FALSE;
+
+		$signup_data = array(
+			'email' => $_POST['email'],
+			'password1' => $_POST['password1'],
+			'password2' => $_POST['password2'],
+			'remember_me' => empty($_POST['remember_me']) ? FALSE : $_POST['remember_me'],
+		);
+		$result = Account::signup($signup_data, $error);
+
+		if ($error === FALSE)
+		{
+			$this->output['redirect_url'] = URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE);
+		}
+
+		$this->output['error'] = $error;
+		$this->output['output'] = $result;
+	}
+
+	public function action_ajax_login()
+	{
+		$this->output = array(
+			'posted' => $_POST,
+		);
+		$error = FALSE;
+
+		$data = array(
+			'username'    => $_POST['email'],
+			'password'    => $_POST['password'],
+			'remember_me' => empty($_POST['remember_me']) ? FALSE : $_POST['remember_me'] == '1',
+		);
+		if ($result = Account::login($data, $error))
+		{
+			$this->output['redirect_url'] = URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE);
+			$this->output['YUP'] = TRUE;
+		}
+
+		$this->output['error'] = $error;
+		$this->output['output'] = $result;
+	}
+
+	public function action_profile()
+	{
+		if ($post = $this->request->post())
+		{
+			if ($result = Account::update($post, $error))
+			{
+				$this->redirect('/profile');
+			}
+			//var_dump($error);
+		}
+
+		$data = Account::factory()->profile();
+
+		View::bind_global('data', $data);
+		$main = 'account/profile';
+		View::bind_global('main', $main);
+	}
+
+	public function action_ajax_profile()
+	{
+		$this->output = array(
+			'posted' => $_POST,
+		);
+		$error = FALSE;
+
+		$logged_account_data = Account::logged_in();
+
+		$data = array(
+			'username' => $logged_account_data['username'],
+			'email' => $_POST['email'],
+			'name' => $_POST['name'],
+			//'password1' => $_POST['password1'],
+			//'password2' => $_POST['password2'],
+			//'remember_me' => empty($_POST['remember_me']) ? FALSE : $_POST['remember_me'],
+		);
+		$result = Account::update($data, $error);
+
+		if ($error === FALSE)
+		{
+			$this->output['message'] = __('Profile updated successfully');
+			$this->output['dismiss_timer'] = 2;
+			//$this->output['redirect_url'] = URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE);
+		}
+
+		$this->output['error'] = $error;
+		$this->output['output'] = $result;
+	}
+
+	public function action_reset()
+	{
+		if ($post = $this->request->post())
+		{
+			if (Account::reset($post, $error))
+			{
+				//$this->redirect('/');
+			}
+		}
+
+		$main = 'account/reset';
+		View::bind_global('main', $main);
+	}
+
+	public function action_forgot()
+	{
+		$main = 'account/forgot';
+		View::bind_global('main', $main);
+	}
+
+	public function action_settings()
+	{
+		$request = $this->request->param('request');
+
+		$user_data = Account::factory()->profile();
+		$account_id = $user_data['pk_id'];
+		$settings_id = $user_data['_id'] . '/settings';
+		$settings_data = Settings::get($account_id);
+
+		if ($post_data = $this->request->post())
+		{
+			$validated = array(
+				$post_data['key'] => $post_data['value'],
+			);
+
+			$post_data['_id'] = $settings_id;
+			$post_data['account_id'] = $user_data['pk_id'];
+			if (empty($settings_data['data']))
+			{
+				$settings_data['data'] = array();
+			}
+
+			$settings_data['data'] = array_merge($settings_data['data'], $validated);
+			if ($result = Settings::update($settings_data, $error))
+			{
+				$this->redirect('/profile');
+			}
+		}
+
+		if ( ! empty($request))
+		{
+			foreach ($settings_data['data'] as $key=>&$item)
+			{
+				if ($request == $key)
+				{
+					$item_data['key'] = $key;
+					$item_data['value'] = $item;
+				}
+			}
+		}
+
+
+		View::bind_global('data', $settings_data);
+		View::bind_global('item_data', $item_data);
+		$main = 'account/settings';
+		View::bind_global('main', $main);
+	}
+
+}

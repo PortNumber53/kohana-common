@@ -5,4 +5,4 @@
  *
  */
 
-class Controller_Content_Backend_Content extends Controller_Content_Backend_Base_Content {}
+class Controller_Content_Backend_Content extends Controller_Content_Backend_Core_Content {}

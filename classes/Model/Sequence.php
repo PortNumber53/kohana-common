@@ -5,12 +5,12 @@
  *
  */
 
-class Model_Sequence extends Kohana_Model_Database
+class Model_Sequence extends Model_Abstract
 {
-	private static $_table_name = 'sequence';
-	private static $_primary_key = '_id';
+	public static $_table_name = 'sequence';
+	public static $_primary_key = '_id';
 
-	private static $_columns = array(
+	public static $_columns = array(
 		'_id' => '',
 		'username' => '',
 		'password' => '',
@@ -30,28 +30,7 @@ class Model_Sequence extends Kohana_Model_Database
 		return $result;
 	}
 
-
-	public function get_by_id($_id)
-	{
-		$query = DB::select()->from(self::$_table_name)->where(self::$_primary_key, '=', $_id);
-		//echo (string) $query;
-		$result_set = $query->execute()->as_array();
-		if (count($result_set) == 1)
-		{
-			$result = $result_set[0];
-			$array = json_decode($result_set[0]['data'], true);
-			unset($result['data']);
-			$result = array_merge($result, $array);
-
-			return $result;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public function save(&$data, &$error)
+	public function save(&$data, &$error, &$options=array())
 	{
 		$data = array_intersect_key($data, self::$_columns);
 

@@ -5,4 +5,4 @@
  *
  */
 
-class Controller_Welcome extends Controller_Content_Base_Manager {}
+class Controller_Welcome extends Controller_Content_Core_Manager {}

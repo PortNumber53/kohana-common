@@ -5,4 +5,4 @@
  *
  */
 
-?><h1>Logout</h1>
+?><h1>You've been logged out</h1>

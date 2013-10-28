@@ -4,7 +4,7 @@
  * Time: 12:58 PM
  */
 
-class Controller_Common_Base_Website extends Controller_Template
+class Controller_Common_Core_Website extends Controller_Template
 {
 	public $template_name = '';
 	public $template_file = 'frontend';
@@ -32,7 +32,7 @@ class Controller_Common_Base_Website extends Controller_Template
 
 		if (in_array($this->request->action(), $this->auth_actions))
 		{
-			if ( ! Account::factory()->is_logged())
+			if ( ! Account::factory()->is_logged_in())
 			{
 				echo $this->request->action() . ' requires Authentication!';
 				$this->redirect('/login?url='.URL::site(Request::current()->uri()));
@@ -40,10 +40,12 @@ class Controller_Common_Base_Website extends Controller_Template
 			//$this->template_file = 'backend';
 		};
 
-		if ($this->request->is_ajax())
+		$this->json = json_decode(file_get_contents('php://input'), TRUE);
+		if (strpos(strtolower($this->request->headers('accept')), 'application/json') !== FALSE ||$this->request->is_ajax() || ! empty($this->json))
 		{
 			$this->auto_render = false;
 			$this->request->action('ajax_'.$this->request->action());
+			$this->response->headers('content-type', 'application/json');
 		}
 	}
 

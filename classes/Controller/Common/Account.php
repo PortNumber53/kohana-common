@@ -5,4 +5,4 @@
  *
  */
 
-class Controller_Common_Account extends Controller_Common_Base_Account {}
+class Controller_Common_Account extends Controller_Common_Core_Account {}

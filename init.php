@@ -6,6 +6,16 @@
  */
 if (! Route::$cache)
 {
+	Route::set('service-actions', 'service(/<controller>(/<action>(/<request>)))',
+		array(
+			'request'    => '[a-zA-Z0-9_/\-]+',
+		))
+		->defaults(array(
+			'directory'  => 'Service',
+			'controller' => 'Check',
+			'action'     => 'Unique',
+		));
+
 	Route::set('account-actions', '<action>(/<request>)',
 		array(
 			'request'    => '[a-zA-Z0-9_/\-]+',

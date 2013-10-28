@@ -6,11 +6,9 @@
  *
  */
 
-class Controller_Common_Service_Base_Website extends Controller_Common_Base_Website
+class Controller_Common_Service_Core_Website extends Controller_Common_Core_Website
 {
 	public $auto_render = FALSE;
 
-
-	public function
 
 }

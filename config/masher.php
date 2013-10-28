@@ -8,15 +8,41 @@
 
 return array(
 	'development' => array(
-		'bootstrap.min.css' => 'http://static.portnumber53.dev/library/css/bootstrap/css/bootstrap.min.css',
-		'bootstrap-responsive.min.css' => 'http://static.portnumber53.dev/library/css/bootstrap/css/bootstrap-responsive.min.css',
+		'3.0.0/bootstrap.min.css' => 'http://static.portnumber53.dev/library/bootstrap/3.0.0/css/bootstrap.min.css',
+
+		'jquery-1.10.2.min.js' => 'http://static.portnumber53.dev/library/js/jquery/jquery-1.10.2.min.js',
+		'jquery-2.0.3.min.js' => 'http://static.portnumber53.dev/library/js/jquery/jquery-2.0.3.min.js',
+		'jquery.form.min.js' => 'http://static.portnumber53.dev/library/js/jquery.form.v20131017.min.js',
+		'3.0.0/bootstrap.min.js' => 'http://static.portnumber53.dev/library/bootstrap/3.0.0/js/bootstrap.min.js',
+		'angular-1.1.5.min.js' => 'http://static.portnumber53.dev/library/js/angularjs/angular-1.1.5.min.js',
+		'angular-sanitize-1.1.5.min.js' => 'http://static.portnumber53.dev/library/js/angularjs/angular-sanitize-1.1.5.min.js',
+		'underscore-1.5.2.min.js' => 'http://static.portnumber53.dev/library/js/underscorejs/underscore-1.5.2.min.js',
+		'json2html.js' => 'http://static.portnumber53.dev/library/js/json2html.js',
+		'jquery.json2html.js' => 'http://static.portnumber53.dev/library/js/jquery.json2html.js',
+		'jquery.cookie.js' => 'http://static.portnumber53.dev/library/js/jquery.cookie.js',
 	),
 	'production' => array(
-		'bootstrap.min.css' => 'http://static.portnumber53.com/library/css/bootstrap/css/bootstrap.min.css',
-		'bootstrap-responsive.min.css' => 'http://static.portnumber53.com/library/css/bootstrap/css/bootstrap-responsive.min.css',
+		'3.0.0/bootstrap.min.css' => 'http://static.portnumber53.com/library/bootstrap/3.0.0/css/bootstrap.min.css',
+
+		'jquery-1.10.2.min.js' => 'http://static.portnumber53.com/library/js/jquery/jquery-1.10.2.min.js',
+		'3.0.0/bootstrap.min.js' => 'http://static.portnumber53.com/library/bootstrap/3.0.0/js/bootstrap.min.js',
+		'angular-1.1.5.min.js' => 'http://static.portnumber53.com/library/js/angularjs/angular-1.1.5.min.js',
+		'angular-sanitize-1.1.5.min.js' => 'http://static.portnumber53.com/library/js/angularjs/angular-sanitize-1.1.5.min.js',
+		'underscore-1.5.2.min.js' => 'http://static.portnumber53.com/library/js/underscorejs/underscore-1.5.2.min.js',
+		'json2html.js' => 'http://static.portnumber53.com/library/js/json2html.js',
+		'jquery.json2html.js' => 'http://static.portnumber53.com/library/js/jquery.json2html.js',
+		'jquery.cookie.js' => 'http://static.portnumber53.com/library/js/jquery.cookie.js',
 	),
 	'staging' => array(
-		'bootstrap.min.css' => 'http://stage.portnumber53.com/library/css/bootstrap/css/bootstrap.min.css',
-		'bootstrap-responsive.min.css' => 'http://stage.portnumber53.com/library/css/bootstrap/css/bootstrap-responsive.min.css',
+		'bootstrap.min.css' => 'http://stage.portnumber53.com/library/bootstrap/3.0.0/css/bootstrap.min.css',
+		'bootstrap-responsive.min.css' => 'http://stage.portnumber53.com/library/bootstrap/3.0.0/css/bootstrap-responsive.min.css',
+		'_________' => '___________',
+		'_________' => '___________',
+		'_________' => '___________',
+		'_________' => '___________',
+		'_________' => '___________',
+		'_________' => '___________',
 	),
 );
+
+

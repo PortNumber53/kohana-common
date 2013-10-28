@@ -5,25 +5,39 @@
  *
  */
 
-?><h1>Sign Up</h1>
+?>
+<form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::Site(Route::get('account-actions')->uri(array('action'=>'signup', )), TRUE); ?>">
 
-<form name="signup" method="post" action="<?php echo URL::site(Request::detect_uri(), TRUE); ?>">
-
-	Username: <input type="text" name="username" id="username" size="40">
-	<br />
-	Password: <input type="password" name="password1" id="password1" size="40">
-	<br />
-	Password (confirm): <input type="password" name="password2" id="password2" size="40">
-	<br />
-	Name: <input type="text" name="name" id="name" size="40">
-	<br />
-	email: <input type="text" name="email" id="email" size="40">
-	<br />
-	Gender: <input type="text" name="gender" id="gender" size="1" value="m">
-	<br />
-	Date of Birth: <input type="text" name="date_of_birth" id="date_of_birth" size="10">
-	<br />
-	<br />
-	<button name="btnaction" id="btnaction_signup" class="form_submit button blue flat"> Sign Up </button>
-
+	<div class="form-group">
+		<label for="inputEmail1" class="col-lg-2 control-label">Email</label>
+		<div class="col-lg-10">
+			<input type="email" class="form-control" id="inputEmail1" placeholder="Email" name="email">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="inputPassword1" class="col-lg-2 control-label">Password</label>
+		<div class="col-lg-10">
+			<input type="password" class="form-control" id="inputPassword1" placeholder="Password" name="password1">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="inputPassword2" class="col-lg-2 control-label">Password (Confirm)</label>
+		<div class="col-lg-10">
+			<input type="password" class="form-control" id="inputPassword2" placeholder="Password" name="password2">
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-lg-offset-2 col-lg-10">
+			<div class="checkbox">
+				<label>
+					<input type="checkbox" name="remember_me" value="1"> Remember me
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-lg-offset-2 col-lg-10">
+			<button type="submit" class="btn btn-default">Create My Account Now</button>
+		</div>
+	</div>
 </form>
