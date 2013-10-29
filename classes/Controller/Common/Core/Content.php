@@ -7,14 +7,13 @@
  * To change this template use File | Settings | File Templates.
  */
 
-class Controller_Content_Core_Manager extends Controller_Common_Core_Website
+class Controller_Common_Core_Content extends Controller_Common_Core_Website
 {
-
-	public $template = 'template/default/frontend';
-
-	public function action_index()
+	public function action_browse()
 	{
-		$this->action_view();
+		$main = 'content/browse';
+
+		View::bind_global('main', $main);
 	}
 
 	public function action_view()

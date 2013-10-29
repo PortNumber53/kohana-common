@@ -23,6 +23,7 @@
 		<ul class="nav navbar-nav">
 			<li><a href="#" class="hidden back-link">Back</a></li>
 			<li class="active"><a href="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'product', 'action'=>'browse' )), TRUE); ?>">Products</a></li>
+			<li class="active"><a href="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'content', 'action'=>'browse' )), TRUE); ?>">Content</a></li>
 			<li><a href="#">Link</a></li>
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>

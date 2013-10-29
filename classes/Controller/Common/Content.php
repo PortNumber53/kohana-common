@@ -7,4 +7,4 @@
  * To change this template use File | Settings | File Templates.
  */
 
-class Controller_Content_Content extends Controller_Content_Core_Manager { }
+class Controller_Common_Content extends Controller_Common_Core_Content { }
