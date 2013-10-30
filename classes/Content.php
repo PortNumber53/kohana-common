@@ -61,6 +61,7 @@ class Content
 			$_id = '/' . $_id;
 		}
 		//echo "GETTING: $_id<br>";
+		$_id = '/' . DOMAINNAME . $_id;
 		$content = new Model_Content();
 		$data = $content->get_by_id($_id);
 
@@ -102,7 +103,7 @@ class Content
 		$content = new Model_Content();
 
 		$autor = Account::profile();
-		$data['account_id'] = $autor['pk_id'];
+		$data['author_id'] = $autor['object_id'];
 		//Update content
 		if ($result = $content->save($data, $error))
 		{
@@ -120,4 +121,11 @@ class Content
 		Cookie::delete('account');
 	}
 
+	static public function filter($filter=array(), $sort=array(), $limit=array())
+	{
+		$oContent = new Model_Content();
+		$result = $oContent->filter($filter, $sort, $limit);
+
+		return $result;
+	}
 }

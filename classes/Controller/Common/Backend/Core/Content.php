@@ -5,11 +5,14 @@
  *
  */
 
-class Controller_Content_Backend_Core_Content extends Controller_Common_Core_Website
+class Controller_Common_Backend_Core_Content extends Controller_Common_Core_Website
 {
 
 	public function action_edit()
 	{
+		$main = 'content/backend/edit';
+		View::set_global('main', $main);
+
 		$request = $this->request->param('request');
 		$type = $this->request->param('type');
 		$full_request = ($request === '/') ? $request : "$request.$type";
@@ -22,12 +25,28 @@ class Controller_Content_Backend_Core_Content extends Controller_Common_Core_Web
 
 			}
 		}
-		$data = Content::get($full_request);
+		$content_data = Content::get($full_request);
+		View::bind_global('content_data', $content_data);
+	}
 
-		View::bind_global('data', $data);
-		$main = View::factory('content/backend/edit')->render();
+	public function action_ajax_edit()
+	{
+		$this->output = array(
+			'posted' => $_POST,
+		);
 
-		View::set_global('main', $main);
+		$content_data = array(
+			'_id'      => str_replace('//', '/', '/' . DOMAINNAME . '/' . URL::title($_POST['url'])),
+			'title'    => $_POST['title'],
+			'body'     => $_POST['body'],
+			'mimetype' => $_POST['mimetype'],
+			'url'      => $_POST['url'],
+		);
+		$error = FALSE;
+
+		$result = Content::update($content_data, $error);
+		$this->output['error'] = $error;
+		$this->output['result'] = $result;
 	}
 
 }

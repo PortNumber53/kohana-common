@@ -38,7 +38,7 @@ if (! Route::$cache)
 			if ( ! empty($params['override']) && $params['override'] == ':edit')
 			{
 				$params['action'] = 'edit';
-				$params['directory'] = 'Content/Backend';
+				$params['directory'] = 'Backend';
 			}
 			//$params['action'] = strtolower($request->method()).'_'.$params['action'];
 			return $params; // Returning an array will replace the parameters

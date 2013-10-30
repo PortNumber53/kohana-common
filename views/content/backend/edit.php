@@ -8,28 +8,50 @@ if (empty($data['mimetype']))
 {
 	$data['mimetype'] = 'text/plain';
 }
-?>EDIT!
+?>
 
 
-<form name="frm_edit" method="post" action="<?php echo URL::site(Request::detect_uri(), TRUE); ?>">
+<form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::site(Request::detect_uri(), TRUE); ?>">
+	<div class="form-group">
+		<label for="inputID" class="col-lg-2 control-label">_ID</label>
+		<div class="col-lg-9">
+			<input type="text" class="form-control" id="inputID" placeholder="_id" name="id" value="<?php echo Arr::path($content_data, '_id', ''); ?>">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="inputUrl" class="col-lg-2 control-label">URL</label>
+		<div class="col-lg-9">
+			<input type="text" class="form-control" id="inputUrl" placeholder="Content URL" name="url" value="<?php echo Arr::path($content_data, 'url', ''); ?>">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="inputMimeType" class="col-lg-2 control-label">MimeType</label>
+		<div class="col-lg-9">
+			<select id="inputMimeType" name="mimetype" class="form-control">
+				<option value="">Force a MimeType</option>
+				<option value="text/plain"<?php if (Arr::path($content_data, 'mimetype', '') == 'text/plain') { echo " SELECTED";} ?>>Text/Plain</option>
+				<option value="text/html"<?php if (Arr::path($content_data, 'mimetype', '') == 'text/html') { echo " SELECTED";} ?>>Text/HTML</option>
+			</select>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="inputTitle" class="col-lg-2 control-label">Title</label>
+		<div class="col-lg-9">
+			<input type="text" class="form-control" id="inputTitle" placeholder="Title" name="title" value="<?php echo Arr::path($content_data, 'title', ''); ?>">
+		</div>
+	</div>
 
-	ID: <input type="text" name="_id" id="_id" size="200" value="<?php echo empty($data['_id']) ? '' : $data['_id']; ?>" />
-	<br />
-	URL: <input type="text" name="url" id="url" size="40" value="<?php echo empty($data['url']) ? '' : $data['url']; ?>" />
-	<br />
-	<select id="mimetype" name="mimetype">
-		<option value="">Force a MimeType</option>
-		<option value="text/plain"<?php if ($data['mimetype'] == 'text/plain') { echo " SELECTED";} ?>>Text/Plain</option>
-		<option value="text/html"<?php if ($data['mimetype'] == 'text/html') { echo " SELECTED";} ?>>Text/HTML</option>
-	</select>
-	<br />
-	Title: <input type="text" name="title" id="title" size="40" value="<?php echo empty($data['title']) ? '' : $data['title']; ?>" />
-	<br />
-	Body: <textarea name="body" id="body" cols="200" rows="15"><?php echo empty($data['body']) ? '' : htmlentities($data['body']); ?></textarea>
-	<br />
-	<br />
-	<button name="btnaction" id="btnaction_update" class="form_submit button blue flat"> Update </button>
 
-
+	<div class="form-group">
+		<label for="inputBody" class="col-lg-2 control-label">Body</label>
+		<div class="col-lg-9">
+			<textarea class="form-control" id="inputBody" placeholder="Content Body" name="body" rows="10"><?php echo Arr::path($content_data, 'body', ''); ?></textarea>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="col-lg-offset-2 col-lg-9">
+			<button type="submit" class="btn btn-default">Update Content</button>
+		</div>
+	</div>
 </form>
 

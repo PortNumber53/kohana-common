@@ -74,6 +74,13 @@ class Controller_Common_Core_Website extends Controller_Template
 
 		if ($this->auto_render)
 		{
+			$current_url = URL::Site(Request::detect_uri(), TRUE);
+			$menu['content_url'] = URL::Site(Route::get('default')->uri(array('controller'=>'content', 'action'=>'browse' )), TRUE);
+			$menu['product_url'] = URL::Site(Route::get('default')->uri(array('controller'=>'product', 'action'=>'browse' )), TRUE);
+			$menu['profile_url'] = URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE);
+			View::bind_global('menu', $menu);
+			View::bind_global('current_url', $current_url);
+
 			View::set_global('param', Request::current()->param());
 			View::set_global('title', '');
 			View::set_global('content', '');
@@ -102,6 +109,8 @@ class Controller_Common_Core_Website extends Controller_Template
 	{
 		if ($this->auto_render)
 		{
+
+
 			View::bind_global('user', $this->user);
 			View::set_global('current_url', URL::site(Request::factory()->current()->uri(), true));
 

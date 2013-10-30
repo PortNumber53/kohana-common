@@ -11,7 +11,7 @@
 <!-- Indicates a successful or positive action -->
 <button type="button" id="btn-new-product" class="btn btn-sm btn-success">+ New Product</button>
 
-<table id="tableData" class="table table-striped table-bordered table-hover table-condensed ">
+<table id="tableData" class="table table-striped table-bordered table-hover table-condensed">
 	<thead>
 		<tr>
 			<th width="50">#</th>

@@ -6,4 +6,4 @@
  *
  */
 
-class Controller_Product extends Controller_Common_Core_Product {}
+class Controller_Common_Product extends Controller_Common_Core_Product {}

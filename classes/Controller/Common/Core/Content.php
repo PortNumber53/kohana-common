@@ -12,12 +12,20 @@ class Controller_Common_Core_Content extends Controller_Common_Core_Website
 	public function action_browse()
 	{
 		$main = 'content/browse';
+		View::set_global('main', $main);
 
-		View::bind_global('main', $main);
+		$filter = array(
+			//array('account_id', '=', $account_data['object_id']),
+		);
+		$content_array = Content::filter($filter);
+		View::set_global('content_array', $content_array);
 	}
 
 	public function action_view()
 	{
+		$main = 'content/main';
+		View::bind_global('main', $main);
+
 		$request = $this->request->param('request');
 		$type = $this->request->param('type');
 		$full_request = ($request === '/') ? $request : "$request.$type";
@@ -28,8 +36,6 @@ class Controller_Common_Core_Content extends Controller_Common_Core_Website
 			throw HTTP_Exception::factory(404, 'Document not found!');
 		}
 		View::bind_global('data', $data);
-
-		$main = View::factory('content/main')->render();
-		View::bind_global('main', $main);
 	}
+
 }
