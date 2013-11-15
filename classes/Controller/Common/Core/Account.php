@@ -13,7 +13,8 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 	{
 		if ($post = $this->request->post())
 		{
-			if (Account::login($post['username'], $post['password']))
+			$error = FALSE;
+			if (Account::login($post, $error))
 			{
 				$this->redirect(URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE));
 			}
@@ -64,7 +65,7 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 		$error = FALSE;
 
 		$signup_data = array(
-			'email' => $_POST['email'],
+			'email'     => $_POST['email'],
 			'password1' => $_POST['password1'],
 			'password2' => $_POST['password2'],
 			'remember_me' => empty($_POST['remember_me']) ? FALSE : $_POST['remember_me'],
@@ -86,18 +87,15 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 			'posted' => $_POST,
 		);
 		$error = FALSE;
-
 		$data = array(
-			'username'    => $_POST['email'],
+			'email'       => $_POST['email'],
 			'password'    => $_POST['password'],
 			'remember_me' => empty($_POST['remember_me']) ? FALSE : $_POST['remember_me'] == '1',
 		);
 		if ($result = Account::login($data, $error))
 		{
 			$this->output['redirect_url'] = URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE);
-			$this->output['YUP'] = TRUE;
 		}
-
 		$this->output['error'] = $error;
 		$this->output['output'] = $result;
 	}

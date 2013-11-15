@@ -86,22 +86,22 @@ abstract class Model_Abstract extends Model_Core_Abstract
 	{
 		$this->_before_save($data);
 
-		$exists = $this->get_by_id($data['_id']);
+		if ( ! empty($data['object_id']))
+		{
+			$exists = $this->get_by_object_id($data['object_id']);
+		}
+		if (empty($exists))
+		{
+			$exists = $this->get_by_id($data['_id']);
+		}
 		if ($exists)
 		{
 			$data['object_id'] = $exists['object_id'];
 		}
-		if ( ! empty($data['object_id']))
-		{
-			$exists2 = $this->get_by_object_id($data['object_id']);
-			if ($exists2)
-			{
-				$exists = $exists2;
-			}
-		}
 		$json_data = array_diff_key($data, $this::$_columns);
 		$data = array_intersect_key($data, $this::$_columns);
 		$data['extra_json'] = json_encode($json_data);
+
 		ksort($data);
 		try
 		{

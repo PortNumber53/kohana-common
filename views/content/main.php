@@ -15,7 +15,7 @@
 	{
 		case "text/plain":
 		default:
-			echo html_entity_decode($data['body']);
+			echo nl2br(html_entity_decode($data['body']));
 			break;
 	}
 	?>

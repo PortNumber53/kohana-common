@@ -7,7 +7,6 @@
 
 class Controller_Common_Backend_Core_Content extends Controller_Common_Core_Website
 {
-
 	public function action_edit()
 	{
 		$main = 'content/backend/edit';

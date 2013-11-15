@@ -12,6 +12,7 @@ class Model_Content extends Model_Abstract
 
 	public static $_columns = array(
 		'_id'          => '',
+		'object_id'     => '',
 		'author_id'    => '',
 		'url'          => '',
 		'mimetype'     => '',
@@ -20,13 +21,12 @@ class Model_Content extends Model_Abstract
 		'created_at'   => '',
 		'modified_at'  => '',
 		'extra_json'   => '',
-		'pk_id'        => '',
 	);
 
 	public function get_by_account_id($account_id)
 	{
 		$query = DB::select()->from(self::$_table_name)->where('account_id', '=', $account_id);
-		echo (string) $query;
+		//echo (string) $query;
 		$result_set = $query->execute()->as_array();
 		if (count($result_set) > 0)
 		{

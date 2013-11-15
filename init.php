@@ -50,4 +50,15 @@ if (! Route::$cache)
 			'request'    => '/',
 			'type'       => 'html',
 		));
+
+	Route::set('image-actions', '(<request>.<type>)',
+		array(
+			'request'       => '[a-zA-Z0-9_/\-]+',
+			'type'          => '(jpg|jpeg|png|gif)',
+		))
+		->defaults(array(
+			'controller' => 'Dynimage',
+			'action'     => 'get',
+		));
+
 }

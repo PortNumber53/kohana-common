@@ -180,14 +180,14 @@ class Account extends Abstracted
 	static public function login($data, &$error)
 	{
 		// TODO: Implement _login() method.
-		$_id = '/' . DOMAINNAME . '/' . $data['username'];
+		$_id = '/' . DOMAINNAME . '/' . $data['email'];
 		$account = new Model_Account();
 		$account_row = $account->get_by_id($_id);
-		//var_dump($account_row);
 
 		if ($account_row)
 		{
-			if (md5(Cookie::$salt . $data['password']) == $account_row['password'])
+			$md5 = md5(Cookie::$salt . $data['password']);
+			if ($md5 == $account_row['password'])
 			{
 				//Only store minimal information in the cookie
 				$data_cookie = array(
@@ -196,11 +196,15 @@ class Account extends Abstracted
 					'email'    => $account_row['email'],
 					'name'     => $account_row['name'],
 				);
-				if ($data['remember_me'])
+				$expiration = NULL;
+				if ( ! empty($data['remember_me']) && $data['remember_me'])
 				{
-					Cookie::set('account', json_encode($data_cookie));
+					$expiration = 86400;
+					Cookie::$expiration = 604800;
 					$error = FALSE;
 				}
+				//echo "SET COOKIE!";die();
+				Cookie::set('account', json_encode($data_cookie));
 				return TRUE;
 			}
 			else
