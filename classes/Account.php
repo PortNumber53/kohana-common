@@ -44,7 +44,8 @@ class Account extends Abstracted
 	static public function logged_in()
 	{
 		$cookie_data = json_decode(Cookie::get('account'), TRUE);
-		return self::get_by_id($cookie_data['_id']);
+		$oAccount = new Model_Account();
+		return $oAccount->get_by_id($cookie_data['_id']);
 	}
 
 	static public function logout()

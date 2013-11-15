@@ -61,11 +61,9 @@ class Model_Sequence extends Model_Abstract
 				'error' => $e->getCode(),
 				'message' => $e->getMessage(),
 			);
-			//var_dump($error);die();
 			return FALSE;
 		}
 		return TRUE;
 	}
-
 
 }

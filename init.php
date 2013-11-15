@@ -44,7 +44,7 @@ if (! Route::$cache)
 			return $params; // Returning an array will replace the parameters
 		})
 		->defaults(array(
-			'directory'  => 'Common',
+			//'directory'  => 'Common',
 			'controller' => 'Content',
 			'action'     => 'view',
 			'request'    => '/',

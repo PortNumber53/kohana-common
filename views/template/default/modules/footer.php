@@ -10,14 +10,10 @@
 <div class="footerbar footerbar-default footerbar-fixed-bottom">
 	<div class="container">
 
-		<div class="form-feedback">
+		<div class="form-feedback hidden">
 			<div class="alert alert-info">
 				<a class="close" data-dismiss="alert" href="#" aria-hidden="true">&times;</a>
 				<ul id="errorlist">
-					<li>1 LINE HERE</li>
-					<li>L2INE HERE</li>
-					<li>LI3NE HERE</li>
-					<li>LIN4E HERE</li>
 				</ul>
 			</div>
 		</div>

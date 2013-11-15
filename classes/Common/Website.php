@@ -46,7 +46,9 @@ class Common_Website
 	static public function set_template($name)
 	{
 		self::$template_name = $name;
+		View::$template_name = $name;
 	}
+
 	static public function set_file($name)
 	{
 		self::$template_file = $name;
@@ -77,7 +79,6 @@ class Common_Website
 		}
 		if (empty(self::$settings))
 		{
-			//echo 'load settings ';
 			self::load_settings();
 		}
 
@@ -89,7 +90,6 @@ class Common_Website
 		return str_replace('www.', '', $_SERVER['SERVER_NAME']);
 	}
 
-
 	const NOT_CACHED = '¿NOT_CACHED?';
 	static $data = array();
 
@@ -99,11 +99,9 @@ class Common_Website
 		$data = Arr::path(self::$data, $array_path, self::NOT_CACHED);
 		if ($data === self::NOT_CACHED)
 		{
-			//echo "$array_path IS NOT CACHED<br>";
 			//Get the data
 			list($class, $method) = explode('/', $function);
 			$data = $class::$method($params);
-			//var_dump($data);die();
 
 			$return = '123';
 			if ( ! $return = Arr::path(self::$data, $array_path, $default))
@@ -127,9 +125,7 @@ class Common_Website
 		}
 		else
 		{
-			//echo "$array_path is CACHED<br>";
 			$data = $data[0];
-			//var_dump($data);die();
 		}
 		return $data;
 	}

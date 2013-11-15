@@ -77,12 +77,19 @@ abstract class Model_Abstract extends Model_Core_Abstract
 		return $data;
 	}
 
+	public function _before_save(&$data = array())
+	{
+		// TODO: Implement _before_save() method.
+	}
+
 	public function save(&$data, &$error, &$options=array())
 	{
+		$this->_before_save($data);
+
 		$exists = $this->get_by_id($data['_id']);
 		if ($exists)
 		{
-			//$data['password'] = $exists['password'];
+			$data['object_id'] = $exists['object_id'];
 		}
 		if ( ! empty($data['object_id']))
 		{
@@ -95,7 +102,6 @@ abstract class Model_Abstract extends Model_Core_Abstract
 		$json_data = array_diff_key($data, $this::$_columns);
 		$data = array_intersect_key($data, $this::$_columns);
 		$data['extra_json'] = json_encode($json_data);
-
 		ksort($data);
 		try
 		{
@@ -103,7 +109,6 @@ abstract class Model_Abstract extends Model_Core_Abstract
 			{
 				$data['object_id'] = Model_Sequence::nextval();
 			}
-
 			if ($exists)
 			{
 				//Update
@@ -203,7 +208,6 @@ abstract class Model_Abstract extends Model_Core_Abstract
 
 	public function delete_by_id($_id)
 	{
-		echo "DELETING $_id\n";
 		$query = DB::delete($this::$_table_name)->where($this::$_primary_key, '=', $_id);
 		return $query->execute();
 	}

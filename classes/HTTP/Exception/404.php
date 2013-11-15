@@ -11,14 +11,15 @@ class HTTP_Exception_404 extends Kohana_HTTP_Exception_404 {
 	{
 		$response = Response::factory();
 
-		$view = View::factory('errors/http/404');
+		$data = array(
+			'message' => $this->getMessage(),
+		);
+		View::bind_global('data', $data);
 
-		// We're inside an instance of Exception here, all the normal stuff is available.
-		$view->message = $this->getMessage();
+		$request = Request::factory('http/404.html');
+		$response = $request->execute();
 
 		$response->status(404);
-		$response->body($view->render());
-
 		return $response;
 	}
 

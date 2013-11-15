@@ -60,14 +60,11 @@ class Content
 		{
 			$_id = '/' . $_id;
 		}
-		//echo "GETTING: $_id<br>";
 		$_id = '/' . DOMAINNAME . $_id;
 		$content = new Model_Content();
 		$data = $content->get_by_id($_id);
-
 		return $data;
 	}
-
 
 	static public function get_author($_id)
 	{
@@ -102,8 +99,8 @@ class Content
 		//$data['_id'] = '/insertcoin.dev/'.$data['email'];
 		$content = new Model_Content();
 
-		$autor = Account::profile();
-		$data['author_id'] = $autor['object_id'];
+		$author = Account::profile();
+		$data['author_id'] = $author['object_id'];
 		//Update content
 		if ($result = $content->save($data, $error))
 		{

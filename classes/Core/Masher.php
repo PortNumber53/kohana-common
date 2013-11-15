@@ -129,7 +129,7 @@ class Core_Masher
 		{
 			if ($script['inline'] === TRUE)
 			{
-				$return .= "<script type=\"text/css\">\n";
+				$return .= "<script type=\"text/javascript\">\n";
 				$return .= $script['flat'];
 				$return .= "</script>\n";
 

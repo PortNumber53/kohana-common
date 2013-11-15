@@ -84,4 +84,30 @@ class View extends Kohana_View
 		return $rendered;
 	}
 
+
+	/**
+	 * Builds a global array, similar to [View::set], except that the
+	 * array will be accessible to all views.
+	 *
+	 *     View::add_global($name, $value);
+	 *
+	 * @param   string  variable name or an array of variables
+	 * @param   mixed   value
+	 * @return  void
+	 */
+	public static function add_global($key, $subkey, $value = NULL)
+	{
+		if (is_array($subkey))
+		{
+			foreach ($subkey as $key2 => $value)
+			{
+				self::$_global_data[$key][$key2] = $value;
+			}
+		}
+		else
+		{
+			self::$_global_data[$key][$subkey] = $value;
+		}
+	}
+
 }

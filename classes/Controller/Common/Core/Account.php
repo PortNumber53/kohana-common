@@ -15,7 +15,7 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 		{
 			if (Account::login($post['username'], $post['password']))
 			{
-				//$this->redirect('/profile');
+				$this->redirect(URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE));
 			}
 		}
 
@@ -33,6 +33,12 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 
 	public function action_signup()
 	{
+		$data = Account::factory()->profile();
+		if ( ! empty($data))
+		{
+			$this->redirect(URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE));
+		}
+
 		if ($post = $this->request->post())
 		{
 			if ($post['password1'] == $post['password2'])
@@ -42,9 +48,8 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 			}
 			if ($result = Account::signup($post, $error))
 			{
-				//$this->redirect('/profile');
+				$this->redirect(URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE));
 			}
-			//var_dump($error);
 		}
 
 		$main = 'account/signup';
@@ -103,11 +108,9 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 		{
 			if ($result = Account::update($post, $error))
 			{
-				$this->redirect('/profile');
+				$this->redirect(URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE));
 			}
-			//var_dump($error);
 		}
-
 		$data = Account::factory()->profile();
 
 		View::bind_global('data', $data);
@@ -123,22 +126,22 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 		$error = FALSE;
 
 		$logged_account_data = Account::logged_in();
-
 		$data = array(
 			'username' => $logged_account_data['username'],
 			'email' => $_POST['email'],
-			'name' => $_POST['name'],
-			//'password1' => $_POST['password1'],
-			//'password2' => $_POST['password2'],
-			//'remember_me' => empty($_POST['remember_me']) ? FALSE : $_POST['remember_me'],
 		);
+		if ( ! empty($_POST['name']))
+		{
+			$data['name'] = $_POST['name'];
+		}
+		$data = array_merge($data, $_POST);
 		$result = Account::update($data, $error);
 
 		if ($error === FALSE)
 		{
 			$this->output['message'] = __('Profile updated successfully');
 			$this->output['dismiss_timer'] = 2;
-			//$this->output['redirect_url'] = URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE);
+			$this->output['redirect_url'] = URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE);
 		}
 
 		$this->output['error'] = $error;
@@ -151,7 +154,7 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 		{
 			if (Account::reset($post, $error))
 			{
-				//$this->redirect('/');
+				$this->redirect(URL::Site(Route::get('default')->uri(array()), TRUE));
 			}
 		}
 
@@ -190,7 +193,7 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 			$settings_data['data'] = array_merge($settings_data['data'], $validated);
 			if ($result = Settings::update($settings_data, $error))
 			{
-				$this->redirect('/profile');
+				$this->redirect(URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE));
 			}
 		}
 
@@ -205,7 +208,6 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 				}
 			}
 		}
-
 
 		View::bind_global('data', $settings_data);
 		View::bind_global('item_data', $item_data);

@@ -11,25 +11,23 @@ class Settings
 
 	public static function factory()
 	{
+		$website_settings = parse_ini_file(APPPATH . '..' . DIRECTORY_SEPARATOR . '.settings', TRUE);
+		//define('WEBSITE_SETTINGS', json_encode($website_settings));
+
 		$obj = new self();
-		$obj::$data = array();
-
-		//$obj::$template_file = $template_file_name;
-		//echo $obj::$template_file;
-
-		//if (empty(self::$template_file))
-		//{
-		//	self::$template_file = 'frontend';
-		//}/
-		//$this->template = 'template/' . $this->template_name . '/' . $this->template_file;
+		$obj::$data = $website_settings;
 
 		return $obj;
 	}
 
-	static function is_logged()
+	static public function value($array_path)
 	{
-		$logged_in = Cookie::get('setting');
-		return ! empty($logged_in);
+		$value = Arr::path(self::$data, $array_path, NULL);
+		if (empty($value))
+		{
+			throw new Kohana_Exception ('Parameter not found: ' . $array_path);
+		}
+		return $value;
 	}
 
 	static public function get($account_id = 0)

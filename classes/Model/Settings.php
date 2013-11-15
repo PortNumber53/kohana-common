@@ -26,7 +26,6 @@ class Model_Settings extends Model_Abstract
 		if (count($result_set) == 1)
 		{
 			$result = $result_set[0];
-			//var_dump($result_set[0]['data']);
 			$array = json_decode($result_set[0]['data'], TRUE);
 			unset($result['data']);
 			$result = array_merge($result, $array);
@@ -47,5 +46,8 @@ class Model_Settings extends Model_Abstract
 		}
 	}
 
-
+	public function _before_save(&$data = array())
+	{
+		// TODO: Implement _before_save() method.
+	}
 }

@@ -17,11 +17,20 @@ class Model_Account extends Model_Abstract
 		'username'      => '',
 		'password'      => '',
 		'name'          => '',
+		'avatar'        => 'picture',
 		'email'         => '',
 		'hash'          => '',
 		'created_at'    => '',
 		'modified_at'   => '',
 		'extra_json'    => '',
 	);
+
+	public static $_json_columns = array(
+	);
+
+	public function _before_save(&$data = array())
+	{
+		unset($data['password1'], $data['password2'], $data['remember_me']);
+	}
 
 }

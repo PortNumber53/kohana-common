@@ -41,9 +41,10 @@ class Controller_Common_Core_Website extends Controller_Template
 		};
 
 		$this->json = json_decode(file_get_contents('php://input'), TRUE);
-		if (strpos(strtolower($this->request->headers('accept')), 'application/json') !== FALSE ||$this->request->is_ajax() || ! empty($this->json))
+		if (strpos(strtolower($this->request->headers('accept')), 'application/json') !== FALSE ||$this->request->is_ajax() || ! empty($this->json)
+			|| (strtolower($this->request->controller()) == 'upload' && strtolower($this->request->action()) == 'receive') )
 		{
-			$this->auto_render = false;
+			$this->auto_render = FALSE;
 			$this->request->action('ajax_'.$this->request->action());
 			$this->response->headers('content-type', 'application/json');
 		}
@@ -75,6 +76,7 @@ class Controller_Common_Core_Website extends Controller_Template
 		if ($this->auto_render)
 		{
 			$current_url = URL::Site(Request::detect_uri(), TRUE);
+			$menu = array();
 			$menu['content_url'] = URL::Site(Route::get('default')->uri(array('controller'=>'content', 'action'=>'browse' )), TRUE);
 			$menu['product_url'] = URL::Site(Route::get('default')->uri(array('controller'=>'product', 'action'=>'browse' )), TRUE);
 			$menu['profile_url'] = URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE);
@@ -107,10 +109,9 @@ class Controller_Common_Core_Website extends Controller_Template
 
 	public function after()
 	{
+		$this->response->headers('Content-Encoding', 'UTF-8');
 		if ($this->auto_render)
 		{
-
-
 			View::bind_global('user', $this->user);
 			View::set_global('current_url', URL::site(Request::factory()->current()->uri(), true));
 
@@ -140,7 +141,6 @@ class Controller_Common_Core_Website extends Controller_Template
 
 		}
 		parent::after();
-
 	}
 
 }

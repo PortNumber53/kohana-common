@@ -30,12 +30,20 @@ class Controller_Common_Core_Content extends Controller_Common_Core_Website
 		$type = $this->request->param('type');
 		$full_request = ($request === '/') ? $request : "$request.$type";
 
-		$data = Content::get($full_request);
-		if ( ! $data)
+		//Check for static content
+		if (Kohana::find_file('views', $full_request))
 		{
-			throw HTTP_Exception::factory(404, 'Document not found!');
+			$main = $full_request;
 		}
-		View::bind_global('data', $data);
+		else
+		{
+			$data = Content::get($full_request);
+			if ( ! $data)
+			{
+				throw HTTP_Exception::factory(404, 'Document not found!');
+			}
+			View::bind_global('data', $data);
+		}
 	}
 
 }

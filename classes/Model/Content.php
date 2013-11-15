@@ -46,5 +46,4 @@ class Model_Content extends Model_Abstract
 		}
 	}
 
-
 }
