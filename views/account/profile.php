@@ -12,7 +12,7 @@
 			<div class="form-group">
 				<div class="thumbnail">
 					<div id="dropbox" class="text-center container center-block" data-field="profile_avatar">
-						<img src="<?php echo Arr::path($data, 'profile_avatar', 'http://placehold.it/240x300'); ?>" alt="...">
+						<img src="<?php echo empty(Arr::path($data, 'profile_avatar')) ? 'http://placehold.it/240x300' : Arr::path($data, 'profile_avatar'); ?>" alt="...">
 					</div>
 				</div>
 			</div>
@@ -55,7 +55,7 @@
 	<div class="row">
 		<div class="col-sm-12">
 			<div class="center-block">
-				<button type="submit" class="btn btn-default">Update My Profile</button>
+				<button type="submit" class="btn btn-default pull-right">Update My Profile</button>
 			</div>
 		</div>
 	</div>
