@@ -10,8 +10,8 @@
 	<div class="row">
 		<div class="col-md-3">
 			<div class="form-group">
-				<div class="thumbnail">
-					<div id="dropbox" class="text-center container center-block" data-field="profile_avatar">
+				<div class="thumbnail dropbox-unique">
+					<div id="dropbox" class="text-center center-block" data-field="profile_avatar">
 						<img src="<?php echo empty(Arr::path($data, 'profile_avatar')) ? 'http://placehold.it/240x300' : Arr::path($data, 'profile_avatar'); ?>" alt="...">
 					</div>
 				</div>

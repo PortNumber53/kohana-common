@@ -45,9 +45,23 @@ class Controller_Service_Core_Upload extends Controller_Service_Core_Service
 			// directory to the uploads folder:
 
 			if(move_uploaded_file($pic['tmp_name'], $upload_dir.$pic['name'])){
+				$routes = Route::all();
+				$matched = FALSE;
+				foreach ($routes as $route)
+				{
+					$params = $route->matches(Request::factory(URL::site($this->request->headers('Referer'), FALSE)));
+					if ($params)
+					{
+						$matched = $params;break;
+					}
+				}
+				$this->output['route'] = $matched;
+				$this->output['routes'] = $routes;
+
 				$this->output['status'] = 'File was uploaded successfuly!';
 				$this->output['dismiss_timer'] = 1;
 				$this->output['filename'] = $pic['name'];
+				$this->output['referrer'] = URL::site($this->request->headers('Referer'), FALSE);
 				return;
 			}
 		}

@@ -11,21 +11,6 @@ class Account extends Abstracted
 
 	protected static $data = array();
 
-
-	public function get_by_id($_id, &$options=array())
-	{
-		$oAccount = new Model_Account();
-		$result = $oAccount->get_by_id($_id);
-		return $result;
-	}
-
-	public function get_by_object_id($object_id, &$options=array())
-	{
-		$oAccount = new Model_Account();
-		$result = $oAccount->get_by_object_id($object_id);
-		return $result;
-	}
-
 	public static function factory()
 	{
 		$obj = new self();
