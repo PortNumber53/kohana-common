@@ -12,7 +12,7 @@
 			<div class="form-group">
 				<div class="thumbnail dropbox-unique">
 					<div id="dropbox" class="text-center center-block" data-field="profile_avatar">
-						<img src="<?php echo empty(Arr::path($data, 'profile_avatar')) ? 'http://placehold.it/240x300' : Arr::path($data, 'profile_avatar'); ?>" alt="...">
+						<img src="<?php echo empty(Arr::path($data, 'profile_avatar')) ? 'http://placehold.it/240x300' : Arr::path($data, 'profile_avatar')[0]; ?>" alt="...">
 					</div>
 				</div>
 			</div>

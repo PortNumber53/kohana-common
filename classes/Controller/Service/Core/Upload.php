@@ -9,7 +9,6 @@
 class Controller_Service_Core_Upload extends Controller_Service_Core_Service
 {
 
-
 	public function action_ajax_receive()
 	{
 		// If you want to ignore the uploaded files,
@@ -44,23 +43,37 @@ class Controller_Service_Core_Upload extends Controller_Service_Core_Service
 			// Move the uploaded file from the temporary
 			// directory to the uploads folder:
 
-			if(move_uploaded_file($pic['tmp_name'], $upload_dir.$pic['name'])){
-				$routes = Route::all();
-				$matched = FALSE;
-				foreach ($routes as $route)
+			$routes = Route::all();
+			$matched = FALSE;
+			foreach ($routes as $route)
+			{
+				$params = $route->matches(Request::factory(URL::site($this->request->headers('Referer'), FALSE)));
+				if ($params)
 				{
-					$params = $route->matches(Request::factory(URL::site($this->request->headers('Referer'), FALSE)));
-					if ($params)
-					{
-						$matched = $params;break;
-					}
+					$matched = $params;break;
 				}
-				$this->output['route'] = $matched;
-				$this->output['routes'] = $routes;
+			}
+			//Extra subfolders from referrer
+			if ($matched['controller'] == 'Account')
+			{
+				$matched['id'] = Account::logged_in()['object_id'];
+			}
+
+			$group = str_pad($matched['id'] % 1000, 3, '0', STR_PAD_LEFT);
+			$extra = strtolower($matched['controller'] . DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR . $matched['id'] . DIRECTORY_SEPARATOR);
+			if ( ! is_dir($upload_dir . $extra))
+			{
+				mkdir($upload_dir . $extra, 0755, TRUE);
+			}
+			$this->output['subfolder'] = $extra;
+			$this->output['route'] = $matched;
+			$this->output['routes'] = $routes;
+
+			if(move_uploaded_file($pic['tmp_name'], $upload_dir. $extra.$pic['name'])){
 
 				$this->output['status'] = 'File was uploaded successfuly!';
 				$this->output['dismiss_timer'] = 1;
-				$this->output['filename'] = $pic['name'];
+				$this->output['filename'] = $extra . $pic['name'];
 				$this->output['referrer'] = URL::site($this->request->headers('Referer'), FALSE);
 				return;
 			}

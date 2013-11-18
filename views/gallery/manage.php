@@ -25,11 +25,17 @@
 		<div class="col-lg-9">
 			<ul class="thumbnail-list dropbox-container">
 				<li>
-					<div id="dropbox" data-dropbox-behavior="gallery" class="dropbox-gallery text-center center-block" data-field="profile_avatar">
+					<div id="dropbox" data-dropbox-behavior="gallery" class="dropbox-gallery text-center center-block" data-field="file_list">
 						Drop images here to upload more
 					</div>
 				</li>
-				<li>Images here</li>
+				<?php
+				foreach (Arr::path($gallery_data, 'file_list', array()) as $file)
+				{
+					echo '<li><div class="preview"><span class="imageHolder"><img src="' . URL::Site($file, TRUE) . '" /></li>';
+					echo '<input type="hidden" name="file_list[]" value="' . $file . '" />';
+				}
+				?>
 			</ul>
 		</div>
 	</div>
@@ -42,7 +48,7 @@
 	<div class="form-group">
 		<div class="col-lg-offset-2 col-lg-9">
 			<button type="button" class="btn btn-primary btn-xs btn-form-action" data-object-id="<?php echo $gallery_data['object_id']; ?>" data-action-link="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'gallery', 'action'=>'edit', 'id'=>$gallery_data['object_id'], )), TRUE); ?>">Back to Edit Gallery</button>
-			<button type="button" class="btn btn-primary btn-xs btn-form-action" data-object-id="<?php echo $gallery_data['object_id']; ?>" data-action-link="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'gallery', 'action'=>'update_list', 'id'=>$gallery_data['object_id'], )), TRUE); ?>">Update Image List</button>
+			<button type="button" class="btn btn-primary btn-xs btn-form-action" data-object-id="<?php echo $gallery_data['object_id']; ?>" data-action-link="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'gallery', 'action'=>'update', 'id'=>$gallery_data['object_id'], )), TRUE); ?>">Update Image List</button>
 			<button type="submit" class="btn btn-default">Update Gallery Information</button>
 		</div>
 	</div>

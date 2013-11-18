@@ -114,4 +114,31 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 
 	}
 
+
+	public function action_ajax_update()
+	{
+		$error = FALSE;
+		$this->output = array(
+			'posted' => $_POST,
+		);
+
+		$object_id = $this->request->param('id');
+		$gallery_data = array(
+			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URL::title($_POST['name'], '-', TRUE),
+			'object_id' => $object_id,
+			'category_id' => 0,
+			'status' => $_POST['status'],
+			'name' => $_POST['name'],
+			'tags' => $_POST['tags'],
+			'file_list' => $_POST['file_list'],
+		);
+		$result = Gallery::update($gallery_data, $error);
+
+		if ($result)
+		{
+
+		}
+
+		$this->output['error'] = $error;
+	}
 }
