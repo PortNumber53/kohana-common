@@ -5,7 +5,7 @@
  *
  */
 ?>
-<form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE); ?>">
+<form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE); ?>" data-dropbox-mode="unique">
 	<input type="hidden" name="profile_avatar" id="profile_avatar" />
 	<div class="row">
 		<div class="col-md-3">

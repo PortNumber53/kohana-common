@@ -58,9 +58,12 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 			'category_id' => 0,
 			'status' => $_POST['status'],
 			'name' => $_POST['name'],
-			'description' => $_POST['description'],
 			'tags' => $_POST['tags'],
 		);
+		if (! empty($_POST['description']))
+		{
+			$gallery_data['description'] = $_POST['description'];
+		}
 		$result = Gallery::update($gallery_data, $error);
 
 		if ($result)
@@ -109,7 +112,7 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 		), $error);
 		if ($result)
 		{
-			$this->output['redirect_url'] = URL::Site(Route::get('default')->uri(array('controller'=>'Gallery', 'action'=>'manage', 'id'=>13, )), TRUE);
+			$this->output['redirect_url'] = URL::Site(Route::get('default')->uri(array('controller'=>'Gallery', 'action'=>'manage', 'id'=>(int) $_POST['what'], )), TRUE);
 		}
 
 	}

@@ -96,7 +96,8 @@ abstract class Model_Abstract extends Model_Core_Abstract
 		}
 		if ($exists)
 		{
-			$data['object_id'] = $exists['object_id'];
+			//$data['object_id'] = $exists['object_id'];
+			$data = array_merge($exists, $data);
 		}
 		$json_data = array_diff_key($data, $this::$_columns);
 		$data = array_intersect_key($data, $this::$_columns);

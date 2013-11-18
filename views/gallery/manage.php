@@ -7,7 +7,7 @@
  */
 
 ?>
-<form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'gallery', 'action'=>'edit', 'id'=>$gallery_data['object_id'], )), TRUE); ?>">
+<form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'gallery', 'action'=>'edit', 'id'=>$gallery_data['object_id'], )), TRUE); ?>" data-dropbox-mode="gallery">
 	<div class="form-group">
 		<label for="inputName" class="col-lg-2 control-label">Name</label>
 		<div class="col-lg-9">
@@ -49,7 +49,6 @@
 		<div class="col-lg-offset-2 col-lg-9">
 			<button type="button" class="btn btn-primary btn-xs btn-form-action" data-object-id="<?php echo $gallery_data['object_id']; ?>" data-action-link="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'gallery', 'action'=>'edit', 'id'=>$gallery_data['object_id'], )), TRUE); ?>">Back to Edit Gallery</button>
 			<button type="button" class="btn btn-primary btn-xs btn-form-action" data-object-id="<?php echo $gallery_data['object_id']; ?>" data-action-link="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'gallery', 'action'=>'update', 'id'=>$gallery_data['object_id'], )), TRUE); ?>">Update Image List</button>
-			<button type="submit" class="btn btn-default">Update Gallery Information</button>
 		</div>
 	</div>
 </form>

@@ -24,6 +24,7 @@
 			<li><a href="#" class="hidden back-link">Back</a></li>
 			<li class="<?php echo ($current_url==$menu['product_url']) ? 'active' : ''; ?>"><a href="<?php echo $menu['product_url']; ?>">Products</a></li>
 			<li class="<?php echo ($current_url==$menu['content_url']) ? 'active' : ''; ?>"><a href="<?php echo $menu['content_url']; ?>">Content</a></li>
+			<li class="<?php echo ($current_url==$menu['gallery_url']) ? 'active' : ''; ?>"><a href="<?php echo $menu['gallery_url']; ?>">Gallery</a></li>
 		</ul>
 		<form class="navbar-form navbar-left" role="search">
 			<div class="form-group">
