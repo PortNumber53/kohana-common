@@ -13,6 +13,7 @@ class Model_Gallery extends Model_Abstract
 
 	public static $_columns = array(
 		'_id'           => '',
+		'url'           => '',
 		'object_id'     => 0,
 		'category_id'   => 0,
 		'status'        => '',
@@ -27,4 +28,14 @@ class Model_Gallery extends Model_Abstract
 		'tags'			=> '',
 	);
 
+	public function _before_save(&$data = array())
+	{
+		parent::_before_save($data);
+		//unset($data['password1'], $data['password2'], $data['remember_me']);
+		if ( ! empty($data['object_id']) && ! empty($data['name']))
+		{
+			$data['url'] = '/' . $data['object_id'] . '-' . URL::title($data['name']) . '/';
+		}
+
+	}
 }

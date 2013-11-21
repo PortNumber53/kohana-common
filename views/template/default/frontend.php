@@ -25,7 +25,7 @@
 
 <body>
 <?php
-echo empty($template['header']) ? '{template.header}' : View::factory($template['header'])->render();
+echo empty($template['facebook']) ? '{template.facebook}' : View::factory($template['facebook'])->render();
 ?>
 
 <ol class="breadcrumb">
@@ -38,6 +38,7 @@ echo empty($template['header']) ? '{template.header}' : View::factory($template[
 
 <?php
 //echo View::factory('modules/akm2_gravity_points_code_pen')->render();
+echo empty($template['header']) ? '{template.header}' : View::factory($template['header'])->render();
 echo empty($template['footer']) ? '{template.footer}' : View::factory($template['footer'])->render();
 ?>
 

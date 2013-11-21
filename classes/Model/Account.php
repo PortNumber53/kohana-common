@@ -31,6 +31,7 @@ class Model_Account extends Model_Abstract
 	public function _before_save(&$data = array())
 	{
 		unset($data['password1'], $data['password2'], $data['remember_me']);
+		parent::_before_save($data);
 	}
 
 }

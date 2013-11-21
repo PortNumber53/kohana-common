@@ -112,7 +112,7 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 		), $error);
 		if ($result)
 		{
-			$this->output['redirect_url'] = URL::Site(Route::get('default')->uri(array('controller'=>'Gallery', 'action'=>'manage', 'id'=>(int) $_POST['what'], )), TRUE);
+			$this->output['redirect_url'] = URL::Site(Route::get('default')->uri(array('controller'=>'gallery', 'action'=>'manage', 'id'=>(int) $_POST['what'], )), TRUE);
 		}
 
 	}
@@ -126,6 +126,18 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 		);
 
 		$object_id = $this->request->param('id');
+		$file_list_array = array();
+		if ( ! empty($_POST['file_list']) && is_array($_POST['file_list']))
+		{
+			foreach ($_POST['file_list'] as $file_sent)
+			{
+				$file_list_array[] = array(
+					'image' => array(
+						'url' => $file_sent,
+					),
+				);
+			}
+		}
 		$gallery_data = array(
 			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URL::title($_POST['name'], '-', TRUE),
 			'object_id' => $object_id,
@@ -133,7 +145,7 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 			'status' => $_POST['status'],
 			'name' => $_POST['name'],
 			'tags' => $_POST['tags'],
-			'file_list' => $_POST['file_list'],
+			'file_list' => $file_list_array,
 		);
 		$result = Gallery::update($gallery_data, $error);
 

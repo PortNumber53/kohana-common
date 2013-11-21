@@ -32,8 +32,9 @@
 				<?php
 				foreach (Arr::path($gallery_data, 'file_list', array()) as $file)
 				{
-					echo '<li><div class="preview"><span class="imageHolder"><img src="' . URL::Site($file, TRUE) . '" /></li>';
-					echo '<input type="hidden" name="file_list[]" value="' . $file . '" />';
+					//var_dump($file);
+					echo '<li><div class="preview"><span class="imageHolder"><img src="' . URL::Site($file['image']['url'], TRUE) . '" /></li>';
+					echo '<input type="hidden" name="file_list[]" value="' . $file['image']['url'] . '" />';
 				}
 				?>
 			</ul>

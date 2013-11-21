@@ -61,4 +61,23 @@ if (! Route::$cache)
 			'action'     => 'get',
 		));
 
+
+
+
+
+
+	//Legacy actions
+	Route::set('blog-actions', 'post/<id>(-(<slug>(/<page>)))',
+		array(
+			'id'         => '[0-9]+',
+			'page'       => '[0-9]+',
+			'slug'       => '[a-z0-9_\-\']+',
+		))
+		->defaults(array(
+			'controller' => 'Blog',
+			'format'     => 'Blog',
+			'page'       => 1,
+			'action'     => 'view',
+		));
+
 }

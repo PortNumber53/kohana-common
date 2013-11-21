@@ -80,6 +80,14 @@ abstract class Model_Abstract extends Model_Core_Abstract
 	public function _before_save(&$data = array())
 	{
 		// TODO: Implement _before_save() method.
+		if (empty($data['object_id']))
+		{
+			$data['object_id'] = Model_Sequence::nextval();
+		}
+		if ( ! empty($data['_id']) && substr($data['_id'], -1) !== '/')
+		{
+			$data['_id'] = $data['_id'] . '/';
+		}
 	}
 
 	public function save(&$data, &$error, &$options=array())
@@ -194,9 +202,17 @@ abstract class Model_Abstract extends Model_Core_Abstract
 					$query->where($item[0], $item[1], $item[2]);
 				}
 			}
+			//echo (string) $query;
 			$data = $query->execute()->as_array();
 			if (count($data) > 0)
 			{
+				foreach ($data as $key=>&$row)
+				{
+					$extra_json = json_decode(Arr::path($row, 'extra_json', '{}'), TRUE);
+					$row = array_merge($row, $extra_json);
+					unset($row['extra_json']);
+					//$row['url'] = parse_url($row['_id']);
+				}
 				Cache::instance('redis')->set($cache_key, json_encode($data));
 			}
 		}

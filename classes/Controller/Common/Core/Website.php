@@ -13,6 +13,7 @@ class Controller_Common_Core_Website extends Controller_Template
 	public $auth_actions = array();
 
 	public $output = null;
+	public $canonical_url = null;
 
 	public static $settings = array();
 
@@ -113,6 +114,11 @@ class Controller_Common_Core_Website extends Controller_Template
 		$this->response->headers('Content-Encoding', 'UTF-8');
 		if ($this->auto_render)
 		{
+			View::bind_global('canonical_url', $this->canonical_url);
+			if ( empty($this->canonical_url))
+			{
+				$this->canonical_url = URL::site('/', TRUE);
+			}
 			View::bind_global('user', $this->user);
 			View::set_global('current_url', URL::site(Request::factory()->current()->uri(), true));
 
