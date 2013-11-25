@@ -7,7 +7,7 @@
  */
 
 ?>
-<a href="#" class="dropdown-toogle" data-toggle="dropdown" id="accountActions">Profile<b class="caret"></b></a>
+
 
 <script>
 	$(document).ready(function() {
@@ -20,15 +20,26 @@
 			},
 			success: function (response) {
 
-				var html = '<ul role="menu" class="dropdown-menu">';
-				if (response.menu) {
-					//var responseArray = JSON.parse(response);
-					for (loop = 0; loop < response.menu.length; loop++) {
-						html += '<li><a href="' + response.menu[loop].href+ '">' + response.menu[loop].title+ '</a></li>';
+				var html = '';
+				for (loop = 0; loop < response.menu.length; loop++) {
+					console.log(response.menu[loop].label);
+					//html += '<ul role="menu" class="dropdown-menu">';
+					html += '<li class="dropdown"><a href="#" class="dropdown-toogle" data-toggle="dropdown">' + response.menu[loop].label + '<b class="caret"></b></a>';
+
+					if (response.menu[loop].actions) {
+						html += '<ul class="dropdown-menu">';
+						//var responseArray = JSON.parse(response);
+						for (subloop = 0; subloop < response.menu[loop].actions.length; subloop++) {
+							html += '<li><a href="' + response.menu[loop].actions[subloop].href+ '">' + response.menu[loop].actions[subloop].title + '</a></li>';
+						}
+						html += '</ul>';
 					}
+
+					html += '</li>';
+					html += ' </ul>';
 				}
-				html += '</ul>';
-				$("#accountActions").after( html );
+				console.log(html);
+				$("#user-menu").html( html );
 			},
 			error: function (response) {
 			}

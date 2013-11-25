@@ -32,21 +32,18 @@
 			</div>
 			<button type="submit" class="btn btn-default">Submit</button>
 		</form>
-		<ul class="nav navbar-nav navbar-right">
-			<li class="dropdown <?php echo ($current_url==$menu['profile_url']) ? "active" : ''; ?>">
+		<ul class="nav navbar-nav navbar-right" id="user-menu">
+			<?php
+			if ( ! Account::is_logged_in())
+			{
+				echo View::factory('modules/unlogged_header')->render();
+			}
+			else
+			{
+				echo View::factory('modules/logged_header')->render();
+			}
+			?>
 
-				<?php
-				if ( ! Account::is_logged_in())
-				{
-					echo View::factory('modules/unlogged_header')->render();
-				}
-				else
-				{
-					echo View::factory('modules/logged_header')->render();
-				}
-				?>
-
-			</li>
 			<li><a name="top"></a></li>
 		</ul>
 	</div><!-- /.navbar-collapse -->

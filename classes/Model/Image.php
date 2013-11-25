@@ -1,14 +1,14 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 /**
- * Date: 11/16/13
- * Time: 1:10 PM
- * Something meaningful about this gallery
+ * Date: 11/24/13
+ * Time: 10:11 PM
+ * Something meaningful about this file
  *
  */
 
-class Model_Gallery extends Model_Abstract
+class Model_Image extends Model_Abstract
 {
-	public static $_table_name = 'gallery';
+	public static $_table_name = 'image';
 	public static $_primary_key = '_id';
 
 	public static $_columns = array(

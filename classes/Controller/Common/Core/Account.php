@@ -132,6 +132,10 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 		{
 			$data['name'] = $_POST['name'];
 		}
+		if (empty($_POST['profile_avatar']))
+		{
+			unset($_POST['profile_avatar']);
+		}
 		$data = array_merge($data, $_POST);
 		$result = Account::update($data, $error);
 

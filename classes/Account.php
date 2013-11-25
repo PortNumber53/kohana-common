@@ -44,7 +44,7 @@ class Account extends Abstracted
 		$cookie = json_decode(Cookie::get('account'), TRUE);
 		if (empty($_id))
 		{
-			$_id = '/' . DOMAINNAME . '/' . $cookie['email'];
+			$_id = '/' . DOMAINNAME . '/' . $cookie['email'] . '/';
 		}
 		$account = new Model_Account();
 		$data = $account->get_by_id($_id);
@@ -120,7 +120,7 @@ class Account extends Abstracted
 
 	static public function update(&$data, &$error)
 	{
-		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
+		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'] . '/';
 		$account = new Model_Account();
 
 		if (! $exists = self::profile($data['_id']))
@@ -141,7 +141,7 @@ class Account extends Abstracted
 
 	static public function reset($data, &$error)
 	{
-		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
+		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'] . '/';
 		$account = new Model_Account();
 
 		if (! $exists = self::profile($data['_id']))
@@ -165,7 +165,7 @@ class Account extends Abstracted
 	static public function login($data, &$error)
 	{
 		// TODO: Implement _login() method.
-		$_id = '/' . DOMAINNAME . '/' . $data['email'];
+		$_id = '/' . DOMAINNAME . '/' . $data['email'] . '/';
 		$account = new Model_Account();
 		$account_row = $account->get_by_id($_id);
 
@@ -176,10 +176,11 @@ class Account extends Abstracted
 			{
 				//Only store minimal information in the cookie
 				$data_cookie = array(
-					'_id'      => $account_row['_id'],
-					'username' => $account_row['username'],
-					'email'    => $account_row['email'],
-					'name'     => $account_row['name'],
+					'_id'           => $account_row['_id'],
+					'username'      => $account_row['username'],
+					'email'         => $account_row['email'],
+					'name'          => $account_row['name'],
+					'object_id'     => $account_row['object_id'],
 				);
 				$expiration = NULL;
 				if ( ! empty($data['remember_me']) && $data['remember_me'])

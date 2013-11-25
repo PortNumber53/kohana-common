@@ -24,46 +24,15 @@ class Model_Sequence extends Model_Abstract
 
 	static public function nextval()
 	{
-		$query = DB::select(DB::expr('nextval(\'object\') as sequence'));
+		//PostgreSQL
+		//$query = DB::select(DB::expr('nextval(\'object\') as sequence'));
 		//echo (string) $query;
-		$result = $query->execute()->get('sequence');
-		return $result;
-	}
+		//$result = $query->execute()->get('sequence');
+		//return $result;
 
-	public function save(&$data, &$error, &$options=array())
-	{
-		$data = array_intersect_key($data, self::$_columns);
-
-		$exists = $this->get_by_id($data['_id']);
-		ksort($data);
-		$row_data = array(
-			'_id' => $data['_id'],
-			'data' => json_encode($data),
-		);
-		try
-		{
-			if ($exists)
-			{
-				//Update
-				//echo "UPDATE<br>\n";
-				$return = DB::update(self::$_table_name)->set($row_data)->where(self::$_primary_key, '=', $row_data[self::$_primary_key])->execute();
-			}
-			else
-			{
-				//Insert
-				//echo "INSERT<br>\n";
-				$result = DB::insert(self::$_table_name, array_keys($row_data))->values($row_data)->execute();
-			}
-		}
-		catch (Exception $e)
-		{
-			$error = array(
-				'error' => $e->getCode(),
-				'message' => $e->getMessage(),
-			);
-			return FALSE;
-		}
-		return TRUE;
+		//MySQL
+		$result = DB::insert('autoincrement', array_keys(array()))->values(array())->execute();
+		return $result[0];
 	}
 
 }

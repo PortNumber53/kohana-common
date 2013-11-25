@@ -21,11 +21,10 @@ class Model_Settings extends Model_Abstract
 	public function get_by_account_id($_id)
 	{
 		$query = DB::select()->from(self::$_table_name)->where('account_id', '=', $_id);
-		//echo (string) $query;
 		$result_set = $query->execute()->as_array();
 		if (count($result_set) == 1)
 		{
-			$result = $result_set[0];
+			$result = array_shift($result_set);
 			$array = json_decode($result_set[0]['data'], TRUE);
 			unset($result['data']);
 			$result = array_merge($result, $array);

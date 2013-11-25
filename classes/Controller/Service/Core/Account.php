@@ -16,22 +16,6 @@ class Controller_Service_Core_Account extends Controller_Service_Core_Service
 
 	public function action_ajax_actions()
 	{
-		$this->output = array(
-			'menu' => array(
-				array(
-					'title' => __('Edit Profile'),
-					'href'  => URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE),
-				),
-				array(
-					'title' => __('Your Rewards'),
-					'href'  => URL::Site(Route::get('default')->uri(array('controller'=>'reward', 'action'=>'browse', )), TRUE),
-				),
-				array(
-					'title' => __('Logout'),
-					'href'  => URL::Site(Route::get('account-actions')->uri(array('action'=>'logout', )), TRUE),
-				),
-			),
-		);
-
+		$this->output = array('menu' => Website::get('menu', array()));
 	}
 }

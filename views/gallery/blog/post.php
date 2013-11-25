@@ -7,6 +7,7 @@
  */
 $file_list = Arr::path($gallery_data, 'file_list', array());
 
+$image_route = '';
 if ( !  empty($file_list))
 {
 	$image_route = URL::Site('/' . $file_list[0]['image']['url'], TRUE);

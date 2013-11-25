@@ -34,7 +34,7 @@ class Controller_Service_Core_Upload extends Controller_Service_Core_Service
 			if ($demo_mode)
 			{
 				// File uploads are ignored. We only log them.
-				$line = implode('		', array( date('r'), $_SERVER['REMOTE_ADDR'], $pic['size'], $pic['name']));
+				$line = implode('		', array( date('r'), $_SERVER['REMOTE_ADDR'], $pic['size'], URL::title($pic['name'])));
 				file_put_contents('log.txt', $line.PHP_EOL, FILE_APPEND);
 				$this->output['status'] = 'Uploads are ignored in demo mode.';
 				return;
@@ -69,12 +69,33 @@ class Controller_Service_Core_Upload extends Controller_Service_Core_Service
 			$this->output['route'] = $matched;
 			$this->output['routes'] = $routes;
 
-			if(move_uploaded_file($pic['tmp_name'], $upload_dir. $extra.$pic['name'])){
+			$target_file = $upload_dir . $extra . $pic['name'];
+			if(move_uploaded_file($pic['tmp_name'], $target_file)){
 
-				$this->output['status'] = 'File was uploaded successfuly!';
-				$this->output['dismiss_timer'] = 1;
-				$this->output['filename'] = $extra . $pic['name'];
-				$this->output['referrer'] = URL::site($this->request->headers('Referer'), FALSE);
+				$path_parts = pathinfo($target_file);
+
+				$finfo = finfo_open();
+				$mime = finfo_file($finfo, $target_file, FILEINFO_MIME);
+				finfo_close($finfo);
+				$mimetype = explode(';', $mime);
+				switch ($mimetype[0])
+				{
+					case "image/gif":
+					case "image/jpg":
+					case "image/jpeg":
+					case "image/png":
+						$image = new Imagick($target_file);
+						$good_name = $extra . URL::title($path_parts['filename']) . '.' . $path_parts['extension'];
+						$image->writeimage($upload_dir . $good_name);
+						unlink($target_file);
+						$this->output['status'] = 'File was uploaded successfuly!';
+						$this->output['dismiss_timer'] = 1;
+						$this->output['filename'] = $good_name;
+						$this->output['referrer'] = URL::site($this->request->headers('Referer'), FALSE);
+						break;
+					default:
+				}
+
 				return;
 			}
 		}
