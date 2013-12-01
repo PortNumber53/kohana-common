@@ -18,23 +18,24 @@ if ( !  empty($file_list))
 //echo '</pre>';
 ?>
 
-
-
-
-
-
 <article>
 
 	<header>
-		<h1><?php echo $gallery_data['name']; ?></h1>
+		<a href="<?php echo $gallery_data['canonical_url']; ?>"><h1><?php echo $gallery_data['name']; ?></h1></a>
 	</header>
 
 	<ul class="social-links clearfix">
 		<li>
-			<div class="fb-like" data-href="<?php echo $canonical_url; ?>" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>
+			<div class="fb-share-button" data-href="<?php echo $gallery_data['canonical_url']; ?>" data-type="button_count"></div>
 		</li>
 		<li>
-			<a href="http://pinterest.com/pin/create/button/?url=<?php echo urlencode($canonical_url); ?>&media=<?php echo urlencode($image_route); ?>&description=<?php echo urlencode($gallery_data['name']); ?>" class="pin-it-button" count-layout="horizontal"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a>
+			<div class="g-plusone" data-href="<?php echo $gallery_data['canonical_url']; ?>" data-size="medium" data-annotation="bubble"></div>
+		</li>
+		<li>
+			<su:badge layout="2" location="<?php echo $gallery_data['canonical_url']; ?>"></su:badge>
+		</li>
+		<li>
+			<a href="http://pinterest.com/pin/create/button/?url=<?php echo urlencode($gallery_data['canonical_url']); ?>&media=<?php echo urlencode($image_route); ?>&description=<?php echo urlencode($gallery_data['name']); ?>" class="pin-it-button" count-layout="horizontal"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a>
 		</li>
 	</ul>
 
@@ -52,13 +53,28 @@ if ( !  empty($file_list))
 			<?php
 			foreach ($file_list as $item)
 			{
-				?><li><img src="<?php echo URL::Site($item['image']['url'], TRUE); ?>" /></li><?php
+			?>
+				<li>
+					<img src="<?php echo URL::Site($item['image']['url'], TRUE); ?>" />
+				</li>
+			<?php
 			}
 			?>
 		</ul>
 	<?php
 	}
 	?>
+	<footer>
+		source: ? / uploaded: <?php echo date("M, d Y @ H:i:s", strtotime(Arr::path($gallery_data, 'created_at'))); ?>
+	</footer>
 
+	<?php
+	if (isset($single_post) && $single_post)
+	{
+	?>
+		<div class="fb-comments" data-href="<?php echo $gallery_data['canonical_url']; ?>" data-numposts="5" data-colorscheme="light"></div>
+	<?php
+	}
+	?>
 
 </article>

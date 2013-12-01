@@ -49,7 +49,7 @@ class Cache_Redis extends Cache implements Cache_Arithmetic {
 		parent::__construct($config);
 
 		// Setup Redis
-		$this->_Redis = new Redis;
+		$this->_Redis = new Redis();
 
 		// Load servers from configuration
 		$servers = Arr::get($this->_config, 'servers', NULL);
@@ -62,25 +62,34 @@ class Cache_Redis extends Cache implements Cache_Arithmetic {
 
 		// Setup default server configuration
 		$this->_default_config = array(
-			'host'             => 'localhost',
-			'port'             => 11211,
+			'host'             => '173.230.149.180',
+			'port'             => 6379,
 			'persistent'       => FALSE,
-			'weight'           => 1,
-			'timeout'          => 1,
-			'retry_interval'   => 15,
-			'status'           => TRUE,
-			'instant_death'	   => TRUE,
-			'failure_callback' => array($this, '_failed_request'),
+			'timeout'          => 10,
+			'pconnect'         => TRUE,
 		);
 
 		// Add the Redis servers to the pool
 		foreach ($servers as $server)
 		{
 			// Merge the defined config with defaults
-			$server += $this->_default_config;
+			$host = isset($config['host']) && ($config['host']) ? $config['host'] : '127.0.0.1';
+			$port = isset($config['port']) && ($config['port']) ? $config['port'] : 6379;
+			$timeout = isset($config['timeout']) && ($config['timeout']) ? $config['timeout'] : 1;
+			$pconnect = isset($config['pconnect']) && ($config['pconnect']) ? $config['pconnect'] : TRUE;
 
-			$this->_Redis->connect($server['host'], $server['port'], $server['timeout']);
-
+			// Persistent connection
+			if ($pconnect === TRUE)
+			{
+				echo 'true';
+				$this->_Redis->pconnect($host, $port, $timeout);
+			}
+			// Non persistent connection
+			else
+			{
+				echo 'false';
+				$this->_Redis->connect($host, $port, $timeout);
+			}
 			//if ( ! $this->_Redis->addServer($server['host'], $server['port'], $server['persistent'], $server['weight'], $server['timeout'], $server['retry_interval'], $server['status'], $server['failure_callback']))
 			//{
 			//	throw new Cache_Exception('Redis could not connect to host \':host\' using port \':port\'', array(':host' => $server['host'], ':port' => $server['port']));

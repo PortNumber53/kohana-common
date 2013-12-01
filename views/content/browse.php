@@ -21,16 +21,19 @@
 
 	<tbody>
 	<?php
-	foreach ($content_array as $content_data)
+	if (is_array($filtered_content['rows']))
 	{
-		$edit_link = URL::Site(Route::get('html-content')->uri(array('request'=>$content_data['url'], 'override'=>':edit', )), TRUE);
-		?>
-		<tr class="clickable" data-edit-link="<?php echo $edit_link; ?>">
-			<td align="right"><?php echo $content_data['object_id']; ?></td>
-			<td><?php echo $content_data['title']; ?></td>
-			<td><button type="button" class="btn btn-danger btn-xs btn-delete" data-object-id="<?php echo $content_data['object_id']; ?>" data-delete-link="<?php echo URL::Site(Route::get('service-actions')->uri(array('controller'=>'content', 'action'=>'delete', 'id'=>$content_data['object_id'], )), TRUE); ?>">Delete</button></td>
-		</tr>
-	<?php
+		foreach ($filtered_content['rows'] as $content_data)
+		{
+			$edit_link = URL::Site(Route::get('html-content')->uri(array('request'=>$content_data['url'], 'override'=>':edit', )), TRUE);
+			?>
+			<tr class="clickable" data-edit-link="<?php echo $edit_link; ?>">
+				<td align="right"><?php echo $content_data['object_id']; ?></td>
+				<td><?php echo $content_data['title']; ?></td>
+				<td><button type="button" class="btn btn-danger btn-xs btn-delete" data-object-id="<?php echo $content_data['object_id']; ?>" data-delete-link="<?php echo URL::Site(Route::get('service-actions')->uri(array('controller'=>'content', 'action'=>'delete', 'id'=>$content_data['object_id'], )), TRUE); ?>">Delete</button></td>
+			</tr>
+		<?php
+		}
 	}
 	?>
 	</tbody>

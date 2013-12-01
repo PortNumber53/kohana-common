@@ -82,6 +82,7 @@ class Controller_Common_Core_Website extends Controller_Template
 			$menu['product_url'] = URL::Site(Route::get('default')->uri(array('controller'=>'product', 'action'=>'browse', )), TRUE);
 			$menu['gallery_url'] = URL::Site(Route::get('blog-actions')->uri(array('',)), TRUE);
 			$menu['profile_url'] = URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE);
+			$menu['privacy_url'] = URL::Site(Route::get('html-content')->uri(array('request'=>'privacy-policy', 'type'=>'html' )), TRUE);
 			View::bind_global('menu', $menu);
 			View::bind_global('current_url', $current_url);
 
@@ -135,7 +136,6 @@ class Controller_Common_Core_Website extends Controller_Template
 		}
 		else
 		{
-			$this->response->headers('Content-Encoding', 'UTF-8');
 			$content_type = Arr::path($this->response->headers(), 'content-type', 'text/html');
 			switch ($content_type)
 			{

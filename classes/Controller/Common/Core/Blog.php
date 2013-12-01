@@ -15,47 +15,74 @@ class Controller_Common_Core_Blog extends Controller_Common_Core_Website
 
 		if (is_null($object_id))
 		{
-			View::set_global('main', 'gallery/blog/scroll');
+			$page = (int) Arr::path($_GET, 'page', 1);
+			View::set_global('page_title', 'Gallery page: ' . $page);
+
+			$main = 'gallery/blog/scroll';
+			View::bind_global('main', $main);
 			$filter = array(
-				//'/' . DOMAINNAME . '/' . $object_id . '/' . URL::title($_POST['name'], '-', TRUE),
+				//'/' . DOMAINNAME . '/' . $object_id . '/' . URLify::filter($_POST['name'], '-', TRUE),
 				//array('object_id', '=', $object_id, ),
 				//array('account_id', '=', $account_data['object_id']),
 			);
-			$gallery_data = Gallery::filter($filter);
-			if (empty($gallery_data))
+			$limit = 15;
+			$sort = array(
+				array('_id', 'asc'),
+			);
+			$offset = ($page - 1) * $limit;
+			$filtered_gallery = Gallery::filter($filter, $sort, $limit, $offset);
+			if (empty($filtered_gallery['rows']))
 			{
 				throw HTTP_Exception::factory(404, 'We could not find any post, chief!');
 			}
+			foreach ($filtered_gallery['rows']as $key=>&$row)
+			{
+				$row['canonical_url'] = URL::Site(Route::get('blog-actions')->uri(array('id'=>$row['object_id'], 'slug'=>URLify::filter($row['name']), )), TRUE);
+				if (substr($row['canonical_url'], -1) != '/')
+				{
+					$row['canonical_url'] = $row['canonical_url'] . '/';
+				}
+			}
+
+			$pagination = Pagination::factory(array(
+				'current_page'      => array('source' => 'query_string', 'key' => 'page'),
+				'total_items'       => $filtered_gallery['count'],
+				'items_per_page'    => $limit,
+				'view'              => 'pagination/basic',
+				'auto_hide'         => FALSE,
+			));
+			$page_links = $pagination->render();
+			View::bind_global('page_links', $page_links);
+
+
 			//$gallery_data = array_shift($gallery_data);
-			View::set_global('gallery_data', $gallery_data);
+			View::bind_global('filtered_gallery', $filtered_gallery);
 			//Canonical URL
-			//$this->canonical_url = URL::Site(Route::get('blog-actions')->uri(array('id'=>$gallery_data['object_id'], 'slug'=>URL::title($gallery_data['name']))), TRUE) . '/';
+			//$this->canonical_url = URL::Site(Route::get('blog-actions')->uri(array('id'=>$gallery_data['object_id'], 'slug'=>URLify::filter($gallery_data['name']))), TRUE) . '/';
 
 		}
 		else
 		{
-			$page = 0;
-			$item_per_page = 1;
-
-			//$object_id = empty($_POST['object_id']) ? $this->request->param('id') : (int) $_POST['object_id'];
-			$filter = array(
-				//'/' . DOMAINNAME . '/' . $object_id . '/' . URL::title($_POST['name'], '-', TRUE),
-				array('object_id', '=', $object_id, ),
-				//array('account_id', '=', $account_data['object_id']),
-			);
-			$gallery_data = Gallery::filter($filter);
+			$gallery_data = Gallery::get_by_object_id($object_id);
 			if (empty($gallery_data))
 			{
 				throw HTTP_Exception::factory(404, 'We could not find that post, chief!');
 			}
-			$gallery_data = array_shift($gallery_data);
-
-			View::set_global('gallery_data', $gallery_data);
+			View::bind_global('gallery_data', $gallery_data);
 
 			//Canonical URL
-			$this->canonical_url = URL::Site(Route::get('blog-actions')->uri(array('id'=>$gallery_data['object_id'], 'slug'=>URL::title($gallery_data['name']))), TRUE) . '/';
+			$gallery_data['canonical_url'] = URL::Site(Route::get('blog-actions')->uri(array('id'=>$gallery_data['object_id'], 'slug'=>URLify::filter($gallery_data['name']))), TRUE) . '/';
+			if (substr($gallery_data['canonical_url'], -1) != '/')
+			{
+				$gallery_data['canonical_url'] = $gallery_data['canonical_url'] . '/';
+			}
+			$page_title = Arr::path($gallery_data, 'name', '');
+			View::bind_global('page_title', $page_title);
 
-			View::set_global('main', 'gallery/blog/post');
+			$main = 'gallery/blog/post';
+			View::bind_global('main', $main);
+
+			View::set_global('single_post', TRUE);
 		}
 	}
 

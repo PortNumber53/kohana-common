@@ -6,7 +6,7 @@
  *
  */
 
-?>
+?>googleads
 <script type="text/javascript"><!--
 	google_ad_client = "ca-pub-9781708178131119";
 	/* ThumbItt */

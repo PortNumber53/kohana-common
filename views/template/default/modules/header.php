@@ -6,7 +6,7 @@
  */
 
 ?>
-<nav class="navbar navbar-default" role="navigation">
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 	<!-- Brand and toggle get grouped for better mobile display -->
 	<div class="navbar-header">
 		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
@@ -22,11 +22,14 @@
 	<div class="collapse navbar-collapse navbar-ex1-collapse">
 		<ul class="nav navbar-nav">
 			<li><a href="#" class="hidden back-link">Back</a></li>
+			<!--
 			<li class="<?php echo ($current_url==$menu['product_url']) ? 'active' : ''; ?>"><a href="<?php echo $menu['product_url']; ?>">Products</a></li>
 			<li class="<?php echo ($current_url==$menu['content_url']) ? 'active' : ''; ?>"><a href="<?php echo $menu['content_url']; ?>">Content</a></li>
+			-->
 			<li class="<?php echo ($current_url==$menu['gallery_url']) ? 'active' : ''; ?>"><a href="<?php echo $menu['gallery_url']; ?>">Gallery</a></li>
+			<li class="<?php echo ($current_url==$menu['privacy_url']) ? 'active' : ''; ?>"><a href="<?php echo $menu['privacy_url']; ?>">Privacy Policy</a></li>
 		</ul>
-		<form class="navbar-form navbar-left" role="search">
+		<form class="navbar-form navbar-left hidden" role="search">
 			<div class="form-group">
 				<input type="text" class="form-control" placeholder="Search">
 			</div>
@@ -43,7 +46,6 @@
 				echo View::factory('modules/logged_header')->render();
 			}
 			?>
-
 			<li><a name="top"></a></li>
 		</ul>
 	</div><!-- /.navbar-collapse -->

@@ -67,7 +67,7 @@ if (! Route::$cache)
 
 
 	//Legacy actions
-	Route::set('blog-actions', 'post(/<id>(-(<slug>(/<page>))))',
+	Route::set('blog-actions', 'blog(/<id>(-(<slug>(/<page>))))',
 		array(
 			'id'         => '[0-9]+',
 			'page'       => '[0-9]+',

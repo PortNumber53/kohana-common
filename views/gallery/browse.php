@@ -16,7 +16,7 @@
 		<tr>
 			<th width="50">#</th>
 			<th>Name</th>
-			<th width="200">Action</th>
+			<th width="125">Action</th>
 		</tr>
 	</thead>
 
@@ -46,6 +46,7 @@
 		</tr>
 	</tfoot>
 </table>
+<?php echo $page_links; ?>
 
 
 <script>

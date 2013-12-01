@@ -7,36 +7,30 @@
  */
 
 ?>
-<h1>Infinite scrolling, here it goes!</h1>
 <ul class="blog-list">
 	<?php
-	foreach ($gallery_data as $item)
+	foreach ($filtered_gallery['rows'] as $gallery_data)
 	{
-		?><li>
-			<article>
-				<header>
-					<h2><?php echo $item['name']; ?></h2>
-				</header>
-				<section>
-					<?php echo $item['description']; ?>
-					<ul>
-					<?php foreach ($item['file_list'] as $file)
-					{
-						?><li><?php echo HTML::image($file['image']['url']); ?></li><?php
-					}
-					?>
-					</ul>
-				</section>
+		//echo'<pre>';var_dump($item);echo'</pre>>';die();
+		$gallery_data['canonical_url'] = URL::Site(Route::get('blog-actions')->uri(array('id'=>$gallery_data['object_id'], 'slug'=>URLify::filter($gallery_data['name']), )), TRUE);
+		if (substr($gallery_data['canonical_url'], -1) != '/')
+		{
+			$gallery_data['canonical_url'] = $gallery_data['canonical_url'] . '/';
+		}
+		?>
+		<li>
 
-				<footer>
-					source: ? / uploaded: <?php echo date("M, d Y @ H:i:s", strtotime(Arr::path($item, 'created_at'))); ?>
-				</footer>
-			</article>
+			<?php
+			echo View::factory('gallery/blog/post', array(
+				'gallery_data' => $gallery_data,
+			))->render();
+			?>
+
+		</li>
+		<li>
+		<hr />
 		</li><?php
 	}
 	?>
 </ul>
-
-
-<?php
-echo '<pre>';print_r($gallery_data);echo'</pre>';
+<?php echo $page_links; ?>

@@ -11,13 +11,13 @@ class Controller_Common_Core_File extends Controller_Common_Core_Website
 	public function action_browse()
 	{
 		$main = 'file/browse';
-		View::set_global('main', $main);
+		View::bind_global('main', $main);
 
 		$filter = array(
 			//array('account_id', '=', $account_data['object_id']),
 		);
 		$file_array = File::filter($filter);
-		View::set_global('file_array', $file_array);
+		View::bind_global('file_array', $file_array);
 	}
 
 	public function action_edit()
@@ -28,16 +28,16 @@ class Controller_Common_Core_File extends Controller_Common_Core_Website
 		{
 			$file_data = File::get_empty_row();
 		}
-		View::set_global('file_data', $file_data);
+		View::bind_global('file_data', $file_data);
 
 		$main = 'file/edit';
-		View::set_global('main', $main);
+		View::bind_global('main', $main);
 
 		$filter = array(
 			//array('account_id', '=', $account_data['object_id']),
 		);
 		$file_array = File::filter($filter);
-		View::set_global('file_array', $file_array);
+		View::bind_global('file_array', $file_array);
 	}
 
 	public function action_ajax_edit()
@@ -52,7 +52,7 @@ class Controller_Common_Core_File extends Controller_Common_Core_Website
 			$object_id = Model_Sequence::nextval();
 		}
 		$file_data = array(
-			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URL::title($_POST['name'], '-', TRUE),
+			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URLify::filter($_POST['name'], '-', TRUE),
 			'object_id' => $object_id,
 			'category_id' => 0,
 			'status' => $_POST['status'],

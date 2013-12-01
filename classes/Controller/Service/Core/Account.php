@@ -16,6 +16,15 @@ class Controller_Service_Core_Account extends Controller_Service_Core_Service
 
 	public function action_ajax_actions()
 	{
-		$this->output = array('menu' => Website::get('menu', array()));
+		$profile = Account::profile();
+		if ($profile['profile'] == 'ADMIN')
+		{
+			$this->output = array('menu' => Website::get('menu', array()));
+
+		}
+		else
+		{
+			$this->output = array('menu' => array(),);
+		}
 	}
 }

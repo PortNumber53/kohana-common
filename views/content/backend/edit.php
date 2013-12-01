@@ -9,9 +9,12 @@ if (empty($data['mimetype']))
 	$data['mimetype'] = 'text/plain';
 }
 ?>
+<script type="text/javascript" src="http://static.portnumber53.dev/library/ckeditor/ckeditor.js"></script>
+<script type="text/javascript" src="http://static.portnumber53.dev/library/ckeditor/adapters/jquery.js"></script>
 
 
 <form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::site(Request::detect_uri(), TRUE); ?>">
+	<input type="hidden" id="object_id" name="object_id" value="<?php echo Arr::path($content_data, 'object_id', ''); ?>">
 	<div class="form-group">
 		<label for="inputID" class="col-lg-2 control-label">_ID</label>
 		<div class="col-lg-9">
@@ -41,13 +44,41 @@ if (empty($data['mimetype']))
 		</div>
 	</div>
 
-
-	<div class="form-group">
-		<label for="inputBody" class="col-lg-2 control-label">Body</label>
-		<div class="col-lg-9">
-			<textarea class="form-control" id="inputBody" placeholder="Content Body" name="body" rows="10"><?php echo Arr::path($content_data, 'body', ''); ?></textarea>
+	<?php
+	if (isset($content_data['body']))
+	{
+		$body = Arr::path($content_data, 'body', '');
+	?>
+		<div class="form-group">
+			<label for="inputBody" class="col-lg-2 control-label">Body</label>
+			<div class="col-lg-9">
+				<textarea class="form-control" id="inputBody" placeholder="Content Body" name="body" rows="10"><?php echo htmlentities($body); ?></textarea>
+			</div>
 		</div>
-	</div>
+	<?php
+	}
+	else
+	{
+		$sections = Arr::path($content_data, 'sections', array());
+		foreach ($sections as $section)
+		{
+	?>
+		<div class="form-group">
+			<label class="col-lg-2 control-label">Title</label>
+			<div class="col-lg-9">
+				<input type="text" class="form-control" placeholder="Title" name="section_title[]" value="<?php echo Arr::path($section, 'title', ''); ?>">
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-lg-2 control-label">Section</label>
+			<div class="col-lg-9">
+				<textarea class="form-control editor ckeditor" placeholder="Content Body" name="section_content[]" rows="10"><?php echo htmlentities($section['content']); ?></textarea>
+			</div>
+		</div>
+	<?php
+		}
+	}
+	?>
 	<div class="form-group">
 		<div class="col-lg-offset-2 col-lg-9">
 			<button type="submit" class="btn btn-default">Update Content</button>
@@ -55,3 +86,7 @@ if (empty($data['mimetype']))
 	</div>
 </form>
 
+
+<script>
+	//$( 'textarea.editor' ).ckeditor();
+</script>

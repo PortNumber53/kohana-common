@@ -11,14 +11,31 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 {
 	public function action_browse()
 	{
+		$page = (int) Arr::path($_GET, 'page', 1);
 		$main = 'gallery/browse';
-		View::set_global('main', $main);
+		View::bind_global('main', $main);
 
+		$limit = 15;
+		$offset = ($page - 1);
+		$sort = array() * $limit;
 		$filter = array(
 			//array('account_id', '=', $account_data['object_id']),
 		);
-		$gallery_array = Gallery::filter($filter);
-		View::set_global('gallery_array', $gallery_array);
+		$filtered_gallery = Gallery::filter($filter, $sort, $limit, $offset);
+
+		$pagination = Pagination::factory(array(
+			'current_page'      => array('source' => 'query_string', 'key' => 'page'),
+			'total_items'       => $filtered_gallery['count'],
+			'items_per_page'    => $limit,
+			'view'              => 'pagination/floating',
+			'auto_hide'         => FALSE,
+		));
+		$page_links = $pagination->render();
+
+
+
+		View::bind_global('gallery_array', $filtered_gallery['rows']);
+		View::bind_global('page_links', $page_links);
 	}
 
 	public function action_edit()
@@ -29,16 +46,16 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 		{
 			$gallery_data = Gallery::get_empty_row();
 		}
-		View::set_global('gallery_data', $gallery_data);
+		View::bind_global('gallery_data', $gallery_data);
 
 		$main = 'gallery/edit';
-		View::set_global('main', $main);
+		View::bind_global('main', $main);
 
 		$filter = array(
 			//array('account_id', '=', $account_data['object_id']),
 		);
 		$gallery_array = Gallery::filter($filter);
-		View::set_global('gallery_array', $gallery_array);
+		View::bind_global('gallery_array', $gallery_array);
 	}
 
 	public function action_ajax_edit()
@@ -53,7 +70,7 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 			$object_id = Model_Sequence::nextval();
 		}
 		$gallery_data = array(
-			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URL::title($_POST['name'], '-', TRUE),
+			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URLify::filter($_POST['name'], '-', TRUE),
 			'object_id' => $object_id,
 			'category_id' => 0,
 			'status' => $_POST['status'],
@@ -85,16 +102,16 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 		{
 			$gallery_data = Gallery::get_empty_row();
 		}
-		View::set_global('gallery_data', $gallery_data);
+		View::bind_global('gallery_data', $gallery_data);
 
 		$main = 'gallery/manage';
-		View::set_global('main', $main);
+		View::bind_global('main', $main);
 
 		$filter = array(
 			//array('account_id', '=', $account_data['object_id']),
 		);
 		$gallery_array = Gallery::filter($filter);
-		View::set_global('gallery_array', $gallery_array);
+		View::bind_global('gallery_array', $gallery_array);
 	}
 
 	public function action_ajax_manage()
@@ -139,7 +156,7 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 			}
 		}
 		$gallery_data = array(
-			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URL::title($_POST['name'], '-', TRUE),
+			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URLify::filter($_POST['name'], '-', TRUE),
 			'object_id' => $object_id,
 			'category_id' => 0,
 			'status' => $_POST['status'],

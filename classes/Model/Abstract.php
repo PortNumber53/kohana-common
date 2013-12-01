@@ -11,32 +11,39 @@ abstract class Model_Abstract extends Model_Core_Abstract
 
 	public function get_by_id($_id, &$options=array())
 	{
-		$cache_key = '/' . $this::$_table_name . ':row:' . json_encode($_id);
-		$data = Cache::instance('redis')->get($cache_key);
-		if (TRUE || empty($data))
+		$cache_key = '/' . $this::$_table_name . ':row:' . $_id;
+		$row = Cache::instance('file')->get($cache_key);
+		if (TRUE || empty($row))
 		{
 			$query = DB::select()->from($this::$_table_name)->where($this::$_primary_key, '=', $_id);
-			$data = $query->execute()->as_array();
-			if (count($data) == 1)
+			$row = $query->execute()->as_array();
+			if (count($row) == 1)
 			{
-				$data = array_shift($data);
-				$json = json_decode($data['extra_json'], TRUE);
-				$data = array_merge($data, $json);
-				unset($data['extra_json']);
-				return $data;
+				$row = array_shift($row);
+				$data = json_decode(empty(Arr::path($row, 'data')) ? '{}' : Arr::path($row, 'data', '{}'), TRUE);
+				unset($data['_id']);
+				$row = array_merge($row, $data);
+				unset($row['data']);
+				$extra_json = json_decode(empty(Arr::path($row, 'extra_json')) ? '{}' : Arr::path($row, 'extra_json', '{}'), TRUE);
+				unset($extra_json['_id']);
+				$row = array_merge($row, $extra_json);
+				unset($row['extra_json']);
+
+				Cache::instance('file')->set($cache_key, json_encode($row));
+				return $row;
 			}
 		}
 		else
 		{
-			$data = json_decode($data, TRUE);
+			$row = json_decode($row, TRUE);
 		}
-		return $data;
+		return $row;
 	}
 
 	public function get_by_object_id($object_id, &$options=array())
 	{
-		$cache_key = '/' . $this::$_table_name . ':row:' . json_encode($object_id);
-		$data = Cache::instance('redis')->get($cache_key);
+		$cache_key = '/' . $this::$_table_name . ':row:' . $object_id;
+		$data = Cache::instance('file')->get($cache_key);
 		if (TRUE || empty($data))
 		{
 			$query = DB::select()->from($this::$_table_name)->where('object_id', '=', $object_id);
@@ -47,7 +54,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 				$json = json_decode($data['extra_json'], TRUE);
 				$data = array_merge($data, $json);
 				unset($data['extra_json']);
-				Cache::instance('redis')->set($cache_key, json_encode($data));
+				Cache::instance('file')->set($cache_key, json_encode($data));
 			}
 		}
 		else
@@ -59,15 +66,15 @@ abstract class Model_Abstract extends Model_Core_Abstract
 
 	public function get_by_associated_id($associated_id, &$options=array())
 	{
-		$cache_key = '/' . $this::$_table_name . ':row:' . json_encode($associated_id);
-		$data = Cache::instance('redis')->get($cache_key);
+		$cache_key = '/' . $this::$_table_name . ':row:' . $associated_id;
+		$data = Cache::instance('file')->get($cache_key);
 		if (TRUE || empty($data))
 		{
 			$query = DB::select()->from($this::$_table_name)->where('associated_id', '=', $associated_id);
 			$data = $query->execute()->as_array();
 			if (count($data) >0)
 			{
-				Cache::instance('redis')->set($cache_key, json_encode($data));
+				Cache::instance('file')->set($cache_key, json_encode($data));
 			}
 		}
 		else
@@ -86,7 +93,13 @@ abstract class Model_Abstract extends Model_Core_Abstract
 		//}
 		if ( ! empty($data['_id']) && substr($data['_id'], -1) !== '/')
 		{
-			$data['_id'] = $data['_id'] . '/';
+			$_id = parse_url($data['_id'], PHP_URL_PATH);
+			$path_parts = pathinfo($_id);
+			if (empty($path_parts['extension']))
+			{
+				$data['_id'] = $data['_id'] . '/';
+			}
+
 		}
 	}
 
@@ -94,6 +107,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 	{
 		$this->_before_save($data);
 
+		$update_filter = 'object_id';
 		if ( ! empty($data['object_id']))
 		{
 			$exists = $this->get_by_object_id($data['object_id']);
@@ -101,12 +115,15 @@ abstract class Model_Abstract extends Model_Core_Abstract
 		if (empty($exists))
 		{
 			$exists = $this->get_by_id($data['_id']);
+			$update_filter = '_id';
 		}
 		if ($exists)
 		{
 			//$data['object_id'] = $exists['object_id'];
 			$data = array_merge($exists, $data);
 		}
+		$cache_key = '/' . $this::$_table_name . ':row:' . $data['_id'];
+
 		$json_data = array_diff_key($data, $this::$_columns);
 		$data = array_intersect_key($data, $this::$_columns);
 		$data['extra_json'] = json_encode($json_data);
@@ -121,13 +138,16 @@ abstract class Model_Abstract extends Model_Core_Abstract
 			if ($exists)
 			{
 				//Update
-				$return = DB::update($this::$_table_name)->set($data)->where('object_id', '=', $data['object_id'])->execute();
+				$query = DB::update($this::$_table_name)->set($data)->where($update_filter, '=', $data[$update_filter]);
+				//echo (string) $query;
+				$result = $query->execute();
 			}
 			else
 			{
 				//Insert
 				$result = DB::insert($this::$_table_name, array_keys($data))->values($data)->execute();
 			}
+			Cache::instance('file')->set($cache_key, json_encode($data));
 
 			//Handle tagging
 			if ( ! empty($json_data['tags']))
@@ -184,14 +204,23 @@ abstract class Model_Abstract extends Model_Core_Abstract
 			);
 			return FALSE;
 		}
-		return TRUE;
+		return $result;
 	}
 
-
-	public function filter($filter=array(), $sort=array(), $limit=array())
+/*
+	static public function filter($filter=array(), $sort=array(), $limit=array())
 	{
-		$cache_key = '/' . $this::$_table_name . ':filter:' . json_encode($filter) . ':sort:' . json_encode($sort) . ':limit:' . json_encode($limit);
-		$data = Cache::instance('redis')->get($cache_key);
+		$oContent = new Model_Content();
+		$result = $oContent->filter($filter, $sort, $limit);
+
+		return $result;
+	}
+*/
+
+	public function filter($filter=array(), $sort=array(), $limit=array(), $offset=array())
+	{
+		$cache_key = '/' . $this::$_table_name . ':filter:' . json_encode($filter) . ':sort:' . json_encode($sort) . ':limit:' . json_encode($limit) . ':offset:' . json_encode($offset);
+		$filter_data = Cache::instance('file')->get($cache_key);
 		if (TRUE || empty($data))
 		{
 			$query = DB::select()->from($this::$_table_name);
@@ -202,32 +231,42 @@ abstract class Model_Abstract extends Model_Core_Abstract
 					$query->where($item[0], $item[1], $item[2]);
 				}
 			}
+			$pagination_query = clone $query;
+			$count = $pagination_query->select(DB::expr('COUNT(*) AS mycount'))->execute()->get('mycount');
+
 			if ( ! empty($limit))
 			{
 				$query->limit($limit);
 			}
-			$data = $query->execute()->as_array();
-			if (count($data) > 0)
+			if ( ! empty($offset))
 			{
-				foreach ($data as $key=>&$row)
+				$query->offset($offset);
+			}
+			$filter_data = array(
+				'rows' => $query->execute()->as_array(),
+				'count' => (int) $count,
+			);
+
+			if (count($filter_data['rows']) > 0)
+			{
+				foreach ($filter_data['rows'] as $key=>&$row)
 				{
-					//var_dump($row);
-					$extra_json = json_decode(Arr::path($row, 'extra_json', '{}'), TRUE);
-					$row = array_merge($row, $extra_json);
-					unset($row['extra_json']);
-					$data = json_decode(Arr::path($row, 'data', '{}'), TRUE);
+					//echo'<pre>';var_dump($row);echo'</pre>';
+					$data = json_decode(empty(Arr::path($row, 'data')) ? '{}' : Arr::path($row, 'data', '{}'), TRUE);
 					$row = array_merge($row, $data);
 					unset($row['data']);
-					//echo '<pre>';var_dump($row);echo'</pre>';
+					$extra_json = json_decode(empty(Arr::path($row, 'extra_json')) ? '{}' : Arr::path($row, 'extra_json', '{}'), TRUE);
+					$row = array_merge($row, $extra_json);
+					unset($row['extra_json']);
 				}
-				Cache::instance('redis')->set($cache_key, json_encode($data));
+				Cache::instance('file')->set($cache_key, $filter_data);
 			}
 		}
 		else
 		{
-			$data = json_decode($data, TRUE);
+			$data = json_decode($filter_data, TRUE);
 		}
-		return $data;
+		return $filter_data;
 	}
 
 	public function delete_by_id($_id)

@@ -11,13 +11,13 @@ class Controller_Common_Core_Product extends Controller_Common_Core_Website
 	public function action_browse()
 	{
 		$main = 'product/browse';
-		View::set_global('main', $main);
+		View::bind_global('main', $main);
 
 		$filter = array(
 			//array('account_id', '=', $account_data['object_id']),
 		);
 		$product_array = Product::filter($filter);
-		View::set_global('product_array', $product_array);
+		View::bind_global('product_array', $product_array);
 	}
 
 	public function action_edit()
@@ -28,16 +28,16 @@ class Controller_Common_Core_Product extends Controller_Common_Core_Website
 		{
 			$product_data = Product::get_empty_row();
 		}
-		View::set_global('product_data', $product_data);
+		View::bind_global('product_data', $product_data);
 
 		$main = 'product/edit';
-		View::set_global('main', $main);
+		View::bind_global('main', $main);
 
 		$filter = array(
 			//array('account_id', '=', $account_data['object_id']),
 		);
 		$product_array = Product::filter($filter);
-		View::set_global('product_array', $product_array);
+		View::bind_global('product_array', $product_array);
 	}
 
 	public function action_ajax_edit()
@@ -52,7 +52,7 @@ class Controller_Common_Core_Product extends Controller_Common_Core_Website
 			$object_id = Model_Sequence::nextval();
 		}
 		$product_data = array(
-			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URL::title($_POST['name'], '-', TRUE),
+			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URLify::filter($_POST['name'], '-', TRUE),
 			'object_id' => $object_id,
 			'category_id' => 0,
 			'status' => $_POST['status'],

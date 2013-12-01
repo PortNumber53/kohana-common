@@ -8,7 +8,6 @@
 
 ?>
 
-
 <script>
 	$(document).ready(function() {
 		$.ajax({
@@ -22,7 +21,6 @@
 
 				var html = '';
 				for (loop = 0; loop < response.menu.length; loop++) {
-					console.log(response.menu[loop].label);
 					//html += '<ul role="menu" class="dropdown-menu">';
 					html += '<li class="dropdown"><a href="#" class="dropdown-toogle" data-toggle="dropdown">' + response.menu[loop].label + '<b class="caret"></b></a>';
 
@@ -38,7 +36,6 @@
 					html += '</li>';
 					html += ' </ul>';
 				}
-				console.log(html);
 				$("#user-menu").html( html );
 			},
 			error: function (response) {

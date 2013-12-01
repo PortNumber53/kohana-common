@@ -74,14 +74,6 @@ class Gallery extends Abstracted
 		}
 	}
 
-	static public function filter($filter=array(), $sort=array(), $limit=array())
-	{
-		$ogallery = new Model_Gallery();
-		$result = $ogallery->filter($filter, $sort, $limit);
-
-		return $result;
-	}
-
 
 	static public function delete_by_object_id($object_id, &$error)
 	{

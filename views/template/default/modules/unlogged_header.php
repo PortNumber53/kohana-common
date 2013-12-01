@@ -7,6 +7,7 @@
  */
 
 ?>
+<li>
 <a href="#" class="dropdown-toogle" data-toggle="dropdown">Your Account<b class="caret"></b></a>
 <div class="dropdown-menu" style="width:400px">
 
@@ -48,5 +49,5 @@
 		</div>
 	</form>
 
-
 </div>
+</li>

@@ -11,14 +11,19 @@ class Controller_Common_Core_Content extends Controller_Common_Core_Website
 {
 	public function action_browse()
 	{
+		$page = (int) Arr::path($_GET, 'page', 1);
 		$main = 'content/browse';
-		View::set_global('main', $main);
+		View::bind_global('main', $main);
 
+		$limit = 15;
+		$offset = ($page - 1);
+		$sort = array();
 		$filter = array(
 			//array('account_id', '=', $account_data['object_id']),
 		);
-		$content_array = Content::filter($filter);
-		View::set_global('content_array', $content_array);
+		$filtered_content = Content::filter($filter, $sort, $limit, $offset);
+
+		View::bind_global('filtered_content', $filtered_content);
 	}
 
 	public function action_view()
@@ -37,7 +42,7 @@ class Controller_Common_Core_Content extends Controller_Common_Core_Website
 		}
 		else
 		{
-			$data = Content::get($full_request);
+			$data = Content::get_by_id($full_request);
 			if ( ! $data)
 			{
 				throw HTTP_Exception::factory(404, 'Document not found!');

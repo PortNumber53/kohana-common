@@ -5,7 +5,7 @@
  *
  */
 
-class Content
+class Content extends Abstracted
 {
 	protected static $data = array();
 
@@ -26,103 +26,11 @@ class Content
 		return $obj;
 	}
 
-	static function is_logged()
-	{
-		$logged_in = Cookie::get('account');
-		return ! empty($logged_in);
-	}
-
-
-	static function login($username, $password, $remember_me = TRUE)
-	{
-		//$cookie = json_decode(Cookie::get('account'), TRUE);
-		//if (empty($_id))
-		//{
-		$_id = '/insertcoin.dev/' . $username;
-		//}
-		$account = new Model_Account();
-		$data = $account->get_by_id($_id);
-
-		if ($username == $data['username'])
-		{
-			if ($password == $data['password'])
-			{
-				Cookie::set('account', json_encode($data));
-				return TRUE;
-			}
-		}
-		return FALSE;
-	}
-
-	static public function get($_id = '')
-	{
-		if (substr($_id, 0, 1) !== '/')
-		{
-			$_id = '/' . $_id;
-		}
-		$_id = '/' . DOMAINNAME . $_id;
-		$content = new Model_Content();
-		$data = $content->get_by_id($_id);
-		return $data;
-	}
-
 	static public function get_author($_id)
 	{
 		return self::$sample_accounts[$_id];
 	}
 
 
-	static public function signup(&$data, &$error)
-	{
-		$data['_id'] = '/insertcoin.dev/'.$data['email'];
-		$account = new Model_Account();
 
-		if ($exists = self::profile($data['_id']))
-		{
-			$error = array(
-				'error' =>  255,
-				'message' => __('Account exists'),
-			);
-			return FALSE;
-		}
-		else
-		{
-			//Create account
-			$account->save($data, $error);
-			return TRUE;
-		}
-	}
-
-
-	static public function update(&$data, &$error)
-	{
-		//$data['_id'] = '/insertcoin.dev/'.$data['email'];
-		$content = new Model_Content();
-
-		$author = Account::profile();
-		$data['author_id'] = $author['object_id'];
-		//Update content
-		if ($result = $content->save($data, $error))
-		{
-			return TRUE;
-		}
-		else
-		{
-			return FALSE;
-		}
-	}
-
-
-	static public function logout()
-	{
-		Cookie::delete('account');
-	}
-
-	static public function filter($filter=array(), $sort=array(), $limit=array())
-	{
-		$oContent = new Model_Content();
-		$result = $oContent->filter($filter, $sort, $limit);
-
-		return $result;
-	}
 }

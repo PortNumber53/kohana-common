@@ -31,7 +31,7 @@ return array(
 
 		'jquery-1.10.2.min.js' => 'http://static.portnumber53.com/library/js/jquery/jquery-1.10.2.min.js',
 		'jquery-2.0.3.min.js' => 'http://static.portnumber53.com/library/js/jquery/jquery-2.0.3.min.js',
-		'jquery.form.min.js' => 'http://static.portnumber53.dev/library/js/jquery.form.v20131017.min.js',
+		'jquery.form.min.js' => 'http://static.portnumber53.com/library/js/jquery.form.v20131017.min.js',
 		'angular-1.1.5.min.js' => 'http://static.portnumber53.com/library/js/angularjs/angular-1.1.5.min.js',
 		'angular-sanitize-1.1.5.min.js' => 'http://static.portnumber53.com/library/js/angularjs/angular-sanitize-1.1.5.min.js',
 		'underscore-1.5.2.min.js' => 'http://static.portnumber53.com/library/js/underscorejs/underscore-1.5.2.min.js',

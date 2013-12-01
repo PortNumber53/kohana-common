@@ -12,7 +12,7 @@ class Model_Content extends Model_Abstract
 
 	public static $_columns = array(
 		'_id'          => '',
-		'object_id'     => '',
+		'object_id'    => 0,
 		'author_id'    => '',
 		'url'          => '',
 		'mimetype'     => '',
