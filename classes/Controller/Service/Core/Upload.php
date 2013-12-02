@@ -66,12 +66,12 @@ class Controller_Service_Core_Upload extends Controller_Service_Core_Service
 				mkdir($upload_dir . $extra, 0755, TRUE);
 			}
 			$this->output['subfolder'] = $extra;
-			$this->output['route'] = $matched;
-			$this->output['routes'] = $routes;
+			//$this->output['route'] = $matched;
+			//$this->output['routes'] = $routes;
 
 			$target_file = $upload_dir . $extra . $pic['name'];
-			if(move_uploaded_file($pic['tmp_name'], $target_file)){
-
+			if (move_uploaded_file($pic['tmp_name'], $target_file))
+			{
 				$path_parts = pathinfo($target_file);
 
 				$finfo = finfo_open();
@@ -85,9 +85,40 @@ class Controller_Service_Core_Upload extends Controller_Service_Core_Service
 					case "image/jpeg":
 					case "image/png":
 						$image = new Imagick($target_file);
-						$good_name = $extra . URL::title($path_parts['filename']) . '.' . $path_parts['extension'];
-						$image->writeimage($upload_dir . $good_name);
-						unlink($target_file);
+						$good_name = $extra . URLify::filter($path_parts['filename']) . '.' . $path_parts['extension'];
+
+						$format = $image->getImageFormat();
+						if ($format == 'GIF')
+						{
+							copy($target_file, $upload_dir . $good_name);
+							/*
+							list($width, $height) = getimagesize($target_file);
+							var_dump($width);var_dump($height);
+							$geo = $image->getImageGeometry();
+							$sizex = $geo['width'];
+							$sizey = $geo['height'];
+							var_dump($geo);
+							$image = $image->coalesceImages();
+							do {
+								$image->resizeImage($width, $height, Imagick::FILTER_BOX, 1);
+							} while ($image->nextImage());
+							$image = $image->deconstructImages();
+
+							$image->writeImages($upload_dir . $good_name, TRUE);
+							*/
+						}
+						else
+						{
+							//$image->setformat($path_parts['extension']);
+							$image->writeimage($upload_dir . $good_name);
+						}
+						if ("$target_file" != "$upload_dir$good_name")
+						{
+							$this->output['target_file'] = "$target_file";
+							$this->output['good_name'] = "$upload_dir$good_name";
+							$this->output['different'] = 'UNLINK';
+							unlink($target_file);
+						}
 						$this->output['status'] = 'File was uploaded successfuly!';
 						$this->output['dismiss_timer'] = 1;
 						$this->output['filename'] = $good_name;

@@ -156,13 +156,13 @@ abstract class Model_Abstract extends Model_Core_Abstract
 				$oTag = new Model_Tag();
 				//Get current tags
 				$tag_array = $oTagged->get_by_associated_id($data['object_id']);
-				foreach (explode(' ',$json_data['tags']) as $tag)
+				foreach (explode(',',$json_data['tags']) as $tag)
 				{
 					$filter = array(
 						array('tag', '=', $tag, ),
 					);
 					$tag_result = $oTag->filter($filter);
-					if ( empty($tag_result) )
+					if ( $tag_result['count'] == 0 )
 					{
 						//Create tag
 						$new_tag_data = array(
@@ -201,6 +201,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 			$error = array(
 				'error' => $e->getCode(),
 				'message' => $e->getMessage(),
+				'line' => $e->getLine(),
 			);
 			return FALSE;
 		}
@@ -251,7 +252,6 @@ abstract class Model_Abstract extends Model_Core_Abstract
 			{
 				foreach ($filter_data['rows'] as $key=>&$row)
 				{
-					//echo'<pre>';var_dump($row);echo'</pre>';
 					$data = json_decode(empty(Arr::path($row, 'data')) ? '{}' : Arr::path($row, 'data', '{}'), TRUE);
 					$row = array_merge($row, $data);
 					unset($row['data']);

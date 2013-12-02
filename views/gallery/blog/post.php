@@ -12,10 +12,6 @@ if ( !  empty($file_list))
 {
 	$image_route = URL::Site('/' . $file_list[0]['image']['url'], TRUE);
 }
-
-//echo '<pre>';
-//var_dump($gallery_data);
-//echo '</pre>';
 ?>
 
 <article>
@@ -35,7 +31,7 @@ if ( !  empty($file_list))
 			<su:badge layout="2" location="<?php echo $gallery_data['canonical_url']; ?>"></su:badge>
 		</li>
 		<li>
-			<a href="http://pinterest.com/pin/create/button/?url=<?php echo urlencode($gallery_data['canonical_url']); ?>&media=<?php echo urlencode($image_route); ?>&description=<?php echo urlencode($gallery_data['name']); ?>" class="pin-it-button" count-layout="horizontal"><img border="0" src="//assets.pinterest.com/images/PinExt.png" title="Pin It" /></a>
+			<a href="//www.pinterest.com/pin/create/button/?url=<?php echo urlencode($gallery_data['canonical_url']); ?>&media=<?php echo urlencode($image_route); ?>&description=<?php echo urlencode($gallery_data['name']); ?>" data-pin-do="buttonPin" data-pin-config="beside"><img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_gray_20.png" /></a>
 		</li>
 	</ul>
 

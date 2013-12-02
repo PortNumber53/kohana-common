@@ -155,7 +155,6 @@ class Account extends Abstracted
 		else
 		{
 			//Add hash to account
-			//var_dump($exists);
 			$exists['hash'] = md5('123mudar');
 			$account->save($exists, $error);
 			return TRUE;

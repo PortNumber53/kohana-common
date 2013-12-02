@@ -169,7 +169,6 @@ class Category
 		else
 		{
 			//Add hash to account
-			//var_dump($exists);
 			$exists['hash'] = md5('123mudar');
 			$account->save($exists, $error);
 			return TRUE;
@@ -182,7 +181,6 @@ class Category
 		$_id = '/' . DOMAINNAME . '/' . $data['username'];
 		$account = new Model_Category();
 		$account_row = $account->get_by_id($_id);
-		//var_dump($account_row);
 
 		if ($account_row)
 		{

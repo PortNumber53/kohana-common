@@ -53,7 +53,6 @@ class File
 		return self::$sample_accounts[$_id];
 	}
 
-
 	static public function update(&$data, &$error)
 	{
 		if ( empty($data['_id']) )
@@ -81,7 +80,6 @@ class File
 		else
 		{
 			//Add hash to account
-			//var_dump($exists);
 			$exists['hash'] = md5('123mudar');
 			$file->save($exists, $error);
 			return TRUE;
@@ -95,7 +93,6 @@ class File
 
 		return $result;
 	}
-
 
 	static public function delete_by_object_id($object_id, &$error)
 	{

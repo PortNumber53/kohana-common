@@ -21,6 +21,19 @@
 	<?php Masher::instance('top_head')->add_js('jquery-2.0.3.min.js'); ?>
 	<?php echo Masher::instance('top_head')->mark_js(); ?>
 
+	<?php
+	if (isset(View::$_global_data['og:tags']))
+	{
+		foreach (View::$_global_data['og:tags'] as $tag=>$value)
+		{
+			if ( ! empty($value))
+			{
+				?><meta property="<?php echo $tag; ?>" content="<?php echo $value; ?>" /><?php
+			}
+		}
+	}
+
+	?>
 </head>
 
 <body>

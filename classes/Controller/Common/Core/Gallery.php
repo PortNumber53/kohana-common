@@ -16,8 +16,8 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 		View::bind_global('main', $main);
 
 		$limit = 15;
-		$offset = ($page - 1);
-		$sort = array() * $limit;
+		$offset = ($page - 1) * $limit;;
+		$sort = array();
 		$filter = array(
 			//array('account_id', '=', $account_data['object_id']),
 		);
@@ -70,7 +70,7 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 			$object_id = Model_Sequence::nextval();
 		}
 		$gallery_data = array(
-			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URLify::filter($_POST['name'], '-', TRUE),
+			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URLify::filter($_POST['name']),
 			'object_id' => $object_id,
 			'category_id' => 0,
 			'status' => $_POST['status'],
@@ -156,7 +156,7 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 			}
 		}
 		$gallery_data = array(
-			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URLify::filter($_POST['name'], '-', TRUE),
+			'_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URLify::filter($_POST['name']),
 			'object_id' => $object_id,
 			'category_id' => 0,
 			'status' => $_POST['status'],

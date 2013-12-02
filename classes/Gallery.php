@@ -20,8 +20,6 @@ class Gallery extends Abstracted
 		return $obj;
 	}
 
-
-
 	static public function get_empty_row()
 	{
 		$ogallery = new Model_Gallery();
@@ -67,13 +65,11 @@ class Gallery extends Abstracted
 		else
 		{
 			//Add hash to account
-			//var_dump($exists);
 			$exists['hash'] = md5('123mudar');
 			$gallery->save($exists, $error);
 			return TRUE;
 		}
 	}
-
 
 	static public function delete_by_object_id($object_id, &$error)
 	{

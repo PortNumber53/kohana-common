@@ -11,7 +11,6 @@
 	<?php
 	foreach ($filtered_gallery['rows'] as $gallery_data)
 	{
-		//echo'<pre>';var_dump($item);echo'</pre>>';die();
 		$gallery_data['canonical_url'] = URL::Site(Route::get('blog-actions')->uri(array('id'=>$gallery_data['object_id'], 'slug'=>URLify::filter($gallery_data['name']), )), TRUE);
 		if (substr($gallery_data['canonical_url'], -1) != '/')
 		{

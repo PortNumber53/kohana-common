@@ -172,7 +172,6 @@ class Product
 		else
 		{
 			//Add hash to account
-			//var_dump($exists);
 			$exists['hash'] = md5('123mudar');
 			$product->save($exists, $error);
 			return TRUE;
@@ -185,7 +184,6 @@ class Product
 		$_id = '/' . DOMAINNAME . '/' . $data['username'];
 		$product = new Model_Product();
 		$product_row = $product->get_by_id($_id);
-		//var_dump($product_row);
 
 		if ($product_row)
 		{

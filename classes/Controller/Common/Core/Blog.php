@@ -76,7 +76,12 @@ class Controller_Common_Core_Blog extends Controller_Common_Core_Website
 			{
 				$gallery_data['canonical_url'] = $gallery_data['canonical_url'] . '/';
 			}
+			$this->canonical_url = $gallery_data['canonical_url'];
 			$page_title = Arr::path($gallery_data, 'name', '');
+			View::add_global('og:tags', 'og:title', $page_title);
+			View::add_global('og:tags', 'og:url', $gallery_data['canonical_url']);
+			View::add_global('og:tags', 'og:image', URL::Site('/' . Arr::path($gallery_data, 'file_list.0.image.url'), TRUE));
+
 			View::bind_global('page_title', $page_title);
 
 			$main = 'gallery/blog/post';
