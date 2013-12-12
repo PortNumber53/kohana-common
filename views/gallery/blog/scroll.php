@@ -18,13 +18,11 @@
 		}
 		?>
 		<li>
-
 			<?php
 			echo View::factory('gallery/blog/post', array(
 				'gallery_data' => $gallery_data,
 			))->render();
 			?>
-
 		</li>
 		<li>
 		<hr />
@@ -32,4 +30,5 @@
 	}
 	?>
 </ul>
-<?php echo $page_links; ?>
+<?php
+echo $page_links;

@@ -81,13 +81,11 @@ class Cache_Redis extends Cache implements Cache_Arithmetic {
 			// Persistent connection
 			if ($pconnect === TRUE)
 			{
-				echo 'true';
 				$this->_Redis->pconnect($host, $port, $timeout);
 			}
 			// Non persistent connection
 			else
 			{
-				echo 'false';
 				$this->_Redis->connect($host, $port, $timeout);
 			}
 			//if ( ! $this->_Redis->addServer($server['host'], $server['port'], $server['persistent'], $server['weight'], $server['timeout'], $server['retry_interval'], $server['status'], $server['failure_callback']))

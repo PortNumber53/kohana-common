@@ -16,4 +16,3 @@ foreach ($gallery_array as $gallery_data)
 	</tr>
 <?php
 }
-?>

@@ -69,7 +69,10 @@ class Controller_Common_Backend_Core_Content extends Controller_Common_Core_Webs
 		}
 		*/
 		$error = FALSE;
-		$this->output['sections'] = $content_data['sections'];
+		if ( ! empty($content_data['sections']))
+		{
+			$this->output['sections'] = $content_data['sections'];
+		}
 
 		$result = Content::update($content_data, $error);
 		$this->output['error'] = $error;

@@ -40,12 +40,6 @@ class Product
 	{
 		$oProduct = new Model_Product();
 		return $oProduct::$_columns;
-		$row = array();
-		foreach ($oProduct::$_columns as $column=>$type)
-		{
-			$row[] = $column;
-		}
-		return $row;
 	}
 
 	static public function is_logged_in()

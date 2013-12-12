@@ -24,12 +24,6 @@ class Gallery extends Abstracted
 	{
 		$ogallery = new Model_Gallery();
 		return $ogallery::$_columns;
-		$row = array();
-		foreach ($ogallery::$_columns as $column=>$type)
-		{
-			$row[] = $column;
-		}
-		return $row;
 	}
 
 	static public function get_author($_id)

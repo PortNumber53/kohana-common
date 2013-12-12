@@ -27,7 +27,7 @@ class Controller_Common_Core_Blog extends Controller_Common_Core_Website
 			);
 			$limit = 15;
 			$sort = array(
-				array('_id', 'asc'),
+				'created_at' => 'desc',
 			);
 			$offset = ($page - 1) * $limit;
 			$filtered_gallery = Gallery::filter($filter, $sort, $limit, $offset);

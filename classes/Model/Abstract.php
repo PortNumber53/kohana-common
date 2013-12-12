@@ -8,12 +8,33 @@
 
 abstract class Model_Abstract extends Model_Core_Abstract
 {
+	static protected function _add_domain(&$_id)
+	{
+		if ( ! empty($_id) && substr($_id, -1) !== '/')
+		{
+			$temp_id = parse_url($_id, PHP_URL_PATH);
+			$path_parts = pathinfo($temp_id);
+			if (empty($path_parts['extension']))
+			{
+				$_id = $_id . '/';
+			}
+		}
+		if (substr($_id, 0, 1) != '/')
+		{
+			$_id = "/$_id";
+		}
+		if (strpos($_id, DOMAINNAME) === FALSE)
+		{
+			$_id = '/' . DOMAINNAME . $_id;
+		}
+	}
 
 	public function get_by_id($_id, &$options=array())
 	{
+		self::_add_domain($_id);
 		$cache_key = '/' . $this::$_table_name . ':row:' . $_id;
-		$row = Cache::instance('file')->get($cache_key);
-		if (TRUE || empty($row))
+		$row = Cache::instance('redis')->get($cache_key);
+		if (empty($row))
 		{
 			$query = DB::select()->from($this::$_table_name)->where($this::$_primary_key, '=', $_id);
 			$row = $query->execute()->as_array();
@@ -29,7 +50,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 				$row = array_merge($row, $extra_json);
 				unset($row['extra_json']);
 
-				Cache::instance('file')->set($cache_key, json_encode($row));
+				Cache::instance('redis')->set($cache_key, json_encode($row));
 				return $row;
 			}
 		}
@@ -43,8 +64,8 @@ abstract class Model_Abstract extends Model_Core_Abstract
 	public function get_by_object_id($object_id, &$options=array())
 	{
 		$cache_key = '/' . $this::$_table_name . ':row:' . $object_id;
-		$data = Cache::instance('file')->get($cache_key);
-		if (TRUE || empty($data))
+		$data = Cache::instance('redis')->get($cache_key);
+		if (empty($data))
 		{
 			$query = DB::select()->from($this::$_table_name)->where('object_id', '=', $object_id);
 			$data = $query->execute()->as_array();
@@ -54,7 +75,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 				$json = json_decode($data['extra_json'], TRUE);
 				$data = array_merge($data, $json);
 				unset($data['extra_json']);
-				Cache::instance('file')->set($cache_key, json_encode($data));
+				Cache::instance('redis')->set($cache_key, json_encode($data));
 			}
 		}
 		else
@@ -67,14 +88,14 @@ abstract class Model_Abstract extends Model_Core_Abstract
 	public function get_by_associated_id($associated_id, &$options=array())
 	{
 		$cache_key = '/' . $this::$_table_name . ':row:' . $associated_id;
-		$data = Cache::instance('file')->get($cache_key);
-		if (TRUE || empty($data))
+		$data = Cache::instance('redis')->get($cache_key);
+		if (empty($data))
 		{
 			$query = DB::select()->from($this::$_table_name)->where('associated_id', '=', $associated_id);
 			$data = $query->execute()->as_array();
 			if (count($data) >0)
 			{
-				Cache::instance('file')->set($cache_key, json_encode($data));
+				Cache::instance('redis')->set($cache_key, json_encode($data));
 			}
 		}
 		else
@@ -99,8 +120,8 @@ abstract class Model_Abstract extends Model_Core_Abstract
 			{
 				$data['_id'] = $data['_id'] . '/';
 			}
-
 		}
+		self::_add_domain($data['_id']);
 	}
 
 	public function save(&$data, &$error, &$options=array())
@@ -139,7 +160,6 @@ abstract class Model_Abstract extends Model_Core_Abstract
 			{
 				//Update
 				$query = DB::update($this::$_table_name)->set($data)->where($update_filter, '=', $data[$update_filter]);
-				//echo (string) $query;
 				$result = $query->execute();
 			}
 			else
@@ -147,7 +167,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 				//Insert
 				$result = DB::insert($this::$_table_name, array_keys($data))->values($data)->execute();
 			}
-			Cache::instance('file')->set($cache_key, json_encode($data));
+			Cache::instance('redis')->set($cache_key, json_encode($data));
 
 			//Handle tagging
 			if ( ! empty($json_data['tags']))
@@ -173,7 +193,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 					}
 					else
 					{
-						$new_tag_data = $tag_result[0];
+						$new_tag_data = $tag_result['rows'][0];
 					}
 					//Link object to tag
 					$tagged_data = array(
@@ -221,8 +241,8 @@ abstract class Model_Abstract extends Model_Core_Abstract
 	public function filter($filter=array(), $sort=array(), $limit=array(), $offset=array())
 	{
 		$cache_key = '/' . $this::$_table_name . ':filter:' . json_encode($filter) . ':sort:' . json_encode($sort) . ':limit:' . json_encode($limit) . ':offset:' . json_encode($offset);
-		$filter_data = Cache::instance('file')->get($cache_key);
-		if (TRUE || empty($data))
+		$filter_data = Cache::instance('redis')->get($cache_key);
+		if (empty($data))
 		{
 			$query = DB::select()->from($this::$_table_name);
 			if ( ! empty($filter))
@@ -243,6 +263,15 @@ abstract class Model_Abstract extends Model_Core_Abstract
 			{
 				$query->offset($offset);
 			}
+			if ( ! empty($sort))
+			{
+				foreach ($sort as $column=>$order)
+				{
+					$query->order_by($column, $order);
+				}
+			}
+
+
 			$filter_data = array(
 				'rows' => $query->execute()->as_array(),
 				'count' => (int) $count,
@@ -259,7 +288,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 					$row = array_merge($row, $extra_json);
 					unset($row['extra_json']);
 				}
-				Cache::instance('file')->set($cache_key, $filter_data);
+				Cache::instance('redis')->set($cache_key, $filter_data);
 			}
 		}
 		else

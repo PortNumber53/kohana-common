@@ -74,7 +74,7 @@ class Account extends Abstracted
 
 	static public function signup(&$data, &$error)
 	{
-		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
+		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'] . '/';
 		$account = new Model_Account();
 
 		$data['username'] = $data['email'];
@@ -188,7 +188,6 @@ class Account extends Abstracted
 					Cookie::$expiration = 604800;
 					$error = FALSE;
 				}
-				//echo "SET COOKIE!";die();
 				Cookie::set('account', json_encode($data_cookie));
 				return TRUE;
 			}

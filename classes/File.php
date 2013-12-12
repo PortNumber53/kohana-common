@@ -40,12 +40,6 @@ class File
 	{
 		$ofile = new Model_file();
 		return $ofile::$_columns;
-		$row = array();
-		foreach ($ofile::$_columns as $column=>$type)
-		{
-			$row[] = $column;
-		}
-		return $row;
 	}
 
 	static public function get_author($_id)
