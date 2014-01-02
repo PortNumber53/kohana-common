@@ -11,7 +11,7 @@
 <a href="#" class="dropdown-toogle" data-toggle="dropdown">Your Account<b class="caret"></b></a>
 <div class="dropdown-menu" style="width:400px">
 
-	<form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::Site(Route::get('account-actions')->uri(array('action'=>'login', )), TRUE); ?>">
+	<form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::Site(Route::get('account-actions')->uri(array('action'=>'login', )), TRUE) . '/'; ?>">
 		<div class="form-group">
 			<label for="inputEmail1" class="col-lg-2 control-label">Email</label>
 			<div class="col-lg-10">
@@ -35,7 +35,7 @@
 		</div>
 		<div class="form-group">
 			<div class="col-lg-offset-2 col-lg-10">
-				<button type="submit" class="btn btn-default">Sign in</button>
+				<button type="submit" name="action" class="btn btn-default" value="signin">Sign in</button>
 			</div>
 		</div>
 		<div class="form-group">
@@ -43,6 +43,9 @@
 				<div class="checkbox">
 					<label>
 						<a href="<?php echo URL::Site(Route::get('account-actions')->uri(array('action'=>'signup', )), TRUE); ?>"> Sign up here</a>
+					</label>
+					<label>
+						<a href="<?php echo URL::Site(Route::get('account-actions')->uri(array('action'=>'reset', )), TRUE); ?>"> Reset password</a>
 					</label>
 				</div>
 			</div>

@@ -123,6 +123,11 @@ class Account extends Abstracted
 		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'] . '/';
 		$account = new Model_Account();
 
+		if ( ! empty($data['password']))
+		{
+			$data['password'] = md5(Cookie::$salt . $data['password']);
+		}
+
 		if (! $exists = self::profile($data['_id']))
 		{
 			$error = array(
@@ -147,7 +152,7 @@ class Account extends Abstracted
 		if (! $exists = self::profile($data['_id']))
 		{
 			$error = array(
-				'error' =>  255,
+				'error' =>  404,
 				'message' => __('Account does not exist'),
 			);
 			return FALSE;
@@ -155,7 +160,9 @@ class Account extends Abstracted
 		else
 		{
 			//Add hash to account
-			$exists['hash'] = md5('123mudar');
+			$exists['hash'] = md5(Cookie::$salt . '123mudar');
+			$reset_url = URL::site(Route::get('account-actions')->uri(array('action'=>'reset', )), TRUE);
+			mail($data['email'], 'Password reset link', $reset_url . '?hash=' . $exists['hash']);
 			$account->save($exists, $error);
 			return TRUE;
 		}
@@ -168,12 +175,14 @@ class Account extends Abstracted
 		$account = new Model_Account();
 		$account_row = $account->get_by_id($_id);
 
+		$error = array(
+			'error' => 0,
+		);
 		if ($account_row)
 		{
-			$md5 = md5(Cookie::$salt . $data['password']);
-			if ($md5 == $account_row['password'])
+			if ( ! empty($data['hash']) && ($data['hash'] == $account_row['hash']))
 			{
-				//Only store minimal information in the cookie
+				//Forced login
 				$data_cookie = array(
 					'_id'           => $account_row['_id'],
 					'username'      => $account_row['username'],
@@ -181,23 +190,41 @@ class Account extends Abstracted
 					'name'          => $account_row['name'],
 					'object_id'     => $account_row['object_id'],
 				);
-				$expiration = NULL;
-				if ( ! empty($data['remember_me']) && $data['remember_me'])
-				{
-					$expiration = 86400;
-					Cookie::$expiration = 604800;
-					$error = FALSE;
-				}
+				$error = FALSE;
+				Cookie::$expiration = 604800;
 				Cookie::set('account', json_encode($data_cookie));
 				return TRUE;
 			}
 			else
 			{
-				$error = array(
-					'error'   => 403,
-					'message' => 'Bad credentials',
-				);
-				return FALSE;
+				$md5 = md5(Cookie::$salt . $data['password']);
+				if ($md5 == $account_row['password'])
+				{
+					//Only store minimal information in the cookie
+					$data_cookie = array(
+						'_id'           => $account_row['_id'],
+						'username'      => $account_row['username'],
+						'email'         => $account_row['email'],
+						'name'          => $account_row['name'],
+						'object_id'     => $account_row['object_id'],
+					);
+					$expiration = NULL;
+					if ( ! empty($data['remember_me']) && $data['remember_me'])
+					{
+						Cookie::$expiration = 604800;
+						$error = FALSE;
+					}
+					Cookie::set('account', json_encode($data_cookie));
+					return TRUE;
+				}
+				else
+				{
+					$error = array(
+						'error'   => 403,
+						'message' => 'Bad credentials',
+					);
+					return FALSE;
+				}
 			}
 		}
 		else
@@ -207,7 +234,7 @@ class Account extends Abstracted
 				'message' => 'Account not found',
 			);
 		}
-		//Cookie::delete('account');
+		Cookie::delete('account');
 		return FALSE;
 	}
 

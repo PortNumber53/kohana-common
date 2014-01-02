@@ -17,7 +17,6 @@ class Model_Content extends Model_Abstract
 		'url'          => '',
 		'mimetype'     => '',
 		'title'        => '',
-		'body'         => '',
 		'created_at'   => '',
 		'modified_at'  => '',
 		'extra_json'   => '',
@@ -35,7 +34,6 @@ class Model_Content extends Model_Abstract
 				unset($result_set[$key]['data']);
 				$result_set[$key] = array_merge($result_set[$key], $array);
 			}
-
 			return $result_set;
 		}
 		else

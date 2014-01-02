@@ -27,6 +27,13 @@ class Controller_Common_Core_Website extends Controller_Template
 
 
 		parent::__construct($request, $response);
+
+		//Check for SEO stuff
+		if ($data = SEO::checkRedirection($this->request))
+		{
+			$this->redirect($data['to_url'], $data['status_code']);
+		}
+
 		//If a user is not logged in and authentication is required:
 		if ($this->auth_required && ! Auth::instance()->logged_in())
 			$this->redirect('/login?url='.URL::site(Request::current()->uri()));

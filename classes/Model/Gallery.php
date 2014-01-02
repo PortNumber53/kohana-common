@@ -35,7 +35,6 @@ class Model_Gallery extends Model_Abstract
 		{
 			$data['object_id'] = Model_Sequence::nextval();
 		}
-		//unset($data['password1'], $data['password2'], $data['remember_me']);
 		if ( ! empty($data['object_id']) && ! empty($data['name']))
 		{
 			$data['url'] = '/' . $data['object_id'] . '-' . URL::title($data['name']) . '/';

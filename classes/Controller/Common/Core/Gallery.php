@@ -17,7 +17,9 @@ class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
 
 		$limit = 15;
 		$offset = ($page - 1) * $limit;;
-		$sort = array();
+		$sort = array(
+			'object_id' => 'ASC',
+		);
 		$filter = array(
 			//array('account_id', '=', $account_data['object_id']),
 		);

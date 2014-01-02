@@ -7,7 +7,7 @@
  */
 
 ?>
-<form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'gallery', 'action'=>'edit', 'id'=>$gallery_data['object_id'], )), TRUE); ?>">
+<form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'gallery', 'action'=>'edit', 'id'=>$gallery_data['object_id'], )), TRUE) . '/'; ?>">
 	<div class="form-group">
 		<label for="inputName" class="col-lg-2 control-label">Name</label>
 		<div class="col-lg-9">

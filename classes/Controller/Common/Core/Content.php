@@ -9,6 +9,32 @@
 
 class Controller_Common_Core_Content extends Controller_Common_Core_Website
 {
+	public function generate_txt()
+	{
+		$page = Request::current()->param('page', 1);
+		$limit = 1000;
+		$offset = ($page - 1) * $limit;;
+		$sort = array(
+			'object_id' => 'ASC',
+		);
+		$filter = array(
+			//array('account_id', '=', $account_data['object_id']),
+		);
+		$filter = Gallery::filter($filter, $sort, $limit, $offset);
+
+		$data = array();
+		foreach ($filter['rows'] as $row)
+		{
+			$id = $row['object_id'];
+			$slug = URLify::filter($row['name']);
+
+			$data[] = array(
+				'url' => URL::Site(Route::get('blog-actions')->uri(array('id'=>$id, 'slug'=>$slug,)), TRUE),
+			);
+		}
+		View::bind_global('data', $data);
+	}
+
 	public function action_browse()
 	{
 		$page = (int) Arr::path($_GET, 'page', 1);

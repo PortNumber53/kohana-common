@@ -6,8 +6,15 @@
  *
  */
 
+$class_image = '';
+if ($filtered_gallery['rows'] > 1)
+{
+	$class_image = 'multiple';
+}
+$class = "$class_image";
+
 ?>
-<ul class="blog-list">
+<ul class="blog-list<?php echo " $class"; ?>">
 	<?php
 	foreach ($filtered_gallery['rows'] as $gallery_data)
 	{

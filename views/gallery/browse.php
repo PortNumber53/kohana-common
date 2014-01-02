@@ -29,8 +29,8 @@
 		<td align="right"><?php echo $gallery_data['object_id']; ?></td>
 		<td><?php echo $gallery_data['name']; ?></td>
 		<td>
-			<button type="button" class="btn btn-danger btn-xs btn-delete" data-object-id="<?php echo $gallery_data['object_id']; ?>" data-delete-link="<?php echo URL::Site(Route::get('service-actions')->uri(array('controller'=>'gallery', 'action'=>'delete', 'id'=>$gallery_data['object_id'], )), TRUE); ?>">Delete</button>
-			<button type="button" class="btn btn-primary btn-xs btn-manage" data-object-id="<?php echo $gallery_data['object_id']; ?>" data-action-link="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'gallery', 'action'=>'manage', 'id'=>$gallery_data['object_id'], )), TRUE); ?>">Manage</button>
+			<button type="button" class="btn btn-danger btn-xs btn-delete" data-object-id="<?php echo $gallery_data['object_id']; ?>" data-delete-link="<?php echo URL::Site(Route::get('service-actions')->uri(array('controller'=>'gallery', 'action'=>'delete', 'id'=>$gallery_data['object_id'], )), TRUE) . '/'; ?>">Delete</button>
+			<button type="button" class="btn btn-primary btn-xs btn-manage" data-object-id="<?php echo $gallery_data['object_id']; ?>" data-action-link="<?php echo URL::Site(Route::get('default')->uri(array('controller'=>'gallery', 'action'=>'manage', 'id'=>$gallery_data['object_id'], )), TRUE)  . '/'; ?>">Manage</button>
 		</td>
 	</tr>
 	<?php

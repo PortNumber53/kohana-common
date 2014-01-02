@@ -65,6 +65,7 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 		$error = FALSE;
 
 		$signup_data = array(
+			'profile'   => 'user',
 			'email'     => $_POST['email'],
 			'password1' => $_POST['password1'],
 			'password2' => $_POST['password2'],
@@ -89,16 +90,41 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 		$error = FALSE;
 		$data = array(
 			'email'       => $_POST['email'],
-			'password'    => $_POST['password'],
+			'password'    => empty($_POST['password']) ? '' : $_POST['password'],
 			'remember_me' => empty($_POST['remember_me']) ? FALSE : $_POST['remember_me'] == '1',
+			'hash'        => empty($_POST['hash']) ? '' : $_POST['hash'],
 		);
 		if ($result = Account::login($data, $error))
 		{
 			$this->output['redirect_url'] = URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE);
 		}
 		$this->output['error'] = $error;
+		if ($error)
+		{
+			$this->response->status( (int) $error['error']);
+		}
 		$this->output['output'] = $result;
 	}
+
+	public function action_ajax_reset()
+	{
+		$this->output = array(
+			'posted' => $_POST,
+		);
+		$error = FALSE;
+		$data = array(
+			'email'       => $_POST['email'],
+		);
+		if ($result = Account::reset($data, $error))
+		{
+
+		}
+		//$this->output['redirect_url'] = URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE);
+		$this->output['error'] = $error;
+		$this->response->status( empty($error['error']) ? 200 : $error['error']);
+		$this->output['output'] = $result;
+	}
+
 
 	public function action_profile()
 	{
@@ -136,6 +162,10 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 		{
 			unset($_POST['profile_avatar']);
 		}
+		if ( ! empty($_POST['password1']) && ! empty($_POST['password2']))
+		{
+			$data['password'] = $_POST['password1'];
+		}
 		$data = array_merge($data, $_POST);
 		$result = Account::update($data, $error);
 
@@ -158,6 +188,12 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 			{
 				$this->redirect(URL::Site(Route::get('default')->uri(array()), TRUE));
 			}
+		}
+		if (! empty($_GET['hash']))
+		{
+			//Force authentication and redirect user to profile page?
+			$hash = htmlentities($_GET['hash']);
+			View::bind_global('hash', $hash);
 		}
 
 		$main = 'account/reset';

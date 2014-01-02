@@ -32,17 +32,6 @@ class Gallery extends Abstracted
 	}
 
 
-	static public function update(&$data, &$error)
-	{
-		if ( empty($data['_id']) )
-		{
-			$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
-		}
-		$gallery = new Model_Gallery();
-		$result = $gallery->save($data, $error);
-		return $result;
-	}
-
 	static public function reset($data, &$error)
 	{
 		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];

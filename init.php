@@ -62,12 +62,30 @@ if (! Route::$cache)
 		));
 
 
+	Route::set('sitemap', 'sitemap/<name>:<page>.<format>',
+		array(
+			'name' => '[a-zA-Z0-9_/\-]+',
+			'page' => '([0-9]+|count)',
+			'format' => '(xml|txt)',
+		))
+		->defaults(array(
+			'controller' => 'Sitemap',
+			'action' => 'generate',
+			'page' => 1,
+		));
+
+	Route::set('seo-robots', 'robots.txt')
+		->defaults(array(
+			'controller' => 'Robots',
+			'action' => 'index',
+		));
+
 
 
 
 
 	//Legacy actions
-	Route::set('blog-actions', 'post(/<id>(-(<slug>(/<page>))))',
+	Route::set('blog-actions', 'gallery(/<id>(-(<slug>)))(:<page>)',
 		array(
 			'id'         => '[0-9]+',
 			'page'       => '[0-9]+',
@@ -76,7 +94,7 @@ if (! Route::$cache)
 		->defaults(array(
 			'controller' => 'Blog',
 			'format'     => 'Blog',
-			'page'       => -1,
+			'page'       => 1,
 			'action'     => 'view',
 		));
 

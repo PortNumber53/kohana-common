@@ -108,10 +108,6 @@ abstract class Model_Abstract extends Model_Core_Abstract
 	public function _before_save(&$data = array())
 	{
 		// TODO: Implement _before_save() method.
-		//if (empty($data['object_id']))
-		//{
-		//	$data['object_id'] = Model_Sequence::nextval();
-		//}
 		if ( ! empty($data['_id']) && substr($data['_id'], -1) !== '/')
 		{
 			$_id = parse_url($data['_id'], PHP_URL_PATH);
@@ -140,10 +136,8 @@ abstract class Model_Abstract extends Model_Core_Abstract
 		}
 		if ($exists)
 		{
-			//$data['object_id'] = $exists['object_id'];
 			$data = array_merge($exists, $data);
 		}
-		$cache_key = '/' . $this::$_table_name . ':row:' . $data['_id'];
 
 		$json_data = array_diff_key($data, $this::$_columns);
 		$data = array_intersect_key($data, $this::$_columns);
@@ -156,6 +150,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 			{
 				$data['object_id'] = Model_Sequence::nextval();
 			}
+
 			if ($exists)
 			{
 				//Update
@@ -167,7 +162,11 @@ abstract class Model_Abstract extends Model_Core_Abstract
 				//Insert
 				$result = DB::insert($this::$_table_name, array_keys($data))->values($data)->execute();
 			}
-			Cache::instance('redis')->set($cache_key, json_encode($data));
+			if ( ! empty($data['object_id']))
+			{
+				$cache_key = '/' . $this::$_table_name . ':row:' . $data['object_id'];
+				Cache::instance('redis')->delete($cache_key);
+			}
 
 			//Handle tagging
 			if ( ! empty($json_data['tags']))
@@ -228,16 +227,6 @@ abstract class Model_Abstract extends Model_Core_Abstract
 		return $result;
 	}
 
-/*
-	static public function filter($filter=array(), $sort=array(), $limit=array())
-	{
-		$oContent = new Model_Content();
-		$result = $oContent->filter($filter, $sort, $limit);
-
-		return $result;
-	}
-*/
-
 	public function filter($filter=array(), $sort=array(), $limit=array(), $offset=array())
 	{
 		$cache_key = '/' . $this::$_table_name . ':filter:' . json_encode($filter) . ':sort:' . json_encode($sort) . ':limit:' . json_encode($limit) . ':offset:' . json_encode($offset);
@@ -270,7 +259,6 @@ abstract class Model_Abstract extends Model_Core_Abstract
 					$query->order_by($column, $order);
 				}
 			}
-
 
 			$filter_data = array(
 				'rows' => $query->execute()->as_array(),

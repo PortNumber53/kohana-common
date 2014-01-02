@@ -29,15 +29,6 @@ class Model_Settings extends Model_Abstract
 			unset($result['data']);
 			$result = array_merge($result, $array);
 			return $result;
-			/*
-			foreach ($result_set as $key=>&$value)
-			{
-				$array = json_decode($value['data'], TRUE);
-				unset($value['data']);
-				$result_set[$key] = array_merge($result_set[$key], $array);
-			}
-			return $result_set;
-			*/
 		}
 		else
 		{

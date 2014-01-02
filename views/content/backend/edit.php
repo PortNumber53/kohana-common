@@ -13,7 +13,7 @@ if (empty($data['mimetype']))
 <script type="text/javascript" src="http://static.portnumber53.dev/library/ckeditor/adapters/jquery.js"></script>
 
 
-<form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::site(Request::detect_uri(), TRUE); ?>">
+<form class="form-horizontal json-form" role="form" method="post" action="<?php echo URL::site(Request::detect_uri(), TRUE) . '/'; ?>">
 	<input type="hidden" id="object_id" name="object_id" value="<?php echo Arr::path($content_data, 'object_id', ''); ?>">
 	<div class="form-group">
 		<label for="inputID" class="col-lg-2 control-label">_ID</label>
@@ -45,7 +45,8 @@ if (empty($data['mimetype']))
 	</div>
 
 	<?php
-	if (isset($content_data['body']))
+	$sections = Arr::path($content_data, 'sections', array(0));
+	if (isset($content_data['body']) && empty($sections))
 	{
 		$body = Arr::path($content_data, 'body', '');
 	?>
@@ -59,7 +60,6 @@ if (empty($data['mimetype']))
 	}
 	else
 	{
-		$sections = Arr::path($content_data, 'sections', array());
 		foreach ($sections as $section)
 		{
 	?>

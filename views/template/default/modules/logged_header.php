@@ -34,7 +34,7 @@
 					}
 
 					html += '</li>';
-					html += ' </ul>';
+					//html += ' </ul>';
 				}
 				$("#user-menu").html( html );
 			},
