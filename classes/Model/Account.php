@@ -38,6 +38,10 @@ class Model_Account extends Model_Abstract
 		{
 			$data['email'] = strtolower($data['email']);
 		}
+		if (! empty($data['username']))
+		{
+			$data['username'] = strtolower($data['username']);
+		}
 		unset($data['password1'], $data['password2'], $data['remember_me']);
 		parent::_before_save($data);
 	}
