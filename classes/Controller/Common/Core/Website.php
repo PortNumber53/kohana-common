@@ -119,7 +119,6 @@ class Controller_Common_Core_Website extends Controller_Template
 
 	public function after()
 	{
-		$this->response->headers('Content-Encoding', 'UTF-8');
 		if ($this->auto_render)
 		{
 			View::bind_global('canonical_url', $this->canonical_url);
