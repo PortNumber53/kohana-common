@@ -78,7 +78,7 @@ echo empty($template['footer']) ? '{template.footer}' : View::factory($template[
 <?php //Masher::instance('bottom_body')->add_js('/script/app.js'); ?>
 <?php echo Masher::instance('bottom_body')->mark_js(); ?>
 
-<?php echo View::factory('google/analytics/tracking')->render(); ?>
+<?php //echo View::factory('google/analytics/tracking')->render(); ?>
 <?php echo View::factory('modules/social/googleplus_common')->render(); ?>
 <?php echo View::factory('modules/social/stumbleupon_common')->render(); ?>
 <?php echo View::factory('modules/social/pinterest_common')->render(); ?>
