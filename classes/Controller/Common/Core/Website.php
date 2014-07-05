@@ -7,7 +7,11 @@
 class Controller_Common_Core_Website extends Controller_Template
 {
 	public $template_name = '';
-	public $template_file = 'frontend';
+	public static $template_file = 'frontend';
+
+	public static $template_mapping = array(
+		'controller:action' => 'otherend',
+	);
 
 	public $auth_required = FALSE;
 	public $auth_actions = array();
@@ -22,9 +26,7 @@ class Controller_Common_Core_Website extends Controller_Template
 		$session = Session::instance();
 
 		self::$settings = Kohana::$config->load('website');
-		//Cookie::$salt = Arr::path(self::$settings, 'cookie_salt');
 		View::set_global('debug', Arr::path(self::$settings, 'debug', FALSE));
-
 
 		parent::__construct($request, $response);
 
@@ -65,22 +67,31 @@ class Controller_Common_Core_Website extends Controller_Template
 		{
 			$this->template_name = Website::get('template.selected', 'default');
 		}
-		Website::set_template($this->template_name);
 
-		if (empty($this->template_file))
+		if (! empty(static::$template_mapping))
 		{
-			$this->template_file = 'frontend';
+			$key = strtolower(Request::current()->controller()) . ':' . strtolower(Request::current()->action());
+			if (isset(static::$template_mapping[$key]))
+			{
+				static::$template_file = static::$template_mapping[$key];
+			}
 		}
-		Website::set_file($this->template_file);
-		$new_template = 'template/' . $this->template_name . '/' . $this->template_file;
+		if (empty(static::$template_file))
+		{
+			static::$template_file = 'frontend';
+		}
+		$new_template = 'template/' . $this->template_name . '/' . static::$template_file;
 		if (! Kohana::find_file('views', $new_template))
 		{
-			$new_template = 'template/default/' . $this->template_file;
+			$new_template = 'template/default/' . static::$template_file;
 		}
 		$this->template = $new_template;
+		Website::set_template($this->template_name);
 
 		parent::before();
 
+		$this->user = Account::factory()->profile();
+		View::bind_global('user', $this->user);
 		if ($this->auto_render)
 		{
 			$current_url = URL::Site(Request::detect_uri(), TRUE);
@@ -104,7 +115,7 @@ class Controller_Common_Core_Website extends Controller_Template
 			View::set_global('scripts', array());
 			View::set_global('breadbrumbs', array());
 
-			$sections = Website::get('template.'.$this->template_name.'.'.$this->template_file.'.sections', array());
+			$sections = Website::get('template.'.$this->template_name.'.'.static::$template_file.'.sections', array());
 			$template_sections = array();
 			foreach ($sections as $section)
 			{
@@ -126,7 +137,6 @@ class Controller_Common_Core_Website extends Controller_Template
 			{
 				$this->canonical_url = URL::site('/', TRUE);
 			}
-			View::bind_global('user', $this->user);
 			View::set_global('current_url', URL::site(Request::factory()->current()->uri(), true));
 
 			$styles = Website::template('style', array());

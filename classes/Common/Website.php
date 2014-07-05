@@ -38,7 +38,6 @@ class Common_Website
 		{
 			self::$template_file = 'frontend';
 		}
-		//$this->template = 'template/' . $this->template_name . '/' . $this->template_file;
 
 		return $obj;
 	}

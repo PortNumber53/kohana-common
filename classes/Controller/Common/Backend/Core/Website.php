@@ -6,7 +6,4 @@
  *
  */
 
-class Controller_Common_Backend_Core_Website extends Controller_Common_Core_Website {
-
-	public $template_file = 'backend';
-}
+class Controller_Common_Backend_Core_Website extends Controller_Common_Core_Backend {}

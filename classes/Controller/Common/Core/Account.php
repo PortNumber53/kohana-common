@@ -99,9 +99,9 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 			$this->output['redirect_url'] = URL::Site(Route::get('account-actions')->uri(array('action'=>'profile', )), TRUE);
 		}
 		$this->output['error'] = $error;
-		if ($error)
+		if (! empty($error) && is_array($error) && ($error['code']) > 0)
 		{
-			$this->response->status( (int) $error['error']);
+			$this->response->status( (int) $error['code']);
 		}
 		$this->output['output'] = $result;
 	}

@@ -176,7 +176,7 @@ class Account extends Abstracted
 		$account_row = $account->get_by_id($_id);
 
 		$error = array(
-			'error' => 0,
+			'code' => 0,
 		);
 		if ($account_row)
 		{
@@ -220,7 +220,7 @@ class Account extends Abstracted
 				else
 				{
 					$error = array(
-						'error'   => 403,
+						'code'   => 403,
 						'message' => 'Bad credentials',
 					);
 					return FALSE;
@@ -230,7 +230,7 @@ class Account extends Abstracted
 		else
 		{
 			$error = array(
-				'error'   => 404,
+				'code'   => 404,
 				'message' => 'Account not found',
 			);
 		}

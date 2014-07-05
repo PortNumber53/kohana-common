@@ -6,6 +6,26 @@
  */
 if (! Route::$cache)
 {
+	Route::set('backend-actions', 'backend(/<controller>(/<action>(/<request>)))',
+		array(
+			'request'    => '[a-zA-Z0-9_/\-]+',
+		))
+		->defaults(array(
+			'directory'  => 'Backend',
+			'controller' => 'Dashboard',
+			'action'     => 'Main',
+		));
+
+	Route::set('dashboard', 'dashboard',
+		array(
+			'request'    => '[a-zA-Z0-9_/\-]+',
+		))
+		->defaults(array(
+			'directory'  => 'Backend',
+			'controller' => 'Dashboard',
+			'action'     => 'Main',
+		));
+
 	Route::set('service-actions', 'service(/<controller>(/<action>(/<request>)))',
 		array(
 			'request'    => '[a-zA-Z0-9_/\-]+',
@@ -22,7 +42,6 @@ if (! Route::$cache)
 			'action'     => '(profile|login|signup|logout|reset|forgot|settings|public)',
 		))
 		->defaults(array(
-			'directory'  => 'Common',
 			'controller' => 'Account',
 			'action'     => 'profile',
 		));
