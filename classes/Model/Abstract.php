@@ -164,7 +164,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 			}
 			if ( ! empty($data['object_id']))
 			{
-				$cache_key = '/' . $this::$_table_name . ':row:' . $data['object_id'];
+				$cache_key = '/' . $this::$_table_name . ':row:' . $data['_id'];
 				Cache::instance('redis')->delete($cache_key);
 			}
 
