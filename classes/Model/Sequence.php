@@ -32,7 +32,7 @@ class Model_Sequence extends Model_Abstract
 			$query = DB::select(DB::expr('nextval(\'object\') as sequence'));
 			$result = $query->execute()->get('sequence');
 		}
-		return $result[0];
+		return $result;
 	}
 
 }
