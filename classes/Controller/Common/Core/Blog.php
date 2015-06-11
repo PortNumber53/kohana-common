@@ -9,6 +9,20 @@
 class Controller_Common_Core_Blog extends Controller_Common_Core_Website
 {
 
+    public function action_landing()
+    {
+        $main = 'blog/landing';
+
+        View::bind_global('main', $main);
+    }
+
+    public function action_post()
+    {
+        $main = 'blog/post';
+
+        View::bind_global('main', $main);
+    }
+
 	public function generate_txt()
 	{
 		$page = Request::current()->param('page', 1);
