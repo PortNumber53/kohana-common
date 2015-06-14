@@ -173,7 +173,7 @@ class Account extends Abstracted
                 if ($md5 == $accountData['password']) {
                     //Only store minimal information in the cookie
                     $data_cookie = array(
-                        'id' => $accountData['id'],
+                        'id' => $accountData['accountid'],
                         'username' => $accountData['username'],
                         'display_name' => $accountData['display_name'],
                     );
