@@ -33,6 +33,8 @@ class Controller_Common_Core_Website extends Controller_Template
 		self::$settings = array_merge($settings, $dotSettings);
 		View::set_global('debug', Arr::path(self::$settings, 'debug', FALSE));
 
+        setlocale(LC_MONETARY, 'en_US');
+
 		parent::__construct($request, $response);
 
 		//Check for SEO stuff

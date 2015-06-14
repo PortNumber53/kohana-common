@@ -21,5 +21,20 @@ class Model_Picture extends Model_Abstract
         'md5_hash' => '',
     );
     protected static $_json_columns = array();
+
+    public static function _getDataByParentId($parentId, $limit, $offset)
+    {
+        $picture = new Model_Picture();
+        $sort = array(
+            'sequence' => 'ASC',
+            'uploaded' => 'ASC',
+        );
+        $filter = array(
+            array('productid', '=', $parentId,),
+        );
+        $product_result = $picture->filter($filter, $sort, $limit, $offset);
+
+        return $product_result;
+    }
 }
 

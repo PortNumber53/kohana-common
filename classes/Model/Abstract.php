@@ -54,6 +54,28 @@ abstract class Model_Abstract extends Model_Core_Abstract
         return $row;
     }
 
+    public static function getDataBySeo($seoName)
+    {
+        $cache_key = '/' . static::$_table_name . ':row:' . $seoName;
+        $data = Cache::instance('redis')->get($cache_key);
+        if (empty($data)) {
+            $query = DB::select()->from(static::$_table_name)->where('name_seo', '=', $seoName);
+            $data = $query->execute()->as_array();
+            if (count($data) == 1) {
+                $data = $data[0];
+                if (isset($data['extra_json'])) {
+                    $json = json_decode($data['extra_json'], true);
+                    $data = array_merge($data, $json);
+                    unset($data['extra_json']);
+                }
+                Cache::instance('redis')->set($cache_key, json_encode($data));
+            }
+        } else {
+            $data = json_decode($data, true);
+        }
+        return $data;
+    }
+
     public function get_by_object_id($object_id, &$options = array())
     {
         $cache_key = '/' . $this::$_table_name . ':row:' . $object_id;
@@ -72,6 +94,16 @@ abstract class Model_Abstract extends Model_Core_Abstract
             $data = json_decode($data, true);
         }
         return $data;
+    }
+
+    public static function getDataByParentId($parentId, $limit = 0, $offset = 0)
+    {
+        return static::_getDataByParentId($parentId, $limit, $offset);
+    }
+
+    public static function _getDataByParentId($parentId, $limit, $offset)
+    {
+        // TODO: Implement _getDataByParentId() method.
     }
 
     public function get_by_associated_id($associated_id, &$options = array())
