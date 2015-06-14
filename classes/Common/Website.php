@@ -10,8 +10,8 @@ class Common_Website
 {
 	public static $default = 'default';
 
-	static public $template_name = '';
-	static public $template_file = '';
+	public static $template_name = '';
+	public static $template_file = '';
 	protected static $settings = array();
 
 	public static $environment = array(
@@ -42,18 +42,18 @@ class Common_Website
 		return $obj;
 	}
 
-	static public function set_template($name)
+	public static function set_template($name)
 	{
 		self::$template_name = $name;
 		View::$template_name = $name;
 	}
 
-	static public function set_file($name)
+	public static function set_file($name)
 	{
 		self::$template_file = $name;
 	}
 
-	static public function get($path, $default=NULL)
+	public static function get($path, $default=NULL)
 	{
 		if (empty(self::$template_file))
 		{
@@ -65,11 +65,10 @@ class Common_Website
 			//echo 'load settings ';
 			self::load_settings();
 		}
-
 		return Arr::path(self::$settings, $path, $default);
 	}
 
-	static public function template($path, $default=NULL)
+	public static function template($path, $default=NULL)
 	{
 		if (empty(self::$template_file))
 		{
@@ -84,7 +83,7 @@ class Common_Website
 		return Arr::path(self::$settings, 'template.' . self::$template_file . '.' . self::$template_name . '.' .$path, $default);
 	}
 
-	static public function domain()
+	public static function domain()
 	{
 		return str_replace('www.', '', $_SERVER['SERVER_NAME']);
 	}
@@ -92,7 +91,7 @@ class Common_Website
 	const NOT_CACHED = '¿NOT_CACHED?';
 	static $data = array();
 
-	static public function service($array_path, $function, $params=array(), $default=NULL)
+	public static function service($array_path, $function, $params=array(), $default=NULL)
 	{
 		//Check if data is "cached"
 		$data = Arr::path(self::$data, $array_path, self::NOT_CACHED);

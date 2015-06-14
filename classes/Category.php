@@ -21,39 +21,39 @@ class Category
 		return $obj;
 	}
 
-	static public function get_by_id($_id)
+	public static function get_by_id($_id)
 	{
 		$oCategory = new Model_Category();
 		$result = $oCategory->get_by_id($_id);
 		return $result;
 	}
 
-	static public function get_by_object_id($object_id)
+	public static function get_by_object_id($object_id)
 	{
 		$oCategory = new Model_Category();
 		$result = $oCategory->get_by_object_id($object_id);
 		return $result;
 	}
 
-	static public function is_logged_in()
+	public static function isLoggedIn()
 	{
 		$cookie_data = Cookie::get('category');
 		return ! empty($cookie_data);
 	}
 
-	static public function logged_in()
+	public static function logged_in()
 	{
 		$cookie_data = json_decode(Cookie::get('category'), TRUE);
 		return self::get_by_id($cookie_data['_id']);
 	}
 
-	static public function logout()
+	public static function logout()
 	{
 		Cookie::delete('category');
 		return TRUE;
 	}
 
-	static public function profile($_id = '', $options = array())
+	public static function profile($_id = '', $options = array())
 	{
 		$cookie = json_decode(Cookie::get('category'), TRUE);
 		if (empty($_id))
@@ -80,13 +80,13 @@ class Category
 	}
 
 
-	static public function get_author($_id)
+	public static function get_author($_id)
 	{
 		return self::$sample_accounts[$_id];
 	}
 
 
-	static public function signup(&$data, &$error)
+	public static function signup(&$data, &$error)
 	{
 		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
 		$account = new Model_Category();
@@ -132,7 +132,7 @@ class Category
 		}
 	}
 
-	static public function update(&$data, &$error)
+	public static function update(&$data, &$error)
 	{
 		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
 		$account = new Model_Category();
@@ -153,7 +153,7 @@ class Category
 		}
 	}
 
-	static public function reset($data, &$error)
+	public static function reset($data, &$error)
 	{
 		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
 		$account = new Model_Category();
@@ -175,7 +175,7 @@ class Category
 		}
 	}
 
-	static public function login($data, &$error)
+	public static function login($data, &$error)
 	{
 		// TODO: Implement _login() method.
 		$_id = '/' . DOMAINNAME . '/' . $data['username'];

@@ -21,11 +21,16 @@ class Controller_Common_Core_Website extends Controller_Template
 
 	public static $settings = array();
 
+    public static $account = null;
+
 	public function __construct(Request $request, Response $response)
 	{
 		$session = Session::instance();
 
-		self::$settings = Kohana::$config->load('website');
+        $dotSettings = empty(WEBSITE) ? array() : json_decode(WEBSITE, true);
+
+        $settings = Kohana::$config->load('website')->as_array();
+		self::$settings = array_merge($settings, $dotSettings);
 		View::set_global('debug', Arr::path(self::$settings, 'debug', FALSE));
 
 		parent::__construct($request, $response);
@@ -42,7 +47,7 @@ class Controller_Common_Core_Website extends Controller_Template
 
 		if (in_array($this->request->action(), $this->auth_actions))
 		{
-			if ( ! Account::factory()->is_logged_in())
+			if ( ! Account::factory()->isLoggedIn())
 			{
 				echo $this->request->action() . ' requires Authentication!';
 				$this->redirect('/login?url='.URL::site(Request::current()->uri()));
@@ -63,35 +68,37 @@ class Controller_Common_Core_Website extends Controller_Template
 
 	public function before()
 	{
-		if (empty($this->template_name))
-		{
-			$this->template_name = Website::get('template.selected', 'default');
-		}
+        if (empty($this->template_name))
+        {
+            $this->template_name = Website::get('template.selected.' . static::$template_file, 'default');
+        }
 
-		if (! empty(static::$template_mapping))
-		{
-			$key = strtolower(Request::current()->controller()) . ':' . strtolower(Request::current()->action());
-			if (isset(static::$template_mapping[$key]))
-			{
-				static::$template_file = static::$template_mapping[$key];
-			}
-		}
-		if (empty(static::$template_file))
-		{
-			static::$template_file = 'frontend';
-		}
-		$new_template = 'template/' . $this->template_name . '/' . static::$template_file;
-		if (! Kohana::find_file('views', $new_template))
-		{
-			$new_template = 'template/default/' . static::$template_file;
-		}
-		$this->template = $new_template;
-		Website::set_template($this->template_name);
+        if (! empty(static::$template_mapping))
+        {
+            $key = strtolower(Request::current()->controller()) . ':' . strtolower(Request::current()->action());
+            if (isset(static::$template_mapping[$key]))
+            {
+                static::$template_file = static::$template_mapping[$key];
+            }
+        }
+        if (empty(static::$template_file))
+        {
+            static::$template_file = 'frontend';
+        }
+        $new_template = 'template/' . $this->template_name . '/' . static::$template_file;
+        if (! Kohana::find_file('views', $new_template))
+        {
+            $new_template = 'template/default/' . static::$template_file;
+        }
+        Website::set_template($this->template_name);
 
+        $this->template = $new_template;
 		parent::before();
 
-		$this->user = Account::factory()->profile();
-		View::bind_global('user', $this->user);
+        if (Account::factory()->isLoggedIn()) {
+            static::$account = Account::factory()->profile();
+        }
+        View::bind_global('account', static::$account);
 		if ($this->auto_render)
 		{
 			$current_url = URL::Site(Request::detect_uri(), TRUE);

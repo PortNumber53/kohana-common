@@ -37,7 +37,7 @@
 		</form>
 		<ul class="nav navbar-nav navbar-right" id="user-menu">
 			<?php
-			if ( ! Account::is_logged_in())
+			if ( ! Account::isLoggedIn())
 			{
 				echo View::factory('modules/unlogged_header')->render();
 			}

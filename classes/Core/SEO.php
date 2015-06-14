@@ -8,7 +8,7 @@
 
 class Core_SEO
 {
-	static public function checkRedirection($request)
+	public static function checkRedirection($request)
 	{
 		$request_uri = $_SERVER['REQUEST_URI'];
 

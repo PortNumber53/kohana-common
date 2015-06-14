@@ -10,7 +10,7 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 	public $auth_actions = array('profile', 'settings');
 
 	public function action_login()
-	{
+    {
 		if ($post = $this->request->post())
 		{
 			$error = FALSE;
@@ -87,12 +87,13 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 		$this->output = array(
 			'posted' => $_POST,
 		);
+
 		$error = FALSE;
 		$data = array(
-			'email'       => $_POST['email'],
-			'password'    => empty($_POST['password']) ? '' : $_POST['password'],
+			'email'       => filter_var($_POST['email'], FILTER_SANITIZE_STRING),
+			'password'    => empty($_POST['password']) ? '' : filter_var($_POST['password'], FILTER_SANITIZE_STRING),
 			'remember_me' => empty($_POST['remember_me']) ? FALSE : $_POST['remember_me'] == '1',
-			'hash'        => empty($_POST['hash']) ? '' : $_POST['hash'],
+			'hash'        => empty($_POST['hash']) ? '' : filter_var($_POST['hash'], FILTER_SANITIZE_STRING),
 		);
 		if ($result = Account::login($data, $error))
 		{
@@ -137,7 +138,7 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 		}
 		$data = Account::factory()->profile();
 
-		View::bind_global('data', $data);
+		View::bind_global('account_data', $data);
 		$main = 'account/profile';
 		View::bind_global('main', $main);
 	}

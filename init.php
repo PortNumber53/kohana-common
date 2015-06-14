@@ -15,7 +15,7 @@ if (! Route::$cache)
 			'controller' => 'Dashboard',
 			'action'     => 'Main',
 		));
-
+    /*
 	Route::set('dashboard', 'dashboard',
 		array(
 			'request'    => '[a-zA-Z0-9_/\-]+',
@@ -25,6 +25,7 @@ if (! Route::$cache)
 			'controller' => 'Dashboard',
 			'action'     => 'Main',
 		));
+    */
 
 	Route::set('service-actions', 'service(/<controller>(/<action>(/<request>)))',
 		array(
@@ -46,7 +47,7 @@ if (! Route::$cache)
 			'action'     => 'profile',
 		));
 
-	Route::set('html-content', '(<request>.<type>)(<override>)',
+    Route::set('html-content', '(<request>.<type>)(<override>)',
 		array(
 			'request'       => '[a-zA-Z0-9_/\-]+',
 			'type'          => '(html|shtml)',

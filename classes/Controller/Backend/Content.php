@@ -1,9 +1,11 @@
 <?php defined('SYSPATH') or die('No direct script access.');
-/**
- * Date: 10/30/13
- * Time: 1:24 AM
- * Something meaningful about this file
- *
- */
 
-class Controller_Backend_Content extends Controller_Common_Backend_Core_Content {}
+/**
+ * Created by IntelliJ IDEA.
+ * User: mauricio
+ * Date: 6/11/2015
+ * Time: 2:49 AM
+ */
+class Controller_Backend_Content extends Controller_Backend_Core_Dashboard
+{
+}

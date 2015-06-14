@@ -7,9 +7,9 @@
 
 class View extends Kohana_View
 {
-	static public $template_name = '';
+	public static $template_name = '';
 
-	static public $buffers = array();
+	public static $buffers = array();
 
 	/**
 	 * Sets the view filename.

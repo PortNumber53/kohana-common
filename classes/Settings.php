@@ -20,7 +20,7 @@ class Settings
 		return $obj;
 	}
 
-	static public function value($array_path)
+	public static function value($array_path)
 	{
 		$value = Arr::path(self::$data, $array_path, NULL);
 		if (empty($value))
@@ -30,7 +30,7 @@ class Settings
 		return $value;
 	}
 
-	static public function get($account_id = 0)
+	public static function get($account_id = 0)
 	{
 		$settings = new Model_Settings();
 		$data = $settings->get_by_account_id($account_id);
@@ -38,7 +38,7 @@ class Settings
 		return $data;
 	}
 
-	static public function get_by_id($_id = '')
+	public static function get_by_id($_id = '')
 	{
 		$settings = new Model_Settings();
 		$data = $settings->get_by_id($_id);
@@ -46,11 +46,16 @@ class Settings
 		return $data;
 	}
 
-	static public function update(&$data, &$error)
+	public static function update(&$data, &$error)
 	{
 		$settings = new Model_Settings();
 
 		//Update settings
 		return $settings->save($data, $error);
 	}
+
+    public static function enabledFeature($featureId)
+    {
+        return false;
+    }
 }

@@ -26,7 +26,7 @@ class Content extends Abstracted
 		return $obj;
 	}
 
-	static public function get_author($_id)
+	public static function get_author($_id)
 	{
 		return self::$sample_accounts[$_id];
 	}

@@ -59,7 +59,7 @@ class Controller_Common_Core_Content extends Controller_Common_Core_Website
 
 		$request = $this->request->param('request');
 		$type = $this->request->param('type');
-		$full_request = ($request === '/') ? $request : "$request.$type";
+		$full_request = ($request === '/') ? "content/frontpage" : "$request.$type";
 
 		//Check for static content
 		if (Kohana::find_file('views', $full_request))

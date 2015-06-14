@@ -12,7 +12,7 @@ class File
 
 	protected static $data = array();
 
-	static public $class_name = 'Model_file';
+	public static $class_name = 'Model_file';
 
 	public static function factory()
 	{
@@ -22,32 +22,32 @@ class File
 		return $obj;
 	}
 
-	static public function get_by_id($_id)
+	public static function get_by_id($_id)
 	{
 		$ofile = new Model_file();
 		$result = $ofile->get_by_id($_id);
 		return $result;
 	}
 
-	static public function get_by_object_id($object_id)
+	public static function get_by_object_id($object_id)
 	{
 		$ofile = new Model_file();
 		$result = $ofile->get_by_object_id($object_id);
 		return $result;
 	}
 
-	static public function get_empty_row()
+	public static function get_empty_row()
 	{
 		$ofile = new Model_file();
 		return $ofile::$_columns;
 	}
 
-	static public function get_author($_id)
+	public static function get_author($_id)
 	{
 		return self::$sample_accounts[$_id];
 	}
 
-	static public function update(&$data, &$error)
+	public static function update(&$data, &$error)
 	{
 		if ( empty($data['_id']) )
 		{
@@ -58,7 +58,7 @@ class File
 		return $result;
 	}
 
-	static public function reset($data, &$error)
+	public static function reset($data, &$error)
 	{
 		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
 		$file = new Model_file();
@@ -80,7 +80,7 @@ class File
 		}
 	}
 
-	static public function filter($filter=array(), $sort=array(), $limit=array())
+	public static function filter($filter=array(), $sort=array(), $limit=array())
 	{
 		$ofile = new Model_file();
 		$result = $ofile->filter($filter, $sort, $limit);
@@ -88,7 +88,7 @@ class File
 		return $result;
 	}
 
-	static public function delete_by_object_id($object_id, &$error)
+	public static function delete_by_object_id($object_id, &$error)
 	{
 		$ofile = new Model_file();
 		$result = $ofile->delete_by_object_id($object_id, $error);

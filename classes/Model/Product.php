@@ -1,30 +1,44 @@
 <?php defined('SYSPATH') or die('No direct script access.');
+
 /**
  * Date: 10/27/13
  * Time: 6:01 PM
  * Something meaningful about this file
  *
  */
-
 class Model_Product extends Model_Abstract
 {
-	public static $_table_name = 'product';
-	public static $_primary_key = '_id';
+    protected static $_table_name = 'product';
+    protected static $_primary_key = 'productid';
+    protected static $_columns = array(
+        'productid' => 0,
+        'categoryid' => 0,
+        'status' => '',
+        'keywords' => '',
+        'sequence' => 999999,
+        'name' => '',
+        'name_seo' => '',
+        'code' => '',
+        'description' => '',
+        'price' => 0,
+        'featured' => 0,
+        'shipping' => 0,
+        'weight' => 0,
+        'width' => 0,
+        'height' => 0,
+        'depth' => 0,
+        'thumbnailid' => 0,
+        'quantity' => 0,
+        'created' => 0,
+        'updated' => 0,
+        'purchased' => 0,
+        'folder' => '',
+        'thumb_filepath' => '',
+        'image_filepath' => '',
+    );
 
-	public static $_columns = array(
-		'_id'           => '',
-		'object_id'     => 0,
-		'category_id'   => 0,
-		'status'        => '',
-		'name'          => '',
-		'description'   => '',
-		'created_at'    => '',
-		'modified_at'   => '',
-		'extra_json'    => '{}',
-	);
-
-	public static $_json_columns = array(
-		'tags'			=> '',
-	);
+    public static $_json_columns = array(
+        'tags' => '',
+    );
 
 }

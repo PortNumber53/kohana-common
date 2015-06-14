@@ -8,18 +8,6 @@
 
 class Model_Category extends Model_Abstract
 {
-	public static $_table_name = 'category';
-	public static $_primary_key = '_id';
-
-	public static $_columns = array(
-		'_id'           => '',
-		'object_id'     => '',
-		'name'          => '',
-		'description'   => '',
-		'status'        => '',
-		'created_at'    => '',
-		'modified_at'   => '',
-		'extra_json'    => '',
-	);
-
+    protected static $_table_name = 'category';
+    protected static $_primary_key = 'categoryid';
 }

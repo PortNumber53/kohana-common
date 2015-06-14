@@ -8,20 +8,20 @@
 
 interface iAbstractTable
 {
-	static public function get_by_id($_id, &$options=array());
+	public static function get_by_id($_id, &$options=array());
 
-	static public function get_by_object_id($object_id, &$options=array());
+	public static function get_by_object_id($object_id, &$options=array());
 
-	static public function check_permission($data, &$option=array());
+	public static function check_permission($data, &$option=array());
 
-	static public function filter($filter=array(), $sort=array(), $limit=array(), $offset=array());
+	public static function filter($filter=array(), $sort=array(), $limit=array(), $offset=array());
 
-	static public function update(&$data, &$error);
+	public static function update(&$data, &$error);
 }
 
 abstract class Core_Abstract implements iAbstractTable
 {
-	static public function get_by_id($_id, &$options=array())
+	public static function get_by_id($_id, &$options=array())
 	{
 		$class = 'Model_'.get_called_class();
 		$oTable = new $class;
@@ -37,7 +37,7 @@ abstract class Core_Abstract implements iAbstractTable
 		return $result;
 	}
 
-	static public function get_by_object_id($object_id, &$options=array())
+	public static function get_by_object_id($object_id, &$options=array())
 	{
 		$class = 'Model_'.get_called_class();
 		$oTable = new $class;
@@ -45,7 +45,7 @@ abstract class Core_Abstract implements iAbstractTable
 		return $result;
 	}
 
-	static public function check_permission($data, &$option = array())
+	public static function check_permission($data, &$option = array())
 	{
 		// TODO: Implement check_permission() method.
 
@@ -55,7 +55,7 @@ abstract class Core_Abstract implements iAbstractTable
 		return TRUE;
 	}
 
-	static public function filter($filter=array(), $sort=array(), $limit=array(), $offset=array())
+	public static function filter($filter=array(), $sort=array(), $limit=array(), $offset=array())
 	{
 		$class = 'Model_'.get_called_class();
 		$oTable = new $class;
@@ -65,7 +65,7 @@ abstract class Core_Abstract implements iAbstractTable
 	}
 
 
-	static public function update(&$data, &$error)
+	public static function update(&$data, &$error)
 	{
 		$class = 'Model_'.get_called_class();
 		$oTable = new $class;

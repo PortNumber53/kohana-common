@@ -20,19 +20,19 @@ class Gallery extends Abstracted
 		return $obj;
 	}
 
-	static public function get_empty_row()
+	public static function get_empty_row()
 	{
 		$ogallery = new Model_Gallery();
 		return $ogallery::$_columns;
 	}
 
-	static public function get_author($_id)
+	public static function get_author($_id)
 	{
 		return self::$sample_accounts[$_id];
 	}
 
 
-	static public function reset($data, &$error)
+	public static function reset($data, &$error)
 	{
 		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
 		$gallery = new Model_Gallery();
@@ -54,7 +54,7 @@ class Gallery extends Abstracted
 		}
 	}
 
-	static public function delete_by_object_id($object_id, &$error)
+	public static function delete_by_object_id($object_id, &$error)
 	{
 		$ogallery = new Model_Gallery();
 		$result = $ogallery->delete_by_object_id($object_id, $error);

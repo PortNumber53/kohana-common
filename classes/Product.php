@@ -12,7 +12,7 @@ class Product
 
 	protected static $data = array();
 
-	static public $class_name = 'Model_Product';
+	public static $class_name = 'Model_Product';
 
 	public static function factory()
 	{
@@ -22,45 +22,45 @@ class Product
 		return $obj;
 	}
 
-	static public function get_by_id($_id)
+	public static function get_by_id($_id)
 	{
 		$oProduct = new Model_Product();
 		$result = $oProduct->get_by_id($_id);
 		return $result;
 	}
 
-	static public function get_by_object_id($object_id)
+	public static function get_by_object_id($object_id)
 	{
 		$oProduct = new Model_Product();
 		$result = $oProduct->get_by_object_id($object_id);
 		return $result;
 	}
 
-	static public function get_empty_row()
+	public static function get_empty_row()
 	{
 		$oProduct = new Model_Product();
 		return $oProduct::$_columns;
 	}
 
-	static public function is_logged_in()
+	public static function isLoggedIn()
 	{
 		$cookie_data = Cookie::get('product');
 		return ! empty($cookie_data);
 	}
 
-	static public function logged_in()
+	public static function logged_in()
 	{
 		$cookie_data = json_decode(Cookie::get('product'), TRUE);
 		return self::get_by_id($cookie_data['_id']);
 	}
 
-	static public function logout()
+	public static function logout()
 	{
 		Cookie::delete('product');
 		return TRUE;
 	}
 
-	static public function profile($_id = '', $options = array())
+	public static function profile($_id = '', $options = array())
 	{
 		$cookie = json_decode(Cookie::get('product'), TRUE);
 		if (empty($_id))
@@ -87,13 +87,13 @@ class Product
 	}
 
 
-	static public function get_author($_id)
+	public static function get_author($_id)
 	{
 		return self::$sample_accounts[$_id];
 	}
 
 
-	static public function signup(&$data, &$error)
+	public static function signup(&$data, &$error)
 	{
 		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
 		$product = new Model_Product();
@@ -139,7 +139,7 @@ class Product
 		}
 	}
 
-	static public function update(&$data, &$error)
+	public static function update(&$data, &$error)
 	{
 		if ( empty($data['_id']) )
 		{
@@ -150,7 +150,7 @@ class Product
 		return $result;
 	}
 
-	static public function reset($data, &$error)
+	public static function reset($data, &$error)
 	{
 		$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'];
 		$product = new Model_Product();
@@ -172,7 +172,7 @@ class Product
 		}
 	}
 
-	static public function login($data, &$error)
+	public static function login($data, &$error)
 	{
 		// TODO: Implement _login() method.
 		$_id = '/' . DOMAINNAME . '/' . $data['username'];
@@ -218,7 +218,7 @@ class Product
 	}
 
 
-	static public function filter($filter=array(), $sort=array(), $limit=array())
+	public static function filter($filter=array(), $sort=array(), $limit=array())
 	{
 		$oProduct = new Model_Product();
 		$result = $oProduct->filter($filter, $sort, $limit);
@@ -227,7 +227,7 @@ class Product
 	}
 
 
-	static public function delete_by_object_id($object_id, &$error)
+	public static function delete_by_object_id($object_id, &$error)
 	{
 		$oProduct = new Model_Product();
 		$result = $oProduct->delete_by_object_id($object_id, $error);

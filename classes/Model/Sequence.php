@@ -16,7 +16,7 @@ class Model_Sequence extends Model_Abstract
 
 	static private $prefix = 'seq_';
 
-	static public function nextval()
+	public static function nextval()
 	{
 		$config = Kohana::$config->load('database')->as_array();
 		$database = (string) Database::instance();
