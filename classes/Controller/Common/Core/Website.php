@@ -72,7 +72,13 @@ class Controller_Common_Core_Website extends Controller_Template
 	{
         if (empty($this->template_name))
         {
-            $this->template_name = Website::get('template.selected.' . static::$template_file, 'default');
+            // Old config format template.selected is a string, not an array
+            $selected_template = Website::get('template.selected');
+            if (is_string($selected_template)) {
+                $this->template_name = $selected_template;
+            } else {
+                $this->template_name = Website::get($selected_template, static::$template_file, '__NOT_FOUND__');
+            }
         }
 
         if (! empty(static::$template_mapping))
