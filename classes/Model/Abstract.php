@@ -27,11 +27,55 @@ abstract class Model_Abstract extends Model_Core_Abstract
 
     public function get_by_id($_id, &$options = array())
     {
-        self::_add_domain($_id);
-        $cache_key = '/' . $this::$_table_name . ':row:' . $_id;
+        try {
+            //self::_add_domain($_id);
+            $cache_key = '/' . $this::$_table_name . ':row:' . $_id;
+            $row = Cache::instance('redis')->get($cache_key);
+            if (true || empty($row)) {
+                $query = DB::select()->from(static::$_table_name)->where(static::$_primary_key, '=', $_id);
+                $row = $query->execute()->as_array();
+                if (count($row) === 1) {
+                    $row = array_shift($row);
+                    $data = json_decode(empty(Arr::path($row, 'data')) ? '{}' : Arr::path($row, 'data', '{}'), true);
+                    unset($data['_id']);
+                    $row = array_merge($row, $data);
+                    unset($row['data']);
+                    $extra_json = json_decode(empty(Arr::path($row, 'extra_json')) ? '{}' : Arr::path($row,
+                        'extra_json',
+                        '{}'), true);
+                    unset($extra_json['_id']);
+                    $row = array_merge($row, $extra_json);
+                    unset($row['extra_json']);
+
+                    Cache::instance('redis')->set($cache_key, json_encode($row));
+                    return $row;
+                } else {
+                    return false;
+                }
+            } else {
+                $row = json_decode($row, true);
+            }
+            return $row;
+        } catch (Exception $e) {
+            $error = array(
+                'error' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+            );
+            return false;
+        } finally {
+            return $row;
+        }
+    }
+
+    public
+    static function _getDataById(
+        $id
+    ) {
+        $cache_key = '/' . static::$_table_name . ':row:' . $id;
         $row = Cache::instance('redis')->get($cache_key);
         if (true || empty($row)) {
-            $query = DB::select()->from($this::$_table_name)->where($this::$_primary_key, '=', $_id);
+            $query = DB::select()->from(static::$_table_name)->where(static::$_primary_key, '=', $id);
             $row = $query->execute()->as_array();
             if (count($row) == 1) {
                 $row = array_shift($row);
@@ -46,11 +90,12 @@ abstract class Model_Abstract extends Model_Core_Abstract
                 unset($row['extra_json']);
 
                 Cache::instance('redis')->set($cache_key, json_encode($row));
-                return $row;
             }
         } else {
             $row = json_decode($row, true);
         }
+
+        // Data check stuff?
         return $row;
     }
 
@@ -103,7 +148,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 
     public static function _getDataByParentId($parentId, $limit, $offset)
     {
-        // TODO: Implement _getDataByParentId() method.
+        // TODO: Implement _getDataByParentId() method._saveRow
     }
 
     public function get_by_associated_id($associated_id, &$options = array())
@@ -138,13 +183,18 @@ abstract class Model_Abstract extends Model_Core_Abstract
     public function save(&$data, &$error, &$options = array())
     {
         $this->_before_save($data);
+        $exists = false;
+
+        if (!isset($data[static::$_primary_key])) {
+            $data[static::$_primary_key] = 0;
+        }
 
         $update_filter = 'object_id';
         if (!empty($data['object_id'])) {
             $exists = $this->get_by_object_id($data['object_id']);
         }
-        if (empty($exists)) {
-            $exists = $this->get_by_id($data['_id']);
+        if (!$exists && $data[static::$_primary_key] !== 0) {
+            $exists = $this->get_by_id($data[static::$_primary_key]);
             $update_filter = '_id';
         }
         if ($exists) {
@@ -157,13 +207,11 @@ abstract class Model_Abstract extends Model_Core_Abstract
 
         ksort($data);
         try {
-            if (empty($data['object_id'])) {
-                $data['object_id'] = Model_Sequence::nextval();
-            }
-
             if ($exists) {
                 //Update
-                $query = DB::update($this::$_table_name)->set($data)->where($update_filter, '=', $data[$update_filter]);
+                $data['updated_at'] = date('Y-m-d H:i:s');
+                $query = DB::update($this::$_table_name)->set($data)->where(static::$_primary_key, '=',
+                    $data[static::$_primary_key]);
                 $result = $query->execute();
             } else {
                 //Insert
@@ -218,16 +266,47 @@ abstract class Model_Abstract extends Model_Core_Abstract
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
             );
+            print_r($error);
             return false;
         }
         return $result;
+    }
+
+
+    public static function _saveRow($data, &$error = array())
+    {
+        if (empty($data[static::$_primary_key])) {
+            $exists = false;
+        } else {
+            $cache_key = '/' . static::$_table_name . ':row:' . $data[static::$_primary_key];
+            $exists = DB::select()->from(static::$_table_name)->where(static::$_primary_key, '=',
+                $data[static::$_primary_key])->execute()->count();
+        }
+        if ($exists) {
+            //Update
+            //echo static::$_table_name.' update';
+            $query = DB::update(static::$_table_name)->set($data)->where(static::$_primary_key, '=',
+                $data[static::$_primary_key]);
+            $affected_rows = $query->execute();
+        } else {
+            //Insert
+            //echo static::$_table_name.' insert';
+            list($insert_id, $affected_rows) = DB::insert(static::$_table_name,
+                array_keys($data))->values($data)->execute();
+            $data[static::$_primary_key] = $insert_id;
+        }
+        $cache_key = '/' . static::$_table_name . ':row:' . $data[static::$_primary_key];
+        // $cache_key;
+
+        Cache::instance('redis')->delete($cache_key);
+        return $data;
     }
 
     public function filter($filter = array(), $sort = array(), $limit = array(), $offset = array())
     {
         $cache_key = '/' . $this::$_table_name . ':filter:' . json_encode($filter) . ':sort:' . json_encode($sort) . ':limit:' . json_encode($limit) . ':offset:' . json_encode($offset);
         $filter_data = Cache::instance('redis')->get($cache_key);
-        if (empty($data)) {
+        if (true || empty($data)) {
             $query = DB::select()->from($this::$_table_name);
             if (!empty($filter)) {
                 foreach ($filter as $item) {

@@ -41,34 +41,6 @@ class Model_Product extends Model_Abstract
         'tags' => '',
     );
 
-    public static function _getDataById($id)
-    {
-        $cache_key = '/' . static::$_table_name . ':row:' . $id;
-        $row = Cache::instance('redis')->get($cache_key);
-        if (true || empty($row)) {
-            $query = DB::select()->from(static::$_table_name)->where(static::$_primary_key, '=', $id);
-            $row = $query->execute()->as_array();
-            if (count($row) == 1) {
-                $row = array_shift($row);
-                $data = json_decode(empty(Arr::path($row, 'data')) ? '{}' : Arr::path($row, 'data', '{}'), true);
-                unset($data['_id']);
-                $row = array_merge($row, $data);
-                unset($row['data']);
-                $extra_json = json_decode(empty(Arr::path($row, 'extra_json')) ? '{}' : Arr::path($row, 'extra_json',
-                    '{}'), true);
-                unset($extra_json['_id']);
-                $row = array_merge($row, $extra_json);
-                unset($row['extra_json']);
-
-                Cache::instance('redis')->set($cache_key, json_encode($row));
-                return $row;
-            }
-        } else {
-            $row = json_decode($row, true);
-        }
-        return $row;
-    }
-
     public static function _getDataByParentId($parentId, $limit, $offset)
     {
         $product = new Model_Product();
@@ -82,4 +54,7 @@ class Model_Product extends Model_Abstract
 
         return $product_result;
     }
+
+
+
 }
