@@ -167,7 +167,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
         return $data;
     }
 
-    public function _before_save(&$data = array())
+    public static function _before_save(&$data = array())
     {
         // TODO: Implement _before_save() method.
         if (!empty($data['_id']) && substr($data['_id'], -1) !== '/') {
@@ -275,6 +275,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 
     public static function _saveRow($data, &$error = array())
     {
+        static::_before_save($data);
         if (empty($data[static::$_primary_key])) {
             $exists = false;
         } else {

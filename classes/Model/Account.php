@@ -26,10 +26,12 @@ class Model_Account extends Model_Abstract
 
     public static $_json_columns = array();
 
-    public function _before_save(&$data = array())
+    public static function _before_save(&$data = array())
     {
         if (!empty($data['_id'])) {
             $data['_id'] = strtolower($data['_id']);
+        } else {
+            $data['_id'] = strtolower('/domain/' . $data['username']);
         }
         if (!empty($data['email'])) {
             $data['email'] = strtolower($data['email']);

@@ -47,7 +47,8 @@ abstract class Model_Core_Abstract extends Model_Database
         );
     }
 
-    abstract public function _before_save(&$data = array());
+    public static function _before_save(&$data = array()) {
+    }
 
     abstract public function save(&$data, &$error, &$options = array());
 
