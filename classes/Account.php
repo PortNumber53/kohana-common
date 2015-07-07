@@ -22,7 +22,15 @@ class Account extends Abstracted
     public static function isLoggedIn()
     {
         $cookie_data = Cookie::get('account');
+        //var_dump($cookie_data);
         return !empty($cookie_data);
+    }
+
+    public static function isGuestUser()
+    {
+        $cookie_data = Cookie::get('account');
+        $array_data = json_decode($cookie_data, true);
+        return !empty($cookie_data) && $array_data['profile'] === 'guest';
     }
 
     public static function logged_in()
@@ -41,9 +49,7 @@ class Account extends Abstracted
     public static function profile($_id = '', $options = array())
     {
         $cookie = json_decode(Cookie::get('account'), true);
-        if (empty($_id)) {
-            $_id = '/' . DOMAINNAME . '/' . $cookie['username'] . '/';
-        }
+        //var_dump($cookie);
         $accountData = Model_Account::getAccountByUsername($cookie['username']);
 
         if (empty($options[self::REMOVE_SENSITIVE])) {
@@ -55,6 +61,8 @@ class Account extends Abstracted
                 unset($accountData['password'], $accountData['hash']);
             }
         }
+
+        //var_dump($accountData);
 
         return $accountData;
     }
@@ -68,12 +76,13 @@ class Account extends Abstracted
 
     public static function signup(&$data, &$error)
     {
-        $data['_id'] = '/' . DOMAINNAME . '/' . $data['email'] . '/';
-        $account = new Model_Account();
+        //print_r($data);
+        //$data['_id'] = '/' . DOMAINNAME . '/' . $data['email'] . '/';
+        //$account = new Model_Account();
 
-        $data['username'] = $data['email'];
-        if (($data['password1'] === $data['password2']) && (!empty($data['password1']))) {
-            $data['password'] = md5(Cookie::$salt . $data['password1']);
+        //$data['username'] = $data['email'];
+        if (!empty($data['password'])) {
+            $data['password'] = md5(Cookie::$salt . $data['password']);
         } else {
             $error = array(
                 'error' => 255,
@@ -83,7 +92,7 @@ class Account extends Abstracted
         }
 
 
-        if ($exists = self::profile($data['_id'])) {
+        if ($exists = Model_Account::getAccountByUsername($data['username'])) {
             $error = array(
                 'error' => 255,
                 'message' => __('Account exists'),
@@ -91,17 +100,50 @@ class Account extends Abstracted
             return false;
         } else {
             //Create account
-            $result = $account->save($data, $error);
+            $result = Model_Account::saveRow($data, $error);
+            //print_r($result);
+            //$result = $account->save($data, $error);
             //Force a login
             if ($result) {
                 //Only store minimal information in the cookie
                 $data_cookie = array(
-                    '_id' => $data['_id'],
+                    'accountid' => $result['accountid'],
+                    'display_name' => $data['display_name'],
                     'username' => $data['username'],
-                    'email' => $data['email'],
+                    'profile' => $data['profile'],
                 );
                 Cookie::set('account', json_encode($data_cookie));
             }
+        }
+    }
+
+    public static function createGuest()
+    {
+        // Check if we already have the guest cookie
+        //$cookie = json_decode(Cookie::get('account'), true);
+        //if (isset($cookie['profile'])) {
+        //    return true;
+        //}
+
+        $error = false;
+        $data = array(
+            'profile' => 'guest',
+            'username' => 'guest_' . str_replace('.', '', microtime(true) . mt_rand(10000, 99999)),
+            'password' => '123',
+            'display_name' => 'Guest User 123',
+        );
+        $result = Model_Account::saveRow($data, $error);
+        //print_r($result);
+        //Force a login
+        if ($result) {
+            //Only store minimal information in the cookie
+            $data_cookie = array(
+                'accountid' => $result['accountid'],
+                'display_name' => $data['display_name'],
+                'username' => $data['username'],
+                'profile' => 'guest',
+            );
+            Cookie::set('account', json_encode($data_cookie));
         }
     }
 
@@ -159,6 +201,7 @@ class Account extends Abstracted
                 //Forced login
                 $data_cookie = array(
                     '_id' => $accountData['_id'],
+                    'profile' => $accountData['profile'],
                     'username' => $accountData['username'],
                     'email' => $accountData['email'],
                     'name' => $accountData['name'],
@@ -170,10 +213,13 @@ class Account extends Abstracted
                 return true;
             } else {
                 $md5 = md5(Cookie::$salt . $data['password']);
+                //echo "$md5\n";
                 if ($md5 == $accountData['password']) {
                     //Only store minimal information in the cookie
                     $data_cookie = array(
                         'id' => $accountData['accountid'],
+                        'profile' => $accountData['profile'],
+                        'username' => $accountData['username'],
                         'username' => $accountData['username'],
                         'display_name' => $accountData['display_name'],
                     );

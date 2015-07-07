@@ -29,7 +29,7 @@ class Controller_Common_Core_Website extends Controller_Template
 
         $dotSettings = empty(WEBSITE) ? array() : json_decode(WEBSITE, true);
 
-        $settings = Kohana::$config->load('website')->as_array();
+		$settings = Kohana::$config->load('website')->as_array();
 		self::$settings = array_merge($settings, $dotSettings);
 		View::set_global('debug', Arr::path(self::$settings, 'debug', FALSE));
 
@@ -97,9 +97,12 @@ class Controller_Common_Core_Website extends Controller_Template
         $this->template = $new_template;
 		parent::before();
 
-        if (Account::factory()->isLoggedIn()) {
-            static::$account = Account::factory()->profile();
+        if (Account::factory()->isLoggedIn() && (static::$account = Account::factory()->profile())) {
+        } else {
+            static::$account = Account::factory()->createGuest();
         }
+        //echo " ACCOUNT:";
+        //var_dump(static::$account);die();
         View::bind_global('account', static::$account);
 		if ($this->auto_render)
 		{

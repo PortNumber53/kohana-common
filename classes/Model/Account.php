@@ -8,20 +8,19 @@
 class Model_Account extends Model_Abstract
 {
     public static $_table_name = 'account';
-    public static $_primary_key = '_id';
+    public static $_primary_key = 'accountid';
 
     public static $_columns = array(
-        '_id' => '',
-        'object_id' => '',
+        'accountid' => '',
         'profile' => '',
         'username' => '',
         'password' => '',
-        'name' => '',
-        'avatar' => 'picture',
-        'email' => '',
+        'display_name' => '',
         'hash' => '',
         'created_at' => '',
-        'modified_at' => '',
+        'updated_at' => '',
+        'last_login' => '',
+        'activation' => '',
         'extra_json' => '',
     );
 
@@ -45,28 +44,32 @@ class Model_Account extends Model_Abstract
     public static function getAccountByUsername($username)
     {
         $cache_key = '/' . static::$_table_name . ':row:' . $username;
+        //echo " CACHE: $cache_key<br>";
         $row = Cache::instance('redis')->get($cache_key);
-        if (empty($row))
-        {
+        if (true || empty($row)) {
             $query = DB::select()->from(static::$_table_name)->where('username', '=', $username);
             $row = $query->execute()->as_array();
-            if (count($row) == 1)
-            {
+            //print_r($row);
+            if (count($row) == 1) {
                 $row = array_shift($row);
-                $data = json_decode(empty(Arr::path($row, 'data')) ? '{}' : Arr::path($row, 'data', '{}'), TRUE);
+                $data = json_decode(empty(Arr::path($row, 'data')) ? '{}' : Arr::path($row, 'data', '{}'), true);
                 unset($data['_id']);
                 $row = array_merge($row, $data);
                 unset($row['data']);
-                $extra_json = json_decode(empty(Arr::path($row, 'extra_json')) ? '{}' : Arr::path($row, 'extra_json', '{}'), TRUE);
+                $extra_json = json_decode(empty(Arr::path($row, 'extra_json')) ? '{}' : Arr::path($row, 'extra_json',
+                    '{}'), true);
                 unset($extra_json['_id']);
                 $row = array_merge($row, $extra_json);
                 unset($row['extra_json']);
 
                 Cache::instance('redis')->set($cache_key, json_encode($row));
-                return $row;
+            } else {
+                return false;
             }
+        } else {
+            $row = json_decode($row, true);
         }
-        return json_decode($row, true);
+        return $row;
     }
 
 }
