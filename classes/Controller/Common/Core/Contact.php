@@ -12,6 +12,7 @@ class Controller_Common_Core_Contact extends Controller_Website
     public function action_form()
     {
         $main = 'contact/form';
+        $this->page_title = 'Contact';
 
 
         View::bind_global('main', $main);
@@ -20,7 +21,6 @@ class Controller_Common_Core_Contact extends Controller_Website
 
     public function action_ajax_validate()
     {
-        print_r($_POST);
         $this->output = array(
             'posted' => $_POST,
         );

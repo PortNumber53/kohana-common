@@ -22,7 +22,7 @@ class Model_Picture extends Model_Abstract
     );
     protected static $_json_columns = array();
 
-    public static function _getDataByParentId($parentId, $limit, $offset)
+    public static function _getDataByParentId($parentId, $filters=array(), $limit, $offset)
     {
         $picture = new Model_Picture();
         $sort = array(
@@ -32,7 +32,8 @@ class Model_Picture extends Model_Abstract
         $filter = array(
             array('productid', '=', $parentId,),
         );
-        $product_result = $picture->filter($filter, $sort, $limit, $offset);
+        $filter = array_merge($filters, $filter);
+        $product_result = $picture->filter($filters, $sort, $limit, $offset);
 
         return $product_result;
     }

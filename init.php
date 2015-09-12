@@ -47,7 +47,7 @@ if (! Route::$cache)
 			'action'     => 'profile',
 		));
 
-    Route::set('html-content', '(<request>.<type>)(<override>)',
+    Route::set('html-content', '(<request>.<type>(<override>))',
 		array(
 			'request'       => '[a-zA-Z0-9_/\-]+',
 			'type'          => '(html|shtml)',
@@ -64,14 +64,13 @@ if (! Route::$cache)
 			return $params; // Returning an array will replace the parameters
 		})
 		->defaults(array(
-			//'directory'  => 'Common',
 			'controller' => 'Content',
 			'action'     => 'view',
 			'request'    => '/',
 			'type'       => 'html',
 		));
 
-	Route::set('image-actions', '(<request>.<type>)',
+	Route::set('image-actions', '<request>.<type>',
 		array(
 			'request'       => '[a-zA-Z0-9_/\-]+',
 			'type'          => '(jpg|jpeg|png|gif)',
@@ -82,7 +81,7 @@ if (! Route::$cache)
 		));
 
 
-	Route::set('sitemap', 'sitemap/<name>:<page>.<format>',
+	Route::set('sitemap', 'sitemap/<name>(:<page>).<format>',
 		array(
 			'name' => '[a-zA-Z0-9_/\-]+',
 			'page' => '([0-9]+|count)',
@@ -91,7 +90,6 @@ if (! Route::$cache)
 		->defaults(array(
 			'controller' => 'Sitemap',
 			'action' => 'generate',
-			'page' => 1,
 		));
 
 	Route::set('seo-robots', 'robots.txt')

@@ -22,8 +22,8 @@ class Account extends Abstracted
     public static function isLoggedIn()
     {
         $cookie_data = Cookie::get('account');
-        //var_dump($cookie_data);
-        return !empty($cookie_data);
+        $array_data = json_decode($cookie_data, true);
+        return !empty($cookie_data) && ($array_data['profile'] !== 'guest');
     }
 
     public static function isGuestUser()
@@ -49,7 +49,6 @@ class Account extends Abstracted
     public static function profile($_id = '', $options = array())
     {
         $cookie = json_decode(Cookie::get('account'), true);
-        //var_dump($cookie);
         $accountData = Model_Account::getAccountByUsername($cookie['username']);
 
         if (empty($options[self::REMOVE_SENSITIVE])) {
@@ -61,8 +60,6 @@ class Account extends Abstracted
                 unset($accountData['password'], $accountData['hash']);
             }
         }
-
-        //var_dump($accountData);
 
         return $accountData;
     }
@@ -133,7 +130,6 @@ class Account extends Abstracted
             'display_name' => 'Guest User 123',
         );
         $result = Model_Account::saveRow($data, $error);
-        //print_r($result);
         //Force a login
         if ($result) {
             //Only store minimal information in the cookie
@@ -145,11 +141,12 @@ class Account extends Abstracted
             );
             Cookie::set('account', json_encode($data_cookie));
         }
+        return $data_cookie;
     }
 
     public static function update(&$data, &$error)
     {
-        $data['_id'] = '/' . DOMAINNAME . '/' . $data['email'] . '/';
+        $data['_id'] = '/' . DOMAINNAME . '/' . $data['username'] . '/';
         $account = new Model_Account();
 
         if (!empty($data['password'])) {
@@ -219,7 +216,6 @@ class Account extends Abstracted
                     $data_cookie = array(
                         'id' => $accountData['accountid'],
                         'profile' => $accountData['profile'],
-                        'username' => $accountData['username'],
                         'username' => $accountData['username'],
                         'display_name' => $accountData['display_name'],
                     );

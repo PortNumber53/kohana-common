@@ -68,7 +68,8 @@ class Controller_Common_Core_Content extends Controller_Common_Core_Website
 		}
 		else
 		{
-			$data = Content::get_by_id($full_request);
+            $data = Model_Content::getDataByUrl($request);
+
 			if ( ! $data)
 			{
 				throw HTTP_Exception::factory(404, 'Document not found!');

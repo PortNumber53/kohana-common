@@ -36,11 +36,13 @@ abstract class Model_Abstract extends Model_Core_Abstract
                 $row = $query->execute()->as_array();
                 if (count($row) === 1) {
                     $row = array_shift($row);
-                    $data = json_decode(empty(Arr::path($row, 'data')) ? '{}' : Arr::path($row, 'data', '{}'), true);
+                    $data = Arr::path($row, 'data');
+                    $data = json_decode(empty($data) ? '{}' : Arr::path($row, 'data', '{}'), true);
                     unset($data['_id']);
                     $row = array_merge($row, $data);
                     unset($row['data']);
-                    $extra_json = json_decode(empty(Arr::path($row, 'extra_json')) ? '{}' : Arr::path($row,
+                    $extra_json = Arr::path($row, 'extra_json');
+                    $extra_json = json_decode(empty($extra_json) ? '{}' : Arr::path($row,
                         'extra_json',
                         '{}'), true);
                     unset($extra_json['_id']);
@@ -68,10 +70,8 @@ abstract class Model_Abstract extends Model_Core_Abstract
         }
     }
 
-    public
-    static function _getDataById(
-        $id
-    ) {
+    public static function _getDataById($id)
+    {
         $cache_key = '/' . static::$_table_name . ':row:' . $id;
         $row = Cache::instance('redis')->get($cache_key);
         if (true || empty($row)) {
@@ -141,12 +141,12 @@ abstract class Model_Abstract extends Model_Core_Abstract
         return $data;
     }
 
-    public static function getDataByParentId($parentId, $limit = 0, $offset = 0)
+    public static function getDataByParentId($parentId, $filters = array(), $limit = 0, $offset = 0)
     {
-        return static::_getDataByParentId($parentId, $limit, $offset);
+        return static::_getDataByParentId($parentId, $filters, $limit, $offset);
     }
 
-    public static function _getDataByParentId($parentId, $limit, $offset)
+    public static function _getDataByParentId($parentId, $filters, $limit, $offset)
     {
         // TODO: Implement _getDataByParentId() method._saveRow
     }
@@ -216,6 +216,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
             } else {
                 //Insert
                 $result = DB::insert($this::$_table_name, array_keys($data))->values($data)->execute();
+                $data[static::$_primary_key] = $result[0];
             }
             if (!empty($data['object_id'])) {
                 $cache_key = '/' . $this::$_table_name . ':row:' . $data['_id'];
@@ -275,7 +276,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 
     public static function _saveRow($data, &$error = array())
     {
-        static::_before_save($data);
+        //static::_before_save($data);
         if (empty($data[static::$_primary_key])) {
             $exists = false;
         } else {
@@ -311,7 +312,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
             $query = DB::select()->from($this::$_table_name);
             if (!empty($filter)) {
                 foreach ($filter as $item) {
-                    $query->where($item[0], $item[1], $item[2]);
+                    $query->and_where($item[0], $item[1], $item[2]);
                 }
             }
             $pagination_query = clone $query;

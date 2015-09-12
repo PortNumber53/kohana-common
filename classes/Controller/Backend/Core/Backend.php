@@ -39,10 +39,7 @@ class Controller_Backend_Core_Backend extends Controller_Website
 
     public function before()
     {
-        View::set_global(
-            'current_path',
-            strtolower(Request::current()->directory() . '/' . Request::current()->controller() . '/' . Request::current()->action())
-        );
+
         parent::before();
     }
 }

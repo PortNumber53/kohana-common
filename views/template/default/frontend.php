@@ -13,7 +13,7 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title><?php
-		echo empty($page_title) ? '' : "$page_title - ";
+        echo (isset($page_title) && $page_title !== '') ? "$page_title - " : '';
 		echo Arr::path($site_settings, 'site_name', '{config::site_name}');
 		?></title>
 	<link rel="canonical" href="<?php echo empty($canonical_url) ? URL::site('/', TRUE) : str_replace('/.html', '/', $canonical_url); ?>" />

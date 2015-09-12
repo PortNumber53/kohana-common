@@ -6,7 +6,9 @@
  *
  */
 
-foreach ($data as $item) {
-	$line = URL::Site($item['url'], TRUE) . '/';
-	echo "$line\n";
+if (isset($url_array)) {
+    foreach ($url_array as $item) {
+        $line = URL::Site($item['url'], true);
+        echo "$line\n";
+    }
 }

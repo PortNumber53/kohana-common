@@ -11,6 +11,7 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 
     public function action_login()
     {
+        $this->page_title = 'Login';
         if ($post = $this->request->post()) {
             $error = false;
             if (Account::login($post, $error)) {
@@ -24,6 +25,7 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 
     public function action_logout()
     {
+        $this->page_title = 'Logout';
         Account::logout();
 
         $main = 'account/logout';
@@ -32,8 +34,9 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 
     public function action_signup()
     {
+        $this->page_title = 'Sign Up';
         $data = Account::factory()->profile();
-        if (!empty($data)) {
+        if (!empty($data) && $data['profile'] !== 'guest') {
             $this->redirect(URL::Site(Route::get('account-actions')->uri(array('action' => 'profile',)), true));
         }
 
@@ -46,6 +49,7 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
                 $this->redirect(URL::Site(Route::get('account-actions')->uri(array('action' => 'profile',)), true));
             }
         }
+        View::bind_global('data', $data);
 
         $main = 'account/signup';
         View::bind_global('main', $main);
@@ -53,12 +57,15 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 
     public function action_ajax_signup()
     {
+        $data = Account::factory()->profile();
+
         $this->output = array(
             'posted' => $_POST,
         );
         $error = false;
 
         $signup_data = array(
+            'accountid'=> Arr::path($data, 'accountid', 0),
             'profile' => 'user',
             'username' => filter_var($_POST['username'], FILTER_SANITIZE_EMAIL),
             'password' => filter_var($_POST['password'], FILTER_SANITIZE_STRING),
@@ -116,6 +123,7 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 
     public function action_profile()
     {
+        $this->page_title = 'Profile';
         if ($post = $this->request->post()) {
             if ($result = Account::update($post, $error)) {
                 $this->redirect(URL::Site(Route::get('account-actions')->uri(array('action' => 'profile',)), true));
@@ -130,26 +138,23 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 
     public function action_ajax_profile()
     {
-        $this->output = array(
-            'posted' => $_POST,
-        );
         $error = false;
 
-        $logged_account_data = Account::logged_in();
+        $logged_account_data = Account::factory()->profile();
         $data = array(
-            'username' => $logged_account_data['username'],
-            'email' => $_POST['email'],
+            'accountid' => $logged_account_data['accountid'],
+            'username' => filter_var($_POST['username'], FILTER_SANITIZE_STRING),
         );
-        if (!empty($_POST['name'])) {
-            $data['name'] = $_POST['name'];
+        if (!empty($_POST['display_name'])) {
+            $data['display_name'] = filter_var($_POST['display_name'], FILTER_SANITIZE_STRING);
         }
         if (empty($_POST['profile_avatar'])) {
             unset($_POST['profile_avatar']);
         }
         if (!empty($_POST['password1']) && !empty($_POST['password2'])) {
-            $data['password'] = $_POST['password1'];
+            $data['password'] = filter_var($_POST['password1'], FILTER_SANITIZE_STRING);
         }
-        $data = array_merge($data, $_POST);
+        //$data = array_merge($data, $_POST);
         $result = Account::update($data, $error);
 
         if ($error === false) {
@@ -165,6 +170,7 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 
     public function action_reset()
     {
+        $this->page_title = 'Reset Password';
         if ($post = $this->request->post()) {
             if (Account::reset($post, $error)) {
                 $this->redirect(URL::Site(Route::get('default')->uri(array()), true));
@@ -182,12 +188,14 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 
     public function action_forgot()
     {
+        $this->page_title = 'Forgot Password';
         $main = 'account/forgot';
         View::bind_global('main', $main);
     }
 
     public function action_settings()
     {
+        $this->page_title = 'Account Settings';
         $request = $this->request->param('request');
 
         $user_data = Account::factory()->profile();

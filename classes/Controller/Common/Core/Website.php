@@ -17,23 +17,36 @@ class Controller_Common_Core_Website extends Controller_Template
     public $auth_actions = array();
 
     public $output = null;
+    public $json = null;
     public $canonical_url = null;
 
+    protected $_cookie = null;
+
     public static $settings = array();
+    protected $frontend_cookie = null;
+    protected $backend_cookie = null;
 
     public static $account = null;
+
+    protected $_per_page = 9;
+
+    protected $page_title = '';
+
 
     public function __construct(Request $request, Response $response)
     {
         $session = Session::instance();
 
-        $dotSettings = empty(WEBSITE) ? array() : json_decode(WEBSITE, true);
+        $dotSettings = defined(WEBSITE) ? array() : json_decode(WEBSITE, true);
 
         $settings = Kohana::$config->load('website')->as_array();
         self::$settings = array_merge($settings, $dotSettings);
         View::set_global('debug', Arr::path(self::$settings, 'debug', false));
 
         setlocale(LC_MONETARY, 'en_US');
+
+        //$this->frontend_cookie = json_decode(Cookie::get(Constants::FE_COOKIE), true);
+        //$this->backend_cookie = json_decode(Cookie::get(Constants::BE_COOKIE), true);
 
         parent::__construct($request, $response);
 
@@ -55,11 +68,11 @@ class Controller_Common_Core_Website extends Controller_Template
             //$this->template_file = 'backend';
         };
 
-        $this->json = json_decode(file_get_contents('php://input'), true);
         if (strpos(strtolower($this->request->headers('accept')),
                 'application/json') !== false || $this->request->is_ajax() || !empty($this->json)
             || (strtolower($this->request->controller()) == 'upload' && strtolower($this->request->action()) == 'receive')
         ) {
+            $this->json = json_decode(file_get_contents('php://input'), true);
             $this->auto_render = false;
             $this->request->action('ajax_' . $this->request->action());
             $this->response->headers('content-type', 'application/json');
@@ -69,11 +82,12 @@ class Controller_Common_Core_Website extends Controller_Template
 
     public function before()
     {
+        $this->_cookie = json_decode(Cookie::get('site'), true);
+
         if (empty($this->template_name)) {
             // Old config format template.selected is a string, not an array
             $selected_template = Website::get('template.selected');
             if (is_string($selected_template)) {
-                echo "1";
                 $this->template_name = $selected_template;
             } else {
                 $this->template_name = Website::get('template.selected.' . static::$template_file, '__NOT_FOUND__');
@@ -98,12 +112,38 @@ class Controller_Common_Core_Website extends Controller_Template
         $this->template = $new_template;
         parent::before();
 
-        if (Account::factory()->isLoggedIn() && (static::$account = Account::factory()->profile())) {
+
+
+
+
+        if ((Account::factory()->isLoggedIn() || Account::factory()->isGuestUser()) && (static::$account = Account::factory()->profile())) {
         } else {
             static::$account = Account::factory()->createGuest();
         }
         View::bind_global('account', static::$account);
+        View::bind_global('cookie_data', $this->_cookie);
+
+        View::set_global(
+            'current_path',
+            strtolower(Request::current()->directory() . '/' . Request::current()->controller() . '/' . Request::current()->action())
+        );
+        View::set_global(
+            'current_url',
+            URL::site(Request::detect_uri(), true) . URL::query()
+        );
+
         if ($this->auto_render) {
+            $per_page_array = array(
+                9 => '9 per page',
+                15 => '15 per page',
+                21 => '21 per page',
+                30 => '30 per page',
+            );
+            View::bind_global('per_page_array', $per_page_array);
+            View::bind_global('per_page', $this->_per_page);
+
+            View::bind_global('page_title', $this->page_title);
+
             $current_url = URL::Site(Request::detect_uri(), true);
             $menu = array();
             $menu['content_url'] = URL::Site(Route::get('default')->uri(array(
@@ -148,12 +188,21 @@ class Controller_Common_Core_Website extends Controller_Template
 
     public function after()
     {
+        View::bind_global('site_settings', self::$settings);
         if ($this->auto_render) {
             View::bind_global('canonical_url', $this->canonical_url);
             if (empty($this->canonical_url)) {
                 $this->canonical_url = URL::site('/', true);
             }
             View::set_global('current_url', URL::site(Request::factory()->current()->uri(), true));
+
+            $route_info = array_merge(Request::factory()->current()->param(),
+                array(
+                'directory' => Request::factory()->current()->directory(),
+                'controller' => Request::factory()->current()->controller(),
+                'action' => Request::factory()->current()->action(),
+            ));
+            View::set_global('route_info', $route_info);
 
             $styles = Website::template('style', array());
             $scripts = Website::template('script', array());
@@ -164,7 +213,6 @@ class Controller_Common_Core_Website extends Controller_Template
             View::set_global('styles', array_merge($this->template->styles, $styles, $custom_styles));
             View::set_global('scripts', array_keys(array_merge($this->template->scripts, $scripts, $custom_scripts)));
 
-            View::bind_global('site_settings', self::$settings);
         } else {
             $content_type = Arr::path($this->response->headers(), 'content-type', 'text/html');
             switch ($content_type) {
@@ -176,6 +224,7 @@ class Controller_Common_Core_Website extends Controller_Template
             }
 
         }
+        Cookie::set('site', json_encode($this->_cookie));
         parent::after();
     }
 

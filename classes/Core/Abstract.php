@@ -33,6 +33,7 @@ abstract class Core_Abstract implements iAbstractTable
 		{
 			$_id = '/' . DOMAINNAME . $_id;
 		}
+        echo "$class ID: $_id";
 		$result = $oTable->get_by_id($_id);
 		return $result;
 	}

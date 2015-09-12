@@ -8,10 +8,10 @@
 class Model_Content extends Model_Abstract
 {
 	public static $_table_name = 'content';
-	public static $_primary_key = '_id';
+	public static $_primary_key = 'contentid';
 
 	public static $_columns = array(
-		'_id'          => '',
+		'contentid'    => '',
 		'object_id'    => 0,
 		'author_id'    => '',
 		'url'          => '',
@@ -22,7 +22,25 @@ class Model_Content extends Model_Abstract
 		'extra_json'   => '',
 	);
 
-	public function get_by_account_id($account_id)
+    public static function getDataByUrl($url)
+    {
+        $content = new Model_Content();
+        $limit = 1;
+        $offset = 0;
+        $sort = array();
+        $filters = array(
+            array('title_seo', '=', $url,),
+        );
+        $product_result = $content->filter($filters, $sort, $limit, $offset);
+
+        if (count($product_result['rows']) == 1) {
+            return array_pop($product_result['rows']);
+        } else {
+            return false;
+        }
+    }
+
+    public function get_by_account_id($account_id)
 	{
 		$query = DB::select()->from(self::$_table_name)->where('account_id', '=', $account_id);
 		$result_set = $query->execute()->as_array();

@@ -89,14 +89,14 @@ class Controller_Common_Core_Blog extends Controller_Common_Core_Website
 				}
 			}
 
-			$pagination = Pagination::factory(array(
+			/*$pagination = Pagination::factory(array(
 				'current_page'      => array('source' => 'route', 'key' => 'page'),
 				'total_items'       => $filtered_gallery['count'],
 				'items_per_page'    => $limit,
 				'view'              => 'pagination/basic',
 				'auto_hide'         => FALSE,
-			));
-			$page_links = $pagination->render();
+			));*/
+			$page_links = 'REPLACE THIS';//$pagination->render();
 			View::bind_global('page_links', $page_links);
 
 			//$gallery_data = array_shift($gallery_data);

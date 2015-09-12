@@ -31,12 +31,12 @@ abstract class Model_Core_Abstract extends Model_Database
 
     abstract public function get_by_object_id($object_id, &$options = array());
 
-    public static function getDataByParentId($parentId, $limit = 0, $offset = 0)
+    public static function getDataByParentId($parentId, $filters=array(), $limit = 0, $offset = 0)
     {
-        return static::_getDataByParentId($parentId, $limit, $offset);
+        return static::_getDataByParentId($parentId, $filters, $limit, $offset);
     }
 
-    public static function _getDataByParentId($parentId, $limit, $offset)
+    public static function _getDataByParentId($parentId, $filters, $limit, $offset)
     {
         return array(
             'rows' => array(),

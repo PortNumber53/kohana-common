@@ -41,7 +41,7 @@ class Model_Product extends Model_Abstract
         'tags' => '',
     );
 
-    public static function _getDataByParentId($parentId, $limit, $offset)
+    public static function _getDataByParentId($parentId, $filters=array(), $limit, $offset)
     {
         $product = new Model_Product();
         $sort = array(
@@ -50,11 +50,10 @@ class Model_Product extends Model_Abstract
         $filter = array(
             array('categoryid', '=', $parentId,),
         );
-        $product_result = $product->filter($filter, $sort, $limit, $offset);
+        $filters = array_merge($filters, $filter);
+        $product_result = $product->filter($filters, $sort, $limit, $offset);
 
         return $product_result;
     }
-
-
 
 }
