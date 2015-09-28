@@ -8,10 +8,10 @@
 class Model_Account extends Model_Abstract
 {
     public static $_table_name = 'account';
-    public static $_primary_key = 'accountid';
+    public static $_primary_key = '_id';
 
     public static $_columns = array(
-        'accountid' => '',
+        '_id' => '',
         'profile' => '',
         'username' => '',
         'password' => '',

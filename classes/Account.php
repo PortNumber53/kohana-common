@@ -123,18 +123,21 @@ class Account extends Abstracted
         //}
 
         $error = false;
+        $username = 'guest_' . str_replace('.', '', microtime(true) . mt_rand(10000, 99999));
         $data = array(
+            '_id' => '/' . DOMAINNAME . '/' . $username,
             'profile' => 'guest',
-            'username' => 'guest_' . str_replace('.', '', microtime(true) . mt_rand(10000, 99999)),
+            'username' => $username,
             'password' => '123',
-            'display_name' => 'Guest User 123',
+            'display_name' => $username,
+            'name' => $username,
         );
         $result = Model_Account::saveRow($data, $error);
         //Force a login
         if ($result) {
             //Only store minimal information in the cookie
             $data_cookie = array(
-                'accountid' => $result['accountid'],
+                '_id' => $result['_id'],
                 'display_name' => $data['display_name'],
                 'username' => $data['username'],
                 'profile' => 'guest',
