@@ -130,7 +130,6 @@ class Account extends Abstracted
             'username' => $username,
             'password' => '123',
             'display_name' => $username,
-            'name' => $username,
         );
         $result = Model_Account::saveRow($data, $error);
         //Force a login
