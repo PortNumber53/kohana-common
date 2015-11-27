@@ -42,9 +42,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
                     $row = array_merge($row, $data);
                     unset($row['data']);
                     $extra_json = Arr::path($row, 'extra_json');
-                    $extra_json = json_decode(empty($extra_json) ? '{}' : Arr::path($row,
-                        'extra_json',
-                        '{}'), true);
+                    $extra_json = json_decode(empty($extra_json) ? '{}' : Arr::path($row, 'extra_json', '{}'), true);
                     unset($extra_json['_id']);
                     $row = array_merge($row, $extra_json);
                     unset($row['extra_json']);
@@ -185,17 +183,36 @@ abstract class Model_Abstract extends Model_Core_Abstract
         $this->_before_save($data);
         $exists = false;
 
-        if (!isset($data[static::$_primary_key])) {
-            $data[static::$_primary_key] = 0;
+        if (is_array(static::$_primary_key)) {
+            foreach (static::$_primary_key as $key) {
+                if (!isset($data[$key])) {
+                    $data[$key] = 0;
+                }
+            }
+        } else {
+            if (!isset($data[static::$_primary_key])) {
+                $data[static::$_primary_key] = 0;
+            }
         }
 
         $update_filter = 'object_id';
         if (!empty($data['object_id'])) {
             $exists = $this->get_by_object_id($data['object_id']);
         }
-        if (!$exists && $data[static::$_primary_key] !== 0) {
-            $exists = $this->get_by_id($data[static::$_primary_key]);
-            $update_filter = '_id';
+        if (!$exists) {
+            if (is_array(static::$_primary_key)) {
+                $filter = array();
+                foreach (static::$_primary_key as $key) {
+                    $filter[] = array($key, '=', $data[$key]);
+                }
+                $tmp = $this->filter($filter);
+                $exists = ($tmp['count'] > 0) ? array_shift($tmp['rows']) : array();
+            } else {
+                if ($data[static::$_primary_key] !== 0) {
+                    $exists = $this->get_by_id($data[static::$_primary_key]);
+                    $update_filter = '_id';
+                }
+            }
         }
         if ($exists) {
             $data = array_merge($exists, $data);
@@ -203,20 +220,31 @@ abstract class Model_Abstract extends Model_Core_Abstract
 
         $json_data = array_diff_key($data, $this::$_columns);
         $data = array_intersect_key($data, $this::$_columns);
-        $data['extra_json'] = json_encode($json_data);
+        if (empty($options['no_extra_json'])) {
+            $data['extra_json'] = json_encode($json_data);
+        }
 
         ksort($data);
         try {
             if ($exists) {
                 //Update
                 $data['updated_at'] = date('Y-m-d H:i:s');
-                $query = DB::update($this::$_table_name)->set($data)->where(static::$_primary_key, '=',
-                    $data[static::$_primary_key]);
+                if (is_array(static::$_primary_key)) {
+                    $query = DB::update($this::$_table_name)->set($data);
+                    foreach (static::$_primary_key as $loop_key) {
+                        $query->where($loop_key, '=', $data[$loop_key]);
+                    }
+                } else {
+                    $query = DB::update($this::$_table_name)->set($data)->where(static::$_primary_key, '=',
+                        $data[static::$_primary_key]);
+                }
                 $result = $query->execute();
             } else {
                 //Insert
                 $result = DB::insert($this::$_table_name, array_keys($data))->values($data)->execute();
-                $data[static::$_primary_key] = $result[0];
+                if (!is_array(static::$_primary_key)) {
+                    $data[static::$_primary_key] = $result[0];
+                }
             }
             if (!empty($data['object_id'])) {
                 $cache_key = '/' . $this::$_table_name . ':row:' . $data['_id'];
@@ -266,6 +294,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
                 'error' => $e->getCode(),
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
+                'file' => __FILE__,
             );
             print_r($error);
             return false;
@@ -333,7 +362,16 @@ abstract class Model_Abstract extends Model_Core_Abstract
             $return_data = array();
             $result = $query->execute()->as_array();
             foreach ($result as $row) {
-                $return_data[$row[static::$_primary_key]] = $row;
+                if (is_array(static::$_primary_key)) {
+                    $key = '';
+                    foreach (static::$_primary_key as $loop_key) {
+                        $key .= $row[$loop_key] . ',';
+                    }
+                    $key = substr($key, 0, -1);
+                    $return_data[$key] = $row;
+                } else {
+                    $return_data[$row[static::$_primary_key]] = $row;
+                }
             }
 
             $filter_data = array(
