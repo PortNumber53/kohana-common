@@ -303,7 +303,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
     }
 
 
-    public static function _saveRow($data, &$error = array())
+    public static function _saveRow($data, &$error = array(), $options = array())
     {
         //static::_before_save($data);
         if (empty($data[static::$_primary_key])) {
@@ -313,6 +313,13 @@ abstract class Model_Abstract extends Model_Core_Abstract
             $exists = DB::select()->from(static::$_table_name)->where(static::$_primary_key, '=',
                 $data[static::$_primary_key])->execute()->count();
         }
+
+        $json_data = array_diff_key($data, static::$_columns);
+        $data = array_intersect_key($data, static::$_columns);
+        if (empty($options['no_extra_json'])) {
+            $data['extra_json'] = json_encode($json_data);
+        }
+
         if ($exists) {
             //Update
             //echo static::$_table_name.' update';

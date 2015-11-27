@@ -128,7 +128,7 @@ class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
             'POST' => $_POST,
         );
 
-        $productId = (int)$this->request->post('id');
+        $product_id = (int)$this->request->post('id');
         $categoryId = (int)$this->request->post('categoryId');
         $code = filter_var($this->request->post('code'), FILTER_SANITIZE_STRING);
         $name = filter_var($this->request->post('name'), FILTER_SANITIZE_STRING);
@@ -137,37 +137,53 @@ class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
         $description = filter_var($this->request->post('description'), FILTER_SANITIZE_STRING);
         $thumbnailid = filter_var($this->request->post('thumbnailId'), FILTER_SANITIZE_STRING);
 
-        $data = array();
+        $current_data = array();
 
-        $product = new Model_Product();
-        $data['updated'] = date('Y-m-d H:i:s', time());
+        //$model_product = new Model_Product();
+        $current_data = Model_Product::getDataById($product_id);
+        $current_data['updated'] = date('Y-m-d H:i:s', time());
         if (!empty($categoryId)) {
-            $data['categoryid'] = $categoryId;
+            $current_data['categoryid'] = $categoryId;
         }
         if (!empty($code)) {
-            $data['code'] = $code;
+            $current_data['code'] = $code;
         }
         if (!empty($name)) {
-            $data['name'] = $name;
+            $current_data['name'] = $name;
         }
         if (!empty($status)) {
-            $data['status'] = $status;
+            $current_data['status'] = $status;
         }
         if (!empty($price)) {
-            $data['price'] = $price;
+            $current_data['price'] = $price;
         }
         if (!empty($description)) {
-            $data['description'] = $description;
+            $current_data['description'] = $description;
         }
         if (!empty($thumbnailid)) {
-            $data['thumbnailid'] = $thumbnailid;
+            $current_data['thumbnailid'] = $thumbnailid;
         }
-        $data['productid'] = $productId;
+        //$data['productid'] = $product_id;
+        if ($current_data['pending_changes']) {
+            if (isset($current_data['new_name'])) {
+                $current_data['name'] = $current_data['new_name'];
+                unset($current_data['new_name']);
+            }
+            if (isset($current_data['new_description'])) {
+                $current_data['description'] = $current_data['new_description'];
+                unset($current_data['new_description']);
+            }
+            if (isset($current_data['new_price'])) {
+                $current_data['price'] = $current_data['new_price'];
+                unset($current_data['new_price']);
+            }
+        }
 
-        $result = Model_Product::saveRow($data, $errors);
+        $result = Model_Product::saveRow($current_data, $errors);
 
-        $this->output['newData'] = $data;
-        $this->output['productId'] = $productId;
+        $this->output['newData'] = $current_data;
+        $this->output['productId'] = $product_id;
+        $this->output['_DEBUG.result'] = $result;
     }
 
 
