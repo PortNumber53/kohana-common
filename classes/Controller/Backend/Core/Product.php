@@ -163,6 +163,7 @@ class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
         }
         //$data['productid'] = $product_id;
         if ($current_data['pending_changes']) {
+            unset($current_data['new_code']);
             if (isset($current_data['new_name'])) {
                 $current_data['name'] = $current_data['new_name'];
                 unset($current_data['new_name']);
@@ -174,6 +175,15 @@ class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
             if (isset($current_data['new_price'])) {
                 $current_data['price'] = $current_data['new_price'];
                 unset($current_data['new_price']);
+            }
+            $no_more_pending_changes = true;
+            foreach ($current_data as $key=>$value) {
+                if (substr($key, 0, 4) == 'new_') {
+                    $no_more_pending_changes = false;
+                }
+            }
+            if ($no_more_pending_changes) {
+                $current_data['pending_changes'] = 0;
             }
         }
 

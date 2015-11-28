@@ -101,7 +101,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
     {
         $cache_key = '/' . static::$_table_name . ':row:' . $seoName;
         $data = Cache::instance('redis')->get($cache_key);
-        if (empty($data)) {
+        if (true || empty($data)) {
             $query = DB::select()->from(static::$_table_name)->where('name_seo', '=', $seoName);
             $data = $query->execute()->as_array();
             if (count($data) == 1) {

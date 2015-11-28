@@ -271,13 +271,6 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $this->_cookie = json_decode(Cookie::get('cart'), true);
 
 
-        $picture = new Model_Picture();
-        $sort = array();
-        //$limit = 0;
-        //$offset = 0;
-        $filter = array(//array('status', '=', 'available'),
-        );
-        $picture_array = $picture->filter($filter, $sort, $limit, $offset);
         // View::bind_global('picture_array', $picture_array);
 
         $pattern = '/item_([0-9]+)([-])([a-z0-9]+)/';
@@ -316,10 +309,21 @@ class Controller_Common_Core_Shopping extends Controller_Website
                 'limit' => $product_array['limit'],
             );
         }
+        $picture = new Model_Picture();
+        $sort = array();
+        //$limit = 0;
+        //$offset = 0;
 
         if (isset($product_array['rows'])) {
+            $filter_picture = array(
+            );
+            $picture_array = $picture->filter($filter_picture, $sort, $limit, $offset);
             $main = 'shopping/browse';
         } else {
+            $filter_picture = array(
+                array('productid', '=', $productId),
+            );
+            $picture_array = $picture->filter($filter_picture, $sort, $limit, $offset);
             $main = 'shopping/product_detail';
         }
         View::bind_global('categoryData', $categoryData);
