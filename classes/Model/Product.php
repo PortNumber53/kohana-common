@@ -14,6 +14,7 @@ class Model_Product extends Model_Abstract
         'productid' => 0,
         'categoryid' => 0,
         'status' => '',
+        'pending_changes' => 0,
         'keywords' => '',
         'sequence' => 999999,
         'name' => '',

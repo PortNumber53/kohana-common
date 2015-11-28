@@ -33,8 +33,7 @@ class Model_Picture extends Model_Abstract
             array('productid', '=', $parentId,),
         );
         $filter = array_merge($filters, $filter);
-        $product_result = $picture->filter($filters, $sort, $limit, $offset);
-
+        $product_result = $picture->filter($filter, $sort, $limit, $offset);
         return $product_result;
     }
 }

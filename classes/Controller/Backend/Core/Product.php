@@ -1,11 +1,11 @@
 <?php
+
 /**
  * Created by IntelliJ IDEA.
  * User: mauricio
  * Date: 7/11/2015
  * Time: 2:07 AM
  */
-
 class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
 {
 
@@ -19,27 +19,25 @@ class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
         if (preg_match($pattern, $request, $matches)) {
             $productId = $matches[1];
             $product_array = Model_Product::getDataById($productId);
-            $product_array['categoryid'] = (int) $product_array['categoryid'];
+            $product_array['categoryid'] = (int)$product_array['categoryid'];
             $pictures = Model_Picture::getDataByParentId($product_array['productid']);
             $product_array['pictures'] = empty($pictures) ? array() : $pictures['rows'];
         }
 
 
-
         // Get categories
-        $category        = new Model_Category();
-        $sort           = array(
-            'name'   => 'asc',
+        $category = new Model_Category();
+        $sort = array(
+            'name' => 'asc',
         );
-        $limit          = 0;
-        $offset         = 0;
-        $filter         = array();
+        $limit = 0;
+        $offset = 0;
+        $filter = array();
         $category_array = $category->filter($filter, $sort, $limit, $offset);
         View::bind_global('category_array', $category_array);
 
 
         View::bind_global('product_array', $product_array);
-        View::bind_global('picture_array', $picture_array);
         View::bind_global('main', $main);
     }
 
@@ -52,38 +50,38 @@ class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
         $params = explode(':', $request);
 
         // Get categories
-        $category        = new Model_Category();
-        $sort           = array(
-            'name'   => 'asc',
+        $category = new Model_Category();
+        $sort = array(
+            'name' => 'asc',
         );
-        $limit          = 0;
-        $offset         = 0;
-        $filter         = array();
+        $limit = 0;
+        $offset = 0;
+        $filter = array();
         $category_result = $category->filter($filter, $sort, $limit, $offset);
         View::bind_global('category_data', $category_result);
 
         $page = 1;
         if (isset($params[0]) && $params[0] == 'page') {
-            $page = (int) $params[1];
+            $page = (int)$params[1];
         }
 
-        $product        = new Model_Product();
-        $sort           = array(
+        $product = new Model_Product();
+        $sort = array(
             'status' => 'asc',
-            'name'   => 'asc',
+            'name' => 'asc',
         );
-        $limit          = 25;
-        $offset         = ($page-1) * $limit;
-        $filter         = array();
-        $product_array  = $product->filter($filter, $sort, $limit, $offset);
+        $limit = 25;
+        $offset = ($page - 1) * $limit;
+        $filter = array();
+        $product_array = $product->filter($filter, $sort, $limit, $offset);
         View::bind_global('product_array', $product_array);
 
 
-        $picture        = new Model_Picture();
-        $sort           = array();
-        $limit          = 0;
-        $offset         = 0;
-        $filter         = array(//array('status', '=', 'import'),
+        $picture = new Model_Picture();
+        $sort = array();
+        $limit = 0;
+        $offset = 0;
+        $filter = array(//array('status', '=', 'import'),
         );
         $picture_array = $picture->filter($filter, $sort, $limit, $offset);
         View::bind_global('picture_array', $picture_array);
@@ -103,7 +101,7 @@ class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
         $error = array();
         $data = array();
 
-        $data['productid'] = (int) $this->request->post('productId');
+        $data['productid'] = (int)$this->request->post('productId');
 
         if (!empty($this->request->post('newStatus'))) {
             $data['status'] = filter_var($this->request->post('newStatus'), FILTER_SANITIZE_STRING);
@@ -112,7 +110,7 @@ class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
         $product = new Model_Product();
         $data['updated'] = date('Y-m-d H:i:s', time());
 
-        if (! empty($data)) {
+        if (!empty($data)) {
             $product->save($data, $error);
             $data['error'] = $error;
         }
@@ -128,14 +126,14 @@ class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
             'POST' => $_POST,
         );
 
-        $product_id = (int)$this->request->post('id');
-        $categoryId = (int)$this->request->post('categoryId');
-        $code = filter_var($this->request->post('code'), FILTER_SANITIZE_STRING);
-        $name = filter_var($this->request->post('name'), FILTER_SANITIZE_STRING);
-        $status = filter_var($this->request->post('status'), FILTER_SANITIZE_STRING);
-        $price = filter_var($this->request->post('price'), FILTER_SANITIZE_STRING);
-        $description = filter_var($this->request->post('description'), FILTER_SANITIZE_STRING);
-        $thumbnailid = filter_var($this->request->post('thumbnailId'), FILTER_SANITIZE_STRING);
+        $product_id = (int)Arr::path($this->json, 'id', $this->request->post('id'));
+        $categoryId = (int)Arr::path($this->json, 'categoryId', $this->request->post('categoryId'));
+        $code = filter_var(Arr::path($this->json, 'code', $this->request->post('code')), FILTER_SANITIZE_STRING);
+        $name = filter_var(Arr::path($this->json, 'name', $this->request->post('name')), FILTER_SANITIZE_STRING);
+        $status = filter_var(Arr::path($this->json, 'status', $this->request->post('status')), FILTER_SANITIZE_STRING);
+        $price = filter_var(Arr::path($this->json, 'price', $this->request->post('price')), FILTER_SANITIZE_STRING);
+        $description = filter_var(Arr::path($this->json, 'description', $this->request->post('description')), FILTER_SANITIZE_STRING);
+        $thumbnailid = filter_var(Arr::path($this->json, 'thumbnailId', $this->request->post('thumbnailId')), FILTER_SANITIZE_NUMBER_INT);
 
         $current_data = array();
 
@@ -185,7 +183,6 @@ class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
         $this->output['productId'] = $product_id;
         $this->output['_DEBUG.result'] = $result;
     }
-
 
 
     public function action_ajax_save()
