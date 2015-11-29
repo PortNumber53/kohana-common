@@ -1,14 +1,15 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Created by IntelliJ IDEA.
- * User: mauricio
- * Date: 6/11/2015
- * Time: 1:09 AM
+ * Class Controller_Backend_Core_Backend
  */
 class Controller_Backend_Core_Backend extends Controller_Website
 {
     public static $template_file = 'backend';
+
+    public $auth_required = 'admin';
+    public $auth_actions = array();
+
 
     public function __construct(Request $request, Response $response)
     {
@@ -37,9 +38,4 @@ class Controller_Backend_Core_Backend extends Controller_Website
         }
     }
 
-    public function before()
-    {
-
-        parent::before();
-    }
 }

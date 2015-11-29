@@ -1,13 +1,12 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Date: 5/14/13
- * Time: 3:19 AM
- *
+ * Class Account
  */
 class Account extends Abstracted
 {
     const REMOVE_SENSITIVE = 'REMOVE_SENSITIVE';
+    const STORAGE_COOKIE_ONLY = 'cookie_only';
 
     protected static $data = array();
 
@@ -83,11 +82,25 @@ class Account extends Abstracted
         } else {
             $error = array(
                 'error' => 255,
-                'message' => __('Bad password'),
+                'message' => __('Password is required'),
+            );
+            return false;
+        }
+        if (empty($data['username'])) {
+            $error = array(
+                'error' => 255,
+                'message' => __('Username is required'),
             );
             return false;
         }
 
+        if (empty($data['display_name'])) {
+            $error = array(
+                'error' => 255,
+                'message' => __('Display Name is required'),
+            );
+            return false;
+        }
 
         if ($exists = Model_Account::getAccountByUsername($data['username'])) {
             $error = array(
@@ -98,52 +111,47 @@ class Account extends Abstracted
         } else {
             //Create account
             $result = Model_Account::saveRow($data, $error);
-            //print_r($result);
-            //$result = $account->save($data, $error);
+
             //Force a login
             if ($result) {
                 //Only store minimal information in the cookie
                 $data_cookie = array(
-                    'accountid' => $result['accountid'],
+                    '_id' => $result['_id'],
                     'display_name' => $data['display_name'],
                     'username' => $data['username'],
                     'profile' => $data['profile'],
                 );
                 Cookie::set('account', json_encode($data_cookie));
             }
+            return $result;
         }
+    }
+
+    public static function getLoggedAccount()
+    {
+        $cookie = json_decode(Cookie::get('account'), true);
+
+        if (null === $cookie) {
+            $cookie = static::createGuest();
+        }
+
+        return $cookie;
     }
 
     public static function createGuest()
     {
-        // Check if we already have the guest cookie
-        //$cookie = json_decode(Cookie::get('account'), true);
-        //if (isset($cookie['profile'])) {
-        //    return true;
-        //}
-
-        $error = false;
         $username = 'guest_' . str_replace('.', '', microtime(true) . mt_rand(10000, 99999));
         $data = array(
             '_id' => '/' . DOMAINNAME . '/' . $username,
             'profile' => 'guest',
             'username' => $username,
-            'password' => '123',
             'display_name' => $username,
+            'storage' => Account::STORAGE_COOKIE_ONLY,
         );
-        $result = Model_Account::saveRow($data, $error);
         //Force a login
-        if ($result) {
-            //Only store minimal information in the cookie
-            $data_cookie = array(
-                '_id' => $result['_id'],
-                'display_name' => $data['display_name'],
-                'username' => $data['username'],
-                'profile' => 'guest',
-            );
-            Cookie::set('account', json_encode($data_cookie));
-        }
-        return $data_cookie;
+        Cookie::set('account', json_encode($data));
+
+        return $data;
     }
 
     public static function update(&$data, &$error)

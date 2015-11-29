@@ -1,14 +1,10 @@
 <?php
 
 /**
- * Created by IntelliJ IDEA.
- * User: mauricio
- * Date: 7/11/2015
- * Time: 2:07 AM
+ * Class Controller_Backend_Core_Product
  */
 class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
 {
-
     public function action_edit()
     {
         $main = 'backend/product/edit';

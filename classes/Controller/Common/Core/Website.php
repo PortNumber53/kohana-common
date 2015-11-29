@@ -59,6 +59,11 @@ class Controller_Common_Core_Website extends Controller_Template
         if ($this->auth_required && !Auth::instance()->logged_in()) {
             $this->redirect('/login?url=' . URL::site(Request::current()->uri()));
         }
+        if ($this->auth_required && $account = Auth::instance()->logged_in()) {
+            if ($this->auth_required !== $account['profile']) {
+                $this->redirect('/login?profile=wrong&url=' . URL::site(Request::current()->uri()));
+            }
+        }
 
         if (in_array($this->request->action(), $this->auth_actions)) {
             if (!Account::factory()->isLoggedIn()) {
@@ -67,6 +72,7 @@ class Controller_Common_Core_Website extends Controller_Template
             }
             //$this->template_file = 'backend';
         };
+
 
         if (strpos(strtolower($this->request->headers('accept')),
                 'application/json') !== false || $this->request->is_ajax() || !empty($this->json)
@@ -114,12 +120,9 @@ class Controller_Common_Core_Website extends Controller_Template
 
 
 
+        static::$account = Account::factory()->getLoggedAccount();
 
 
-        if ((Account::factory()->isLoggedIn() || Account::factory()->isGuestUser()) && (static::$account = Account::factory()->profile())) {
-        } else {
-            static::$account = Account::factory()->createGuest();
-        }
         View::bind_global('account', static::$account);
         View::bind_global('cookie_data', $this->_cookie);
 

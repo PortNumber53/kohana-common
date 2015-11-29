@@ -1,10 +1,7 @@
 <?php
 
 /**
- * Created by IntelliJ IDEA.
- * User: mauricio
- * Date: 7/9/2015
- * Time: 9:27 AM
+ * Class Controller_Backend_Core_Search
  */
 class Controller_Backend_Core_Search extends Controller_Backend_Core_Backend
 {

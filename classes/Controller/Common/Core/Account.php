@@ -57,25 +57,21 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 
     public function action_ajax_signup()
     {
-        $data = Account::factory()->profile();
-
-        $this->output = array(
-            'posted' => $_POST,
-        );
         $error = false;
 
         $signup_data = array(
-            'accountid'=> Arr::path($data, 'accountid', 0),
             'profile' => 'user',
-            'username' => filter_var($_POST['username'], FILTER_SANITIZE_EMAIL),
-            'password' => filter_var($_POST['password'], FILTER_SANITIZE_STRING),
-            'display_name' => filter_var($_POST['display_name'], FILTER_SANITIZE_STRING),
+            'username' => $name = filter_var(Arr::path($this->json, 'username', $this->request->post('username')), FILTER_SANITIZE_STRING),
+            'password' => $name = filter_var(Arr::path($this->json, 'password', $this->request->post('password')), FILTER_SANITIZE_STRING),
+            'display_name' => $name = filter_var(Arr::path($this->json, 'display_name', $this->request->post('display_name')), FILTER_SANITIZE_STRING),
         );
         $result = Account::signup($signup_data, $error);
 
         if ($error === false) {
             $this->output['redirect_url'] = URL::Site(Route::get('account-actions')->uri(array('action' => 'profile',)),
                 true);
+        } else {
+            $this->response->headers('content-type', 'application/json');
         }
 
         $this->output['error'] = $error;
@@ -104,9 +100,6 @@ class Controller_Common_Core_Account extends Controller_Common_Core_Website
 
     public function action_ajax_reset()
     {
-        $this->output = array(
-            'posted' => $_POST,
-        );
         $error = false;
         $data = array(
             'email' => $_POST['email'],
