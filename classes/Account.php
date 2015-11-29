@@ -42,6 +42,7 @@ class Account extends Abstracted
     public static function logout()
     {
         Cookie::delete('account');
+        Auth::instance()->logout(true, true);
         return true;
     }
 
