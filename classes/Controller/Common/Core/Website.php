@@ -115,12 +115,13 @@ class Controller_Common_Core_Website extends Controller_Template
         }
         Website::set_template($this->template_name);
 
+        static::$account = Account::factory()->getLoggedAccount();
+
         $this->template = $new_template;
         parent::before();
 
 
 
-        static::$account = Account::factory()->getLoggedAccount();
 
 
         View::bind_global('account', static::$account);

@@ -296,7 +296,6 @@ abstract class Model_Abstract extends Model_Core_Abstract
                 'line' => $e->getLine(),
                 'file' => __FILE__,
             );
-            print_r($error);
             return false;
         }
         return $result;

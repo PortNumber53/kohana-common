@@ -36,7 +36,7 @@ class Account extends Abstracted
     {
         $cookie_data = json_decode(Cookie::get('account'), true);
         $oAccount = new Model_Account();
-        return $oAccount->get_by_id($cookie_data['_id']);
+        return $oAccount->get_by_id($cookie_data['accountid']);
     }
 
     public static function logout()
@@ -118,6 +118,7 @@ class Account extends Abstracted
                 //Only store minimal information in the cookie
                 $data_cookie = array(
                     '_id' => $result['_id'],
+                    'accountid' => $result['accountid'],
                     'display_name' => $data['display_name'],
                     'username' => $data['username'],
                     'profile' => $data['profile'],
@@ -144,6 +145,7 @@ class Account extends Abstracted
         $username = 'guest_' . str_replace('.', '', microtime(true) . mt_rand(10000, 99999));
         $data = array(
             '_id' => '/' . DOMAINNAME . '/' . $username,
+            'accountid' => -1,
             'profile' => 'guest',
             'username' => $username,
             'display_name' => $username,
