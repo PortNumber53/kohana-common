@@ -97,14 +97,13 @@ class Model_Product extends Model_Abstract
 
     public function getProductByScore($method=1, $limit = array(), $offset = array())
     {
-        $score_method = 'rand()';
         $row = false;
         try {
             $cache_key = '/' . Model_Product::$_table_name . ':row-score:' . $method;
             $row = Cache::instance('redis')->get($cache_key);
             if (true || empty($row)) {
                 $query = DB::select()->from(static::$_table_name)->join('scoring')->on('product.productid', '=', 'scoring.productid')
-                ->where('scoring.methodid', '=', $method)->order_by($score_method);
+                ->where('scoring.methodid', '=', $method)->order_by('score');
 
                 $pagination_query = clone $query;
                 $count = $pagination_query->select(DB::expr('COUNT(*) AS mycount'))->execute()->get('mycount');

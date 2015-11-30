@@ -44,25 +44,8 @@ class Controller_Common_Core_Content extends Controller_Website
 
     public function action_view()
     {
-        $cookie_limit = empty(Arr::path($this->_cookie, Constants::LIMIT, 9)) ? 9 : Arr::path($this->_cookie,
-            Constants::LIMIT, 9);
-
-        $limit = empty($this->request->query(Constants::LIMIT)) ? $cookie_limit : $this->request->query(Constants::LIMIT);
-        $offset = empty($this->request->query(Constants::OFFSET)) ? 0 : $this->request->query(Constants::OFFSET);
-        $this->_cookie[Constants::LIMIT] = $this->_per_page = $limit;
-        $this->_cookie[Constants::OFFSET] = $offset;
-
-        $this->_cookie = json_decode(Cookie::get('cart'), true);
-
-        if ($this->auto_render) {
-            View::bind_global('limit', $limit);
-            View::bind_global('offset', $offset);
-        }
-
-
         $main = 'content/main';
         View::bind_global('main', $main);
-        View::bind_global('cookies', $this->_cookie);
 
         $request = $this->request->param('request');
         $type = $this->request->param('type');

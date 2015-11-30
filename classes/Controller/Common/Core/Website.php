@@ -20,7 +20,7 @@ class Controller_Common_Core_Website extends Controller_Template
     public $json = null;
     public $canonical_url = null;
 
-    protected $_cookie = null;
+    protected $_cookie_data = null;
 
     public static $settings = array();
     protected $frontend_cookie = null;
@@ -75,8 +75,7 @@ class Controller_Common_Core_Website extends Controller_Template
 
 
         if (strpos(strtolower($this->request->headers('accept')),
-                'application/json') !== false || $this->request->is_ajax() || !empty($this->json)
-            || (strtolower($this->request->controller()) == 'upload' && strtolower($this->request->action()) == 'receive')
+                'application/json') !== false || $this->request->is_ajax() || !empty($this->json) || (strtolower($this->request->controller()) == 'upload' && strtolower($this->request->action()) == 'receive')
         ) {
             $this->json = json_decode(file_get_contents('php://input'), true);
             $this->auto_render = false;
@@ -88,7 +87,20 @@ class Controller_Common_Core_Website extends Controller_Template
 
     public function before()
     {
-        $this->_cookie = json_decode(Cookie::get('site'), true);
+        $this->_cookie_data = json_decode(Cookie::get('data'), true);
+        $cookie_limit = empty(Arr::path($this->_cookie_data, Constants::LIMIT, 9)) ? 9 : Arr::path($this->_cookie_data,
+            Constants::LIMIT, 9);
+
+        $limit = empty($this->request->query(Constants::LIMIT)) ? $cookie_limit : $this->request->query(Constants::LIMIT);
+        $offset = empty($this->request->query(Constants::OFFSET)) ? 0 : $this->request->query(Constants::OFFSET);
+        $this->_cookie_data[Constants::LIMIT] = $this->_per_page = $limit;
+        $this->_cookie_data[Constants::OFFSET] = $offset;
+
+
+        if ($this->auto_render) {
+            View::bind_global('limit', $this->_cookie_data[Constants::LIMIT]);
+            View::bind_global('offset', $this->_cookie_data[Constants::OFFSET]);
+        }
 
         if (empty($this->template_name)) {
             // Old config format template.selected is a string, not an array
@@ -121,20 +133,12 @@ class Controller_Common_Core_Website extends Controller_Template
         parent::before();
 
 
-
-
-
         View::bind_global('account', static::$account);
-        View::bind_global('cookie_data', $this->_cookie);
+        View::bind_global('cookie_data', $this->_cookie_data);
 
-        View::set_global(
-            'current_path',
-            strtolower(Request::current()->directory() . '/' . Request::current()->controller() . '/' . Request::current()->action())
-        );
-        View::set_global(
-            'current_url',
-            URL::site(Request::detect_uri(), true) . URL::query()
-        );
+        View::set_global('current_path',
+            strtolower(Request::current()->directory() . '/' . Request::current()->controller() . '/' . Request::current()->action()));
+        View::set_global('current_url', URL::site(Request::detect_uri(), true) . URL::query());
 
         if ($this->auto_render) {
             $per_page_array = array(
@@ -200,12 +204,11 @@ class Controller_Common_Core_Website extends Controller_Template
             }
             View::set_global('current_url', URL::site(Request::factory()->current()->uri(), true));
 
-            $route_info = array_merge(Request::factory()->current()->param(),
-                array(
-                'directory' => Request::factory()->current()->directory(),
-                'controller' => Request::factory()->current()->controller(),
-                'action' => Request::factory()->current()->action(),
-            ));
+            $route_info = array_merge(Request::factory()->current()->param(), array(
+                    'directory' => Request::factory()->current()->directory(),
+                    'controller' => Request::factory()->current()->controller(),
+                    'action' => Request::factory()->current()->action(),
+                ));
             View::set_global('route_info', $route_info);
 
             $styles = Website::template('style', array());
@@ -228,7 +231,7 @@ class Controller_Common_Core_Website extends Controller_Template
             }
 
         }
-        Cookie::set('site', json_encode($this->_cookie));
+        Cookie::set('data', json_encode($this->_cookie_data));
         parent::after();
     }
 

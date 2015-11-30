@@ -10,7 +10,6 @@ class Controller_Common_Core_Shopping extends Controller_Website
     {
         parent::before();
 
-
         $category = new Model_Category();
         $sort = array();
         $limit = 0;
@@ -33,14 +32,6 @@ class Controller_Common_Core_Shopping extends Controller_Website
         View::bind_global('stripe', self::$settings['stripe']);
         \Stripe\Stripe::setApiKey(self::$settings['stripe']['secret_key']);
     }
-
-    public function after()
-    {
-        Cookie::set('site', json_encode($this->_cookie));
-
-        parent::after();
-    }
-
 
     public function generate_txt()
     {
@@ -95,18 +86,14 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $this->page_title = 'Shopping cart';
         $main = 'shopping/cart';
 
-
-        if (empty($this->_cookie['product'])) {
-            $this->_cookie['product'] = array();
+        if (empty($this->_cookie_data['product'])) {
+            $this->_cookie_data['product'] = array();
         }
-        if (empty($this->_cookie['details'])) {
-            $this->_cookie['details'] = array();
+        if (empty($this->_cookie_data['details'])) {
+            $this->_cookie_data['details'] = array();
         }
 
-        $product_array = array(
-            'rows' => array(),
-        );
-        foreach ($this->_cookie['product'] as $key => $status) {
+        foreach ($this->_cookie_data['product'] as $key => $status) {
             $product_data = Model_Product::getDataById($key);
 
             $product_array['rows'][$key] = $product_data;
@@ -122,7 +109,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
 
         $this->page_title = 'Checkout';
 
-        if (Account::isGuestUser() && (empty($this->_cookie['checkout-as-guest']))) {
+        if (Account::isGuestUser() && (empty($this->_cookie_data['checkout-as-guest']))) {
             $main = 'shopping/guest_user';
         } else {
 
@@ -139,22 +126,21 @@ class Controller_Common_Core_Shopping extends Controller_Website
             View::bind_global('picture_array', $picture_array);
 
 
-            if (empty($this->_cookie['product'])) {
-                $this->_cookie['product'] = array();
+            if (empty($this->_cookie_data['product'])) {
+                $this->_cookie_data['product'] = array();
             }
-            if (empty($this->_cookie['details'])) {
-                $this->_cookie['details'] = array();
+            if (empty($this->_cookie_data['details'])) {
+                $this->_cookie_data['details'] = array();
             }
             $product_array = array(
                 'rows' => array(),
             );
-            //echo'<pre>';print_r($this->_cookie);echo'</pre>';
 
             $total = 0;
             $shipping = 0;
             $tax = 0;
             $discount = 0;
-            foreach ($this->_cookie['product'] as $key => $status) {
+            foreach ($this->_cookie_data['product'] as $key => $status) {
                 $product_data = Model_Product::getDataById($key);
 
                 $product_array['rows'][$key] = $product_data;
@@ -163,7 +149,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
             }
 
             $data = array(
-                'type' => empty($this->_cookie['type']) ? 'sale' : filter_var($this->_cookie['type'],
+                'type' => empty($this->_cookie_data['type']) ? 'sale' : filter_var($this->_cookie_data['type'],
                     FILTER_SANITIZE_STRING),
                 'accountid' => empty(self::$account['accountid']) ? -1 : self::$account['accountid'],
                 'contact_email' => empty(self::$account['username']) ? 'guest' : self::$account['username'],
@@ -172,15 +158,13 @@ class Controller_Common_Core_Shopping extends Controller_Website
                 'tax' => $tax,
                 'discount' => $discount,
             );
-            if (!empty($this->_cookie['orderid'])) {
-                $data['orderid'] = (int)$this->_cookie['orderid'];
+            if (!empty($this->_cookie_data['orderid'])) {
+                $data['orderid'] = (int)$this->_cookie_data['orderid'];
             }
             $result = Model_Orderb::saveRow($data, $errors);
-            //$data['orderid'] = (int)$result['orderid'];
-            //echo'<pre>';print_r($result);echo'</pre>';
 
             // Check orders details
-            $order_detail_array = empty($this->_cookie['order_detail']) ? array() : $this->_cookie['order_detail'];
+            $order_detail_array = empty($this->_cookie_data['order_detail']) ? array() : $this->_cookie_data['order_detail'];
 
             $order_detail_array['total'] = $total;
             $order_detail_array['shipping'] = $shipping;
@@ -188,33 +172,31 @@ class Controller_Common_Core_Shopping extends Controller_Website
             $order_detail_array['discount'] = $discount;
 
             if (!empty($result['orderid'])) {
-                $this->_cookie['orderid'] = $result['orderid'];
+                $this->_cookie_data['orderid'] = $result['orderid'];
                 $order_detail_array['orderid'] = $result['orderid'];
-
 
                 $detail_result = Model_OrderbDetail::getDataByParentId($result['orderid']);
                 // Store Detailed information
                 $errors_detail = array();
-                foreach ($this->_cookie['product'] as $productid => $product_status) {
-                    $detailid = isset($this->_cookie['details'][$productid]) ? $this->_cookie['details'][$productid] : 0;
+                foreach ($this->_cookie_data['product'] as $productid => $product_status) {
+                    $detailid = isset($this->_cookie_data['details'][$productid]) ? $this->_cookie_data['details'][$productid] : 0;
 
                     if (!$product_data = Model_Product::getDataById($productid)) {
-                        unset($this->_cookie['details'][$productid]);
+                        unset($this->_cookie_data['details'][$productid]);
                     }
                     if ($detailid && (!$check_detail_exists = Model_OrderbDetail::getDataById($detailid))) {
-                        unset($this->_cookie['details'][$productid]);
+                        unset($this->_cookie_data['details'][$productid]);
                     }
 
                     $detail_data = array(
                         'detailid' => $detailid,
-                        'orderid' => $this->_cookie['orderid'],
+                        'orderid' => $this->_cookie_data['orderid'],
                         'productid' => $productid,
                         'description' => empty($product_data['description']) ? '' : $product_data['description'],
                     );
                     $update_detail = Model_OrderbDetail::saveRow($detail_data, $errors_detail);
 
-                    $this->_cookie['details'][$productid] = $update_detail['detailid'];
-                    //echo'<pre>';print_r($this->_cookie['details']);echo'</pre>';
+                    $this->_cookie_data['details'][$productid] = $update_detail['detailid'];
                     $order_detail_array['details'][$productid] = $detail_data;
                 }
 
@@ -233,7 +215,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
     {
         $this->output['POST'] = $this->json;
 
-        $this->_cookie['checkout-as-guest'] = 1;
+        $this->_cookie_data['checkout-as-guest'] = 1;
     }
 
 
@@ -253,12 +235,6 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $pagination_array = array();
 
         $request = $this->request->param('id');
-
-
-
-
-
-        // View::bind_global('picture_array', $picture_array);
 
         $pattern = '/item_([0-9]+)([-])([a-z0-9]+)/';
         if (preg_match($pattern, $request, $matches)) {
@@ -280,11 +256,11 @@ class Controller_Common_Core_Shopping extends Controller_Website
             $filters = array(
                 array('status', '=', 'available'),
             );
-            $product_array = Model_Product::getDataByParentId($categoryData['categoryid'], $filters, $this->_cookie[Constants::LIMIT], $this->_cookie[Constants::OFFSET]);
+            $product_array = Model_Product::getDataByParentId($categoryData['categoryid'], $filters, $this->_cookie_data[Constants::LIMIT], $this->_cookie_data[Constants::OFFSET]);
             $this->page_title = $categoryData['name'];
 
             foreach ($product_array['rows'] as $key => $product) {
-                if (isset($this->_cookie['product'][$key])) {
+                if (isset($this->_cookie_data['product'][$key])) {
                     $product_array['rows'][$key]['reserved'] = 'cart' . static::$account['accountid'];
                 } else {
                     $product_array['rows'][$key]['reserved'] = '';
@@ -298,8 +274,6 @@ class Controller_Common_Core_Shopping extends Controller_Website
         }
         $picture = new Model_Picture();
         $sort = array();
-        //$limit = 0;
-        //$offset = 0;
 
         $picture_limit = 1000;
         $picture_offset = 0;
@@ -309,6 +283,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
             $picture_array = $picture->filter($filter_picture, $sort, $picture_limit, $picture_offset);
             $main = 'shopping/browse';
         } else {
+            $product_array['reserved'] = 'cart' . static::$account['accountid'];
             $filter_picture = array(
                 array('productid', '=', $productId),
             );
@@ -320,8 +295,6 @@ class Controller_Common_Core_Shopping extends Controller_Website
         View::bind_global('picture_array', $picture_array);
         View::bind_global('pagination_array', $pagination_array);
         View::bind_global('main', $main);
-
-        View::bind_global('offset', $offset);
     }
 
     public function action_ajax_add()
@@ -332,12 +305,12 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $result = array();
 
         $product_id = (int)$_POST['productId'];
-        $this->_cookie['product'][$product_id] = 'added';
+        $this->_cookie_data['product'][$product_id] = 'added';
 
-        $result['cart'] = $this->_cookie;
+        $result['cart'] = $this->_cookie_data;
 
-        $result['error'] = in_array($product_id, $this->_cookie);
-        $result['cookie_data'] = $this->_cookie;
+        $result['error'] = in_array($product_id, $this->_cookie_data);
+        $result['cookie_data'] = $this->_cookie_data;
 
         $this->output = $result;
     }
@@ -347,11 +320,11 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $result = array();
 
         $product_id = (int)$_POST['productId'];
-        unset($this->_cookie['product'][$product_id]);
+        unset($this->_cookie_data['product'][$product_id]);
 
-        $result['cart'] = $this->_cookie;
+        $result['cart'] = $this->_cookie_data;
 
-        $result['error'] = in_array($product_id, $this->_cookie);
+        $result['error'] = in_array($product_id, $this->_cookie_data);
 
         $this->output = $result;
     }
@@ -418,11 +391,11 @@ class Controller_Common_Core_Shopping extends Controller_Website
 
     private function shoppingCartData()
     {
-        if (empty($this->_cookie['product'])) {
-            $this->_cookie['product'] = array();
+        if (empty($this->_cookie_data['product'])) {
+            $this->_cookie_data['product'] = array();
         }
-        if (empty($this->_cookie['details'])) {
-            $this->_cookie['details'] = array();
+        if (empty($this->_cookie_data['details'])) {
+            $this->_cookie_data['details'] = array();
         }
 
         $sub_total = 0;
@@ -430,7 +403,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $shipping = 0;
         $product_array = array();
 
-        foreach ($this->_cookie['product'] as $key => $status) {
+        foreach ($this->_cookie_data['product'] as $key => $status) {
             $product_data = Model_Product::getDataById($key);
 
             $product_array['rows'][$key] = $product_data;
