@@ -1,11 +1,5 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
-/**
- * Created by IntelliJ IDEA.
- * User: mauricio
- * Date: 6/9/2015
- * Time: 9:11 AM
- */
 class Controller_Common_Core_Shopping extends Controller_Website
 {
 
@@ -286,7 +280,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
             $filters = array(
                 array('status', '=', 'available'),
             );
-            $product_array = Model_Product::getDataByParentId($categoryData['categoryid'], $filters, $limit, $offset);
+            $product_array = Model_Product::getDataByParentId($categoryData['categoryid'], $filters, $this->_cookie[Constants::LIMIT], $this->_cookie[Constants::OFFSET]);
             $this->page_title = $categoryData['name'];
 
             foreach ($product_array['rows'] as $key => $product) {
@@ -307,16 +301,18 @@ class Controller_Common_Core_Shopping extends Controller_Website
         //$limit = 0;
         //$offset = 0;
 
+        $picture_limit = 1000;
+        $picture_offset = 0;
         if (isset($product_array['rows'])) {
             $filter_picture = array(
             );
-            $picture_array = $picture->filter($filter_picture, $sort, $limit, $offset);
+            $picture_array = $picture->filter($filter_picture, $sort, $picture_limit, $picture_offset);
             $main = 'shopping/browse';
         } else {
             $filter_picture = array(
                 array('productid', '=', $productId),
             );
-            $picture_array = $picture->filter($filter_picture, $sort, $limit, $offset);
+            $picture_array = $picture->filter($filter_picture, $sort, $picture_limit, $picture_offset);
             $main = 'shopping/product_detail';
         }
         View::bind_global('categoryData', $categoryData);

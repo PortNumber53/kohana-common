@@ -1,9 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Date: 5/14/13
- * Time: 3:12 AM
- *
+ * Class Controller_Common_Core_Account
  */
 class Controller_Common_Core_Account extends Controller_Website
 {

@@ -1,10 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Date: 11/16/13
- * Time: 1:04 PM
- * Something meaningful about this gallery
- *
+ * Class Controller_Common_Core_Gallery
  */
 class Controller_Common_Core_Gallery extends Controller_Website
 {

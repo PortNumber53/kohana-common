@@ -1,12 +1,5 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
-/**
- * Created by JetBrains PhpStorm.
- * User: mauricio
- * Date: 5/14/13
- * Time: 12:47 PM
- * To change this template use File | Settings | File Templates.
- */
 class Controller_Common_Core_Content extends Controller_Website
 {
     public function generate_txt()

@@ -1,10 +1,7 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Created by IntelliJ IDEA.
- * User: mauricio
- * Date: 6/9/2015
- * Time: 8:38 AM
+ * Class Controller_Common_Core_Contact
  */
 class Controller_Common_Core_Contact extends Controller_Website
 {
@@ -14,10 +11,8 @@ class Controller_Common_Core_Contact extends Controller_Website
         $main = 'contact/form';
         $this->page_title = 'Contact';
 
-
         View::bind_global('main', $main);
     }
-
 
     public function action_ajax_validate()
     {

@@ -1,10 +1,7 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Created by IntelliJ IDEA.
- * User: mauricio
- * Date: 8/2/2015
- * Time: 4:51 PM
+ * Class Controller_Common_Core_Form
  */
 class Controller_Common_Core_Form extends Controller_Website
 {

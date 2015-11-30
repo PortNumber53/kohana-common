@@ -1,11 +1,4 @@
-
 <?php defined('SYSPATH') or die('No direct script access.');
-/**
- * Date: 10/27/13
- * Time: 3:19 PM
- * Something meaningful about this file
- *
- */
 
 class Controller_Common_Core_Product extends Controller_Website
 {
