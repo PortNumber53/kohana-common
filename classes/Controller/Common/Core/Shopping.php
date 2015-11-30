@@ -256,16 +256,12 @@ class Controller_Common_Core_Shopping extends Controller_Website
             $filters = array(
                 array('status', '=', 'available'),
             );
-            $product_array = Model_Product::getDataByParentId($categoryData['categoryid'], $filters, $this->_cookie_data[Constants::LIMIT], $this->_cookie_data[Constants::OFFSET]);
+            $product_array = Model_Product::getDataByParentId($categoryData['categoryid'], $filters,
+                $this->_cookie_data[Constants::LIMIT], $this->_cookie_data[Constants::OFFSET]);
             $this->page_title = $categoryData['name'];
 
-            foreach ($product_array['rows'] as $key => $product) {
-                if (isset($this->_cookie_data['product'][$key])) {
-                    $product_array['rows'][$key]['reserved'] = 'cart' . static::$account['accountid'];
-                } else {
-                    $product_array['rows'][$key]['reserved'] = '';
-                }
-            }
+            $product_array = Product::setReservedField($product_array, $this->_cookie_data, static::$account);
+
             $pagination_array = array(
                 'count' => $product_array['count'],
                 'pages' => $product_array['pages'],
@@ -278,8 +274,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $picture_limit = 1000;
         $picture_offset = 0;
         if (isset($product_array['rows'])) {
-            $filter_picture = array(
-            );
+            $filter_picture = array();
             $picture_array = $picture->filter($filter_picture, $sort, $picture_limit, $picture_offset);
             $main = 'shopping/browse';
         } else {
