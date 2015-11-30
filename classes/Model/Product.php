@@ -95,4 +95,72 @@ class Model_Product extends Model_Abstract
         }
     }
 
+    public function getProductByScore($method=1, $limit = array(), $offset = array())
+    {
+        $score_method = 'rand()';
+        $row = false;
+        try {
+            $cache_key = '/' . Model_Product::$_table_name . ':row-score:' . $method;
+            $row = Cache::instance('redis')->get($cache_key);
+            if (true || empty($row)) {
+                $query = DB::select()->from(static::$_table_name)->join('scoring')->on('product.productid', '=', 'scoring.productid')
+                ->where('scoring.methodid', '=', $method)->order_by($score_method);
+
+                $pagination_query = clone $query;
+                $count = $pagination_query->select(DB::expr('COUNT(*) AS mycount'))->execute()->get('mycount');
+                if (!empty($limit)) {
+                    $query->limit($limit);
+                }
+                if (!empty($offset)) {
+                    $query->offset($offset);
+                }
+
+                $return_data = array();
+                $result = $query->execute()->as_array();
+                foreach ($result as $row) {
+                    if (is_array(static::$_primary_key)) {
+                        $key = '';
+                        foreach (static::$_primary_key as $loop_key) {
+                            $key .= $row[$loop_key] . ',';
+                        }
+                        $key = substr($key, 0, -1);
+                        $return_data[$key] = $row;
+                    } else {
+                        $return_data[$row[static::$_primary_key]] = $row;
+                    }
+                }
+
+                $filter_data = array(
+                    'rows' => $return_data,
+                    'count' => (int)$count,
+                    'limit' => $limit,
+                    'offset' => $offset,
+                    'pages' => empty($limit) ? 1 : (ceil($count / (($limit === 0) ? 1 : $limit))),
+                );
+
+                if (count($filter_data['rows']) > 0) {
+                    foreach ($filter_data['rows'] as $key => &$row) {
+                        $data = json_decode(empty(Arr::path($row, 'data')) ? '{}' : Arr::path($row, 'data', '{}'), true);
+                        $row = array_merge($row, $data);
+                        unset($row['data']);
+                        $extra_json = json_decode(empty(Arr::path($row, 'extra_json')) ? '{}' : Arr::path($row,
+                            'extra_json', '{}'), true);
+                        $row = array_merge($row, $extra_json);
+                        unset($row['extra_json']);
+                    }
+                    Cache::instance('redis')->set($cache_key, $filter_data);
+                }
+            }
+        } catch (Exception $e) {
+            $error = array(
+                'error' => $e->getCode(),
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+            );
+            return false;
+        } finally {
+            return $filter_data;
+        }
+    }
+
 }
