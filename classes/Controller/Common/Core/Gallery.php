@@ -6,7 +6,7 @@
  * Something meaningful about this gallery
  *
  */
-class Controller_Common_Core_Gallery extends Controller_Common_Core_Website
+class Controller_Common_Core_Gallery extends Controller_Website
 {
     public function action_browse()
     {

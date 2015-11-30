@@ -260,15 +260,8 @@ class Controller_Common_Core_Shopping extends Controller_Website
 
         $request = $this->request->param('id');
 
-        $cookie_limit = empty(Arr::path($this->_cookie, Constants::LIMIT, 9)) ? 9 : Arr::path($this->_cookie,
-            Constants::LIMIT, 9);
 
-        $limit = empty($this->request->query(Constants::LIMIT)) ? $cookie_limit : $this->request->query(Constants::LIMIT);
-        $offset = empty($this->request->query(Constants::OFFSET)) ? 0 : $this->request->query(Constants::OFFSET);
-        $this->_cookie[Constants::LIMIT] = $this->_per_page = $limit;
-        $this->_cookie[Constants::OFFSET] = $offset;
 
-        $this->_cookie = json_decode(Cookie::get('cart'), true);
 
 
         // View::bind_global('picture_array', $picture_array);

@@ -6,7 +6,7 @@
  *
  */
 
-class Controller_Common_Core_Dynimage extends Controller_Common_Core_Website
+class Controller_Common_Core_Dynimage extends Controller_Website
 {
 	public $auto_render = FALSE;
 

@@ -6,7 +6,7 @@
  *
  */
 
-class Controller_Common_Core_File extends Controller_Common_Core_Website
+class Controller_Common_Core_File extends Controller_Website
 {
 	public function action_browse()
 	{

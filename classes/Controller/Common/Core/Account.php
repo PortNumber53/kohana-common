@@ -5,7 +5,7 @@
  * Time: 3:12 AM
  *
  */
-class Controller_Common_Core_Account extends Controller_Common_Core_Website
+class Controller_Common_Core_Account extends Controller_Website
 {
     public $auth_actions = array('profile', 'settings');
 
