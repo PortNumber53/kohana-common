@@ -93,6 +93,16 @@ class Controller_Common_Core_Shopping extends Controller_Website
             $this->_cookie_data['details'] = array();
         }
 
+        $model_order = new Model_Orderb();
+        $options = array();
+        $data['orderid'] = (int)Arr::path($this->_cookie_data, 'orderid', 77);
+        $data['type'] = 'sale';
+
+        $result = $model_order->save($data, $error, $options);
+        if (empty($this->_cookie_data['orderid'])) {
+            $this->_cookie_data['orderid'] = (int)$result[0];
+        }
+
         foreach ($this->_cookie_data['product'] as $key => $status) {
             $product_data = Model_Product::getDataById($key);
 
@@ -136,6 +146,9 @@ class Controller_Common_Core_Shopping extends Controller_Website
                 'rows' => array(),
             );
 
+            $order_array = array(
+                'orderid' => 1234,
+            );
             $total = 0;
             $shipping = 0;
             $tax = 0;
@@ -146,6 +159,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
                 $product_array['rows'][$key] = $product_data;
 
                 $total += $product_data['price'];
+                $order_array['products'][] = $product_data['productid'];
             }
 
             $data = array(
@@ -194,7 +208,9 @@ class Controller_Common_Core_Shopping extends Controller_Website
                         'productid' => $productid,
                         'description' => empty($product_data['description']) ? '' : $product_data['description'],
                     );
-                    $update_detail = Model_OrderbDetail::saveRow($detail_data, $errors_detail);
+                    $update_detail = Model_OrderbDetail::saveRow($detail_data, $errors_detail, array(
+                        'no_extra_json' => true,
+                    ));
 
                     $this->_cookie_data['details'][$productid] = $update_detail['detailid'];
                     $order_detail_array['details'][$productid] = $detail_data;

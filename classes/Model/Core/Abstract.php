@@ -54,7 +54,7 @@ abstract class Model_Core_Abstract extends Model_Database
 
     public static function saveRow($data, &$error = array(), $options = array())
     {
-        return static::_saveRow($data, $error, $options = array());
+        return static::_saveRow($data, $error, $options);
     }
 
     public static function _saveRow($data, &$error = array(), $options = array())

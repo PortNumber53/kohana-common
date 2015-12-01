@@ -208,7 +208,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
                 $tmp = $this->filter($filter);
                 $exists = ($tmp['count'] > 0) ? array_shift($tmp['rows']) : array();
             } else {
-                if ($data[static::$_primary_key] !== 0) {
+                if (!empty($data[static::$_primary_key])) {
                     $exists = $this->get_by_id($data[static::$_primary_key]);
                     $update_filter = '_id';
                 }
