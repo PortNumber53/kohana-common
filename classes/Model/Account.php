@@ -8,10 +8,11 @@
 class Model_Account extends Model_Abstract
 {
     public static $_table_name = 'account';
-    public static $_primary_key = '_id';
+    public static $_primary_key = 'accountid';
 
     public static $_columns = array(
         '_id' => '',
+        'accountid' => 0,
         'profile' => '',
         'username' => '',
         'password' => '',
@@ -71,6 +72,7 @@ class Model_Account extends Model_Abstract
         } else {
             $row = json_decode($row, true);
         }
+        $row['_id'] = $row['accountid'];
         return $row;
     }
 
