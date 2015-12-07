@@ -13,6 +13,7 @@ class Model_Order extends Model_Abstract
     protected static $_columns = array(
         'orderid' => 0,
         'type' => '',
+        'status' => '',
         'accountid' => 0,
         'contact_email' => '',
         'total' => '',
@@ -24,6 +25,7 @@ class Model_Order extends Model_Abstract
         'shipping_address2' => '',
         'shipping_city' => '',
         'shipping_state' => '',
+        'shipping_postal_code' => '',
         'shipping_country' => '',
         'created_at' => '',
         'updated_at' => '',
