@@ -238,6 +238,13 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $this->_cookie_data['checkout-as-guest'] = 1;
     }
 
+    public function action_ajax_cashstore()
+    {
+        $this->output['POST'] = $this->json;
+
+        $this->_cookie_data['action_ajax_cashstore'] = 1;
+    }
+
 
     public function action_wishlist()
     {
