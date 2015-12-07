@@ -93,9 +93,9 @@ class Controller_Common_Core_Shopping extends Controller_Website
             $this->_cookie_data['details'] = array();
         }
 
-        $model_order = new Model_Orderb();
+        $model_order = new Model_Order();
         $options = array();
-        $data['orderid'] = (int)Arr::path($this->_cookie_data, 'orderid', 77);
+        $data['orderid'] = (int)Arr::path($this->_cookie_data, 'orderid');
         $data['type'] = 'sale';
 
         $result = $model_order->save($data, $error, $options);
@@ -147,7 +147,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
             );
 
             $order_array = array(
-                'orderid' => 1234,
+                'orderid' => Arr::path($this->_cookie_data, 'orderid', 0),
             );
             $total = 0;
             $shipping = 0;
@@ -159,7 +159,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
                 $product_array['rows'][$key] = $product_data;
 
                 $total += $product_data['price'];
-                $order_array['products'][] = $product_data['productid'];
+                $order_array['product'][] = $product_data['productid'];
             }
 
             $data = array(
@@ -175,7 +175,8 @@ class Controller_Common_Core_Shopping extends Controller_Website
             if (!empty($this->_cookie_data['orderid'])) {
                 $data['orderid'] = (int)$this->_cookie_data['orderid'];
             }
-            $result = Model_Orderb::saveRow($data, $errors);
+            $errors = false;
+            $result = Model_Order::saveRow($data, $errors);
 
             // Check orders details
             $order_detail_array = empty($this->_cookie_data['order_detail']) ? array() : $this->_cookie_data['order_detail'];
@@ -189,16 +190,16 @@ class Controller_Common_Core_Shopping extends Controller_Website
                 $this->_cookie_data['orderid'] = $result['orderid'];
                 $order_detail_array['orderid'] = $result['orderid'];
 
-                $detail_result = Model_OrderbDetail::getDataByParentId($result['orderid']);
+                $detail_result = Model_OrderDetail::getDataByParentId($result['orderid']);
                 // Store Detailed information
                 $errors_detail = array();
-                foreach ($this->_cookie_data['product'] as $productid => $product_status) {
+                foreach ($this->_cookie_data['products'] as $productid => $product_status) {
                     $detailid = isset($this->_cookie_data['details'][$productid]) ? $this->_cookie_data['details'][$productid] : 0;
 
                     if (!$product_data = Model_Product::getDataById($productid)) {
                         unset($this->_cookie_data['details'][$productid]);
                     }
-                    if ($detailid && (!$check_detail_exists = Model_OrderbDetail::getDataById($detailid))) {
+                    if ($detailid && (!$check_detail_exists = Model_OrderDetail::getDataById($detailid))) {
                         unset($this->_cookie_data['details'][$productid]);
                     }
 
@@ -208,7 +209,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
                         'productid' => $productid,
                         'description' => empty($product_data['description']) ? '' : $product_data['description'],
                     );
-                    $update_detail = Model_OrderbDetail::saveRow($detail_data, $errors_detail, array(
+                    $update_detail = Model_OrderDetail::saveRow($detail_data, $errors_detail, array(
                         'no_extra_json' => true,
                     ));
 
@@ -343,7 +344,10 @@ class Controller_Common_Core_Shopping extends Controller_Website
 
     public function action_charge()
     {
+        $this->auto_render = false;
+
         $token = filter_var($_POST['stripeToken'], FILTER_SANITIZE_STRING);
+
 
         $customer = \Stripe\Customer::create(array(
             'email' => 'customer@example.com',
@@ -356,7 +360,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
             'currency' => 'usd'
         ));
 
-        echo '<h1>Successfully charged $50.00!</h1>';
+        $this->output['message'] = '<h1>Successfully charged $50.00!</h1>';
     }
 
     public function action_ajax_charge()
@@ -364,14 +368,25 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $this->output['message'] = 'Thanks for your purchase';
         $this->output['_POST'] = $_POST;
 
+        $orderid = filter_var(Arr::path($_POST, 'orderid', 0), FILTER_SANITIZE_NUMBER_INT);
+
+        // Get order info
+        $model_order = new Model_Order();
+        $order_data = $model_order->getDataById($orderid);
+
+
+
+        $this->output['$order_data'] = $order_data;
+
+
         $stripe_token = filter_var($_POST['token'], FILTER_SANITIZE_STRING);
 
         try {
             $charge = \Stripe\Charge::create(array(
-                "amount" => 1000, // amount in cents, again
+                "amount" => $order_data['total'] * 100, // amount in cents, again
                 "currency" => "usd",
                 "source" => $stripe_token,
-                "description" => "Example charge"
+                "description" => 'Order #' . $order_data['orderid'] . ' by ' . $order_data['contact_email'],
             ));
             $this->output['charge'] = $charge;
         } catch (\Stripe\Error\Card $e) {

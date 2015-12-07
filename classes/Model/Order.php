@@ -6,9 +6,9 @@
  * Time: 3:31 PM
  */
 
-class Model_Orderb extends Model_Abstract
+class Model_Order extends Model_Abstract
 {
-    protected static $_table_name = 'orderb';
+    protected static $_table_name = 'order';
     protected static $_primary_key = 'orderid';
     protected static $_columns = array(
         'orderid' => 0,

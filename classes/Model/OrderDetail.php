@@ -1,14 +1,11 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: mauricio
- * Date: 6/21/2015
- * Time: 4:25 PM
- */
 
-class Model_OrderbDetail extends Model_Abstract
+/**
+ * Class Model_OrderDetail
+ */
+class Model_OrderDetail extends Model_Abstract
 {
-    protected static $_table_name = 'orderb_detail';
+    protected static $_table_name = 'order_detail';
     protected static $_primary_key = 'detailid';
     protected static $_columns = array(
         'detailid' => 0,
