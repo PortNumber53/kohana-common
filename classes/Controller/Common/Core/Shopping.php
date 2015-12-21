@@ -193,30 +193,31 @@ class Controller_Common_Core_Shopping extends Controller_Website
                 $detail_result = Model_OrderDetail::getDataByParentId($result['orderid']);
                 // Store Detailed information
                 $errors_detail = array();
-                foreach ($this->_cookie_data['products'] as $productid => $product_status) {
-                    $detailid = isset($this->_cookie_data['details'][$productid]) ? $this->_cookie_data['details'][$productid] : 0;
+                if (isset($this->_cookie_data['products']) && is_array($this->_cookie_data['products'])) {
+                    foreach ($this->_cookie_data['products'] as $productid => $product_status) {
+                        $detailid = isset($this->_cookie_data['details'][$productid]) ? $this->_cookie_data['details'][$productid] : 0;
 
-                    if (!$product_data = Model_Product::getDataById($productid)) {
-                        unset($this->_cookie_data['details'][$productid]);
+                        if (!$product_data = Model_Product::getDataById($productid)) {
+                            unset($this->_cookie_data['details'][$productid]);
+                        }
+                        if ($detailid && (!$check_detail_exists = Model_OrderDetail::getDataById($detailid))) {
+                            unset($this->_cookie_data['details'][$productid]);
+                        }
+
+                        $detail_data = array(
+                            'detailid' => $detailid,
+                            'orderid' => $this->_cookie_data['orderid'],
+                            'productid' => $productid,
+                            'description' => empty($product_data['description']) ? '' : $product_data['description'],
+                        );
+                        $update_detail = Model_OrderDetail::saveRow($detail_data, $errors_detail, array(
+                            'no_extra_json' => true,
+                        ));
+
+                        $this->_cookie_data['details'][$productid] = $update_detail['detailid'];
+                        $order_detail_array['details'][$productid] = $detail_data;
                     }
-                    if ($detailid && (!$check_detail_exists = Model_OrderDetail::getDataById($detailid))) {
-                        unset($this->_cookie_data['details'][$productid]);
-                    }
-
-                    $detail_data = array(
-                        'detailid' => $detailid,
-                        'orderid' => $this->_cookie_data['orderid'],
-                        'productid' => $productid,
-                        'description' => empty($product_data['description']) ? '' : $product_data['description'],
-                    );
-                    $update_detail = Model_OrderDetail::saveRow($detail_data, $errors_detail, array(
-                        'no_extra_json' => true,
-                    ));
-
-                    $this->_cookie_data['details'][$productid] = $update_detail['detailid'];
-                    $order_detail_array['details'][$productid] = $detail_data;
                 }
-
             }
             View::bind_global('product_array', $product_array);
             View::bind_global('order_array', $order_array);

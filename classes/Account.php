@@ -117,8 +117,7 @@ class Account extends Abstracted
             if ($result) {
                 //Only store minimal information in the cookie
                 $data_cookie = array(
-                    '_id' => $result['_id'],
-                    'accountid' => $result['_id'],
+                    'accountid' => $result['accountid'],
                     'display_name' => $data['display_name'],
                     'username' => $data['username'],
                     'profile' => $data['profile'],
