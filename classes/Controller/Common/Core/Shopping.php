@@ -311,8 +311,22 @@ class Controller_Common_Core_Shopping extends Controller_Website
                 array('productid', '=', $productId),
             );
             $picture_array = $picture->filter($filter_picture, $sort, $picture_limit, $picture_offset);
+            $product_array['thumbnail_detail'] = $picture_array['rows'][$product_array['thumbnailid']];
             $main = 'shopping/product_detail';
         }
+
+        foreach ($picture_array['rows'] as $key=>$picture) {
+            $picture_array['rows'][$key]['full_url'] = URL::Site(Route::get('image-actions')->uri(array(
+                'action' => 'resize',
+                'width' => '1024',
+                'height' => '1024',
+                'method' => 'crop',
+                'pictureid' => $key,
+                'request' => $picture['md5_hash'],
+                'type' => 'jpg',
+            )), true);
+        }
+
         View::bind_global('categoryData', $categoryData);
         View::bind_global('product_array', $product_array);
         View::bind_global('picture_array', $picture_array);

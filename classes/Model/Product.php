@@ -54,6 +54,11 @@ class Model_Product extends Model_Abstract
         $filters = array_merge($filters, $filter);
         $product_result = $product->filter($filters, $sort, $limit, $offset);
 
+        $model_picture = new Model_Picture();
+        foreach ($product_result['rows'] as $key => $row) {
+            $product_result['rows'][$key]['thumbnail_detail'] = $model_picture->getDataById($row['thumbnailid']);
+        }
+
         return $product_result;
     }
 
@@ -114,9 +119,11 @@ class Model_Product extends Model_Abstract
                     $query->offset($offset);
                 }
 
+                $model_picture = new Model_Picture();
                 $return_data = array();
                 $result = $query->execute()->as_array();
                 foreach ($result as $row) {
+                    $row['thumbnail_detail'] = $model_picture->getDataById($row['thumbnailid']);
                     if (is_array(static::$_primary_key)) {
                         $key = '';
                         foreach (static::$_primary_key as $loop_key) {
@@ -127,6 +134,8 @@ class Model_Product extends Model_Abstract
                     } else {
                         $return_data[$row[static::$_primary_key]] = $row;
                     }
+
+
                 }
 
                 $filter_data = array(

@@ -37,4 +37,3 @@ class Model_Picture extends Model_Abstract
         return $product_result;
     }
 }
-
