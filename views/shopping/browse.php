@@ -9,6 +9,3 @@
 ?><h1>Browse</h1>
 
 
-<?php
-var_dump($categoryData);
-var_dump($productData);

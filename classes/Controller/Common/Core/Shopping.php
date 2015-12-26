@@ -125,7 +125,6 @@ class Controller_Common_Core_Shopping extends Controller_Website
 
             $main = 'shopping/checkout';
 
-
             $picture = new Model_Picture();
             $sort = array();
             $limit = 0;
@@ -155,6 +154,16 @@ class Controller_Common_Core_Shopping extends Controller_Website
             $discount = 0;
             foreach ($this->_cookie_data['product'] as $key => $status) {
                 $product_data = Model_Product::getDataById($key);
+                $picture_data = Model_Picture::getDataById($product_data['thumbnailid']);
+                $product_data['full_url'] = URL::Site(Route::get('image-actions')->uri(array(
+                    'action' => 'resize',
+                    'width' => '1024',
+                    'height' => '1024',
+                    'method' => 'crop',
+                    'pictureid' => $key,
+                    'request' => $picture_data['md5_hash'],
+                    'type' => 'jpg',
+                )), true);
 
                 $product_array['rows'][$key] = $product_data;
 
@@ -165,7 +174,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
             $data = array(
                 'type' => empty($this->_cookie_data['type']) ? 'sale' : filter_var($this->_cookie_data['type'],
                     FILTER_SANITIZE_STRING),
-                'accountid' => empty(self::$account['accountid']) ? -1 : self::$account['accountid'],
+                'accountid' => empty(self::$account['id']) ? -1 : self::$account['id'],
                 'contact_email' => empty(self::$account['username']) ? 'guest' : self::$account['username'],
                 'total' => $total,
                 'shipping' => $shipping,
@@ -391,7 +400,6 @@ class Controller_Common_Core_Shopping extends Controller_Website
     public function action_ajax_charge()
     {
         $this->output['message'] = 'Thanks for your purchase';
-        $this->output['_POST'] = $_POST;
 
         $orderid = filter_var(Arr::path($_POST, 'orderid', 0), FILTER_SANITIZE_NUMBER_INT);
 
@@ -403,9 +411,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $model_account = new Model_Account();
         $account_data = $model_account->getDataById($order_data['accountid']);
 
-
         $this->output['$order_data'] = $order_data;
-
 
         $stripe_token = filter_var($_POST['token'], FILTER_SANITIZE_STRING);
 
@@ -441,7 +447,6 @@ class Controller_Common_Core_Shopping extends Controller_Website
 
             $errors = false;
             $model_stripe->save($charge_data, $errors);
-
 
             $queue_name = 'DEV::stripe::charge';
             $data = array(

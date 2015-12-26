@@ -26,7 +26,7 @@ class Product
     {
         foreach ($product_array['rows'] as $key => $product) {
             if (isset($cookies['product'][$key])) {
-                $product_array['rows'][$key]['reserved'] = 'cart' . $account['accountid'];
+                $product_array['rows'][$key]['reserved'] = 'cart' . $account['id'];
             } else {
                 $product_array['rows'][$key]['reserved'] = '';
             }
