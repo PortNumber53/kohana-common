@@ -1,5 +1,8 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Message\AMQPMessage;
+
 /**
  * Class Controller_Common_Core_Account
  */
@@ -59,9 +62,12 @@ class Controller_Common_Core_Account extends Controller_Website
 
         $signup_data = array(
             'profile' => 'user',
-            'username' => $name = filter_var(Arr::path($this->json, 'username', $this->request->post('username')), FILTER_SANITIZE_STRING),
-            'password' => $name = filter_var(Arr::path($this->json, 'password', $this->request->post('password')), FILTER_SANITIZE_STRING),
-            'display_name' => $name = filter_var(Arr::path($this->json, 'display_name', $this->request->post('display_name')), FILTER_SANITIZE_STRING),
+            'username' => $name = filter_var(Arr::path($this->json, 'username', $this->request->post('username')),
+                FILTER_SANITIZE_STRING),
+            'password' => $name = filter_var(Arr::path($this->json, 'password', $this->request->post('password')),
+                FILTER_SANITIZE_STRING),
+            'display_name' => $name = filter_var(Arr::path($this->json, 'display_name',
+                $this->request->post('display_name')), FILTER_SANITIZE_STRING),
         );
         $result = Account::signup($signup_data, $error);
 
@@ -182,6 +188,33 @@ class Controller_Common_Core_Account extends Controller_Website
         $this->page_title = 'Forgot Password';
         $main = 'account/forgot';
         View::bind_global('main', $main);
+    }
+
+    public function action_ajax_forgot()
+    {
+        $queue_name = Environment::level() . '-' . 'forgot-message';
+        $this->output['_DEBUG'] = $_POST;
+
+        $email_data = array(
+            'email' => filter_var($_POST['email'], FILTER_SANITIZE_STRING),
+        );
+
+        $queue_settings = Arr::path(self::$settings, 'rabbitmq');
+
+        $connection = new AMQPStreamConnection($queue_settings['host'], $queue_settings['port'], $queue_settings['user'],
+            $queue_settings['password']);
+        $channel = $connection->channel();
+        $channel->queue_declare($queue_name, false, true, false, false);
+
+
+        $msg = new AMQPMessage(json_encode($email_data), array('delivery_mode' => 2));
+
+        $result = $channel->basic_publish($msg, '', $queue_name);
+
+        $channel->close();
+        $connection->close();
+
+        $this->output['errorCode'] = 0;
     }
 
     public function action_settings()
