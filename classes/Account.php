@@ -144,7 +144,7 @@ class Account extends Abstracted
         $username = 'guest_' . str_replace('.', '', microtime(true) . mt_rand(10000, 99999));
         $data = array(
             '_id' => '/' . DOMAINNAME . '/' . $username,
-            'accountid' => -1,
+            'id' => -1,
             'profile' => 'guest',
             'username' => $username,
             'display_name' => $username,
