@@ -27,6 +27,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
 
     public function get_by_id($_id, &$options = array())
     {
+        $row = false;
         try {
             //self::_add_domain($_id);
             $cache_key = '/' . $this::$_table_name . ':row:' . $_id;
@@ -49,8 +50,6 @@ abstract class Model_Abstract extends Model_Core_Abstract
 
                     Cache::instance('redis')->set($cache_key, json_encode($row));
                     return $row;
-                } else {
-                    return false;
                 }
             } else {
                 $row = json_decode($row, true);
