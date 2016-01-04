@@ -315,7 +315,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
             $picture_array = $picture->filter($filter_picture, $sort, $picture_limit, $picture_offset);
             $main = 'shopping/browse';
         } else {
-            $product_array['reserved'] = 'cart' . static::$account['accountid'];
+            $product_array['reserved'] = 'cart' . Arr::path(static::$account, 'id', '??');
             $filter_picture = array(
                 array('productid', '=', $productId),
             );
