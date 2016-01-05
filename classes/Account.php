@@ -128,6 +128,24 @@ class Account extends Abstracted
         }
     }
 
+    public static function forceLogIn($data)
+    {
+        $model_account = new Model_Account();
+        $data_account = $model_account->getAccountByHash($data['hash']);
+        if ($data_account) {
+            $data_cookie = array(
+                'accountid' => $data_account['accountid'],
+                'display_name' => $data_account['display_name'],
+                'username' => $data_account['username'],
+                'profile' => $data_account['profile'],
+            );
+            Cookie::set('account', json_encode($data_cookie));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static function getLoggedAccount()
     {
         $cookie = json_decode(Cookie::get('account'), true);

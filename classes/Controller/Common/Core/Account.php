@@ -102,6 +102,23 @@ class Controller_Common_Core_Account extends Controller_Website
         $this->output['output'] = $result;
     }
 
+    public function action_reset()
+    {
+        $this->page_title = 'Reset Password';
+        if (!empty($_GET['hash'])) {
+            //Force authentication and redirect user to profile page?
+            $hash = htmlentities($_GET['hash']);
+            View::bind_global('hash', $hash);
+            $result = Account::forceLogIn(array(
+                'hash' => $hash,
+            ));
+            if ($result) {
+                $this->redirect(URL::Site(Route::get('account-actions')->uri(array('action' => 'profile',)), true));
+            }
+        }
+        $this->redirect(URL::Site(Route::get('default')->uri(array()), true));
+    }
+
     public function action_ajax_reset()
     {
         $error = false;
@@ -165,24 +182,6 @@ class Controller_Common_Core_Account extends Controller_Website
         $this->output['output'] = $result;
     }
 
-    public function action_reset()
-    {
-        $this->page_title = 'Reset Password';
-        if ($post = $this->request->post()) {
-            if (Account::reset($post, $error)) {
-                $this->redirect(URL::Site(Route::get('default')->uri(array()), true));
-            }
-        }
-        if (!empty($_GET['hash'])) {
-            //Force authentication and redirect user to profile page?
-            $hash = htmlentities($_GET['hash']);
-            View::bind_global('hash', $hash);
-        }
-
-        $main = 'account/reset';
-        View::bind_global('main', $main);
-    }
-
     public function action_forgot()
     {
         $this->page_title = 'Forgot Password';
@@ -195,26 +194,45 @@ class Controller_Common_Core_Account extends Controller_Website
         $queue_name = Environment::level() . '-' . 'forgot-message';
         $this->output['_DEBUG'] = $_POST;
 
-        $email_data = array(
-            'email' => filter_var($_POST['email'], FILTER_SANITIZE_STRING),
-        );
+        $email = filter_var($_POST['email'], FILTER_SANITIZE_STRING);
 
-        $queue_settings = Arr::path(self::$settings, 'rabbitmq');
+        $model_account = new Model_Account();
+        $account_data = $model_account->getAccountByUsername($email);
 
-        $connection = new AMQPStreamConnection($queue_settings['host'], $queue_settings['port'], $queue_settings['user'],
-            $queue_settings['password']);
-        $channel = $connection->channel();
-        $channel->queue_declare($queue_name, false, true, false, false);
+        if ($account_data) {
+            $hash = md5($account_data['accountid'] . Arr::path(self::$settings, 'website.cookie_salt', time()));
+            $account_data['hash'] = $hash;
+            $options = array();
+            $model_account->save($account_data, $options);
+            $this->output['account'] = $account_data;
+            $this->output['hash'] = $hash;
+
+            $email_data = array(
+                'name' => $account_data['display_name'],
+                'email' => $email,
+                'template' => 'forgot-password',
+                'hash' => $hash,
+            );
+
+            $queue_settings = Arr::path(self::$settings, 'rabbitmq');
+
+            $connection = new AMQPStreamConnection($queue_settings['host'], $queue_settings['port'],
+                $queue_settings['user'], $queue_settings['password']);
+            $channel = $connection->channel();
+            $channel->queue_declare($queue_name, false, true, false, false);
 
 
-        $msg = new AMQPMessage(json_encode($email_data), array('delivery_mode' => 2));
+            $msg = new AMQPMessage(json_encode($email_data), array('delivery_mode' => 2));
 
-        $result = $channel->basic_publish($msg, '', $queue_name);
+            $result = $channel->basic_publish($msg, '', $queue_name);
 
-        $channel->close();
-        $connection->close();
+            $channel->close();
+            $connection->close();
 
-        $this->output['errorCode'] = 0;
+            $this->output['errorCode'] = 0;
+        } else {
+            $this->output['errorCode'] = 404;
+        }
     }
 
     public function action_settings()
