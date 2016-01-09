@@ -1,11 +1,4 @@
-<?php
-
-/**
- * Created by IntelliJ IDEA.
- * User: mauricio
- * Date: 7/2/2015
- * Time: 2:52 AM
- */
+<?php defined('SYSPATH') or die('No direct script access.');
 
 /**
  * Class Core_Constants
@@ -14,7 +7,6 @@ class Core_Constants
 {
     const LIMIT = 'l';
     const OFFSET = 'o';
-
 
     const FE_COOKIE = 'fe';
     const BE_COOKIE = 'be';
