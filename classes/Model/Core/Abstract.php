@@ -1,10 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Date: 10/27/13
- * Time: 5:37 PM
- * Something meaningful about this file
- *
+ * Class Model_Core_Abstract
  */
 abstract class Model_Core_Abstract extends Model_Database
 {
@@ -31,7 +28,7 @@ abstract class Model_Core_Abstract extends Model_Database
 
     abstract public function get_by_object_id($object_id, &$options = array());
 
-    public static function getDataByParentId($parentId, $filters=array(), $limit = 0, $offset = 0)
+    public static function getDataByParentId($parentId, $filters = array(), $limit = 0, $offset = 0)
     {
         return static::_getDataByParentId($parentId, $filters, $limit, $offset);
     }
@@ -47,7 +44,8 @@ abstract class Model_Core_Abstract extends Model_Database
         );
     }
 
-    public static function _before_save(&$data = array()) {
+    public static function _before_save(&$data = array())
+    {
     }
 
     abstract public function save(&$data, &$error, &$options = array());
