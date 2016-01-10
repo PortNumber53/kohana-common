@@ -18,7 +18,7 @@ $class = "$class_image";
 	<?php
 	foreach ($filtered_gallery['rows'] as $gallery_data)
 	{
-		$gallery_data['canonical_url'] = URL::Site(Route::get('blog-actions')->uri(array('id'=>$gallery_data['object_id'], 'slug'=>URLify::filter($gallery_data['name']), )), TRUE);
+		$gallery_data['canonical_url'] = URL::Site(Route::get('blog-actions')->uri(array('id'=>$gallery_data['galleryid'], 'slug'=>URLify::filter($gallery_data['name']), )), true);
 		if (substr($gallery_data['canonical_url'], -1) != '/')
 		{
 			$gallery_data['canonical_url'] = $gallery_data['canonical_url'] . '/';
@@ -28,6 +28,13 @@ $class = "$class_image";
 			<?php
 			echo View::factory('gallery/blog/post', array(
 				'gallery_data' => $gallery_data,
+				'picture_data' => array(
+					'rows' => array(
+						array(
+                            'image_url' => $gallery_data['image_url'],
+                        )
+					),
+				),
 			))->render();
 			?>
 		</li>

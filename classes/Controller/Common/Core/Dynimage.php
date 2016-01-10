@@ -9,7 +9,6 @@ class Controller_Common_Core_Dynimage extends Controller_Website
 
     public function action_view()
     {
-        //print_r($_SERVER);
         $request = $this->request->param('request');
         $type = $this->request->param('type');
         $full_request = ($request === '/') ? $request : "$request.$type";
@@ -19,8 +18,6 @@ class Controller_Common_Core_Dynimage extends Controller_Website
         $mime_type = mime_content_type($file_name);
         $this->response->headers('content-type', $mime_type);
         echo file_get_contents($file_name);
-
-
     }
 
     public function action_resize()

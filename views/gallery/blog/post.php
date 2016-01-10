@@ -43,16 +43,16 @@ if ( !  empty($file_list))
 	</section>
 
 	<?php
-	if ( ! empty($file_list))
+	if ( ! empty($picture_data))
 	{
 	?>
 		<ul class="blog-list clearfix">
 			<?php
-			foreach ($file_list as $item)
+			foreach ($picture_data['rows'] as $row)
 			{
 			?>
 				<li>
-					<img src="<?php echo URL::Site($item['image']['url'], TRUE); ?>" />
+					<img src="<?php echo URL::Site($row['image_url'], true); ?>" />
 				</li>
 			<?php
 			}

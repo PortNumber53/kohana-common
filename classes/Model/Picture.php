@@ -10,6 +10,7 @@ class Model_Picture extends Model_Abstract
 {
     protected static $_table_name = 'picture';
     protected static $_primary_key = 'pictureid';
+    protected static $_parent_key = 'productid';
     protected static $_columns = array(
         'pictureid' => 0,
         'productid' => 0,
@@ -22,18 +23,4 @@ class Model_Picture extends Model_Abstract
     );
     protected static $_json_columns = array();
 
-    public static function _getDataByParentId($parentId, $filters=array(), $limit, $offset)
-    {
-        $picture = new Model_Picture();
-        $sort = array(
-            'sequence' => 'ASC',
-            'uploaded' => 'ASC',
-        );
-        $filter = array(
-            array('productid', '=', $parentId,),
-        );
-        $filter = array_merge($filters, $filter);
-        $product_result = $picture->filter($filter, $sort, $limit, $offset);
-        return $product_result;
-    }
 }

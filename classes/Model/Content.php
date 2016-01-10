@@ -29,7 +29,7 @@ class Model_Content extends Model_Abstract
         $offset = 0;
         $sort = array();
         $filters = array(
-            array('title_seo', '=', $url,),
+            array('url', '=', $url,),
         );
         $product_result = $content->filter($filters, $sort, $limit, $offset);
 

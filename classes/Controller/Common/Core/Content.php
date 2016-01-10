@@ -55,7 +55,7 @@ class Controller_Common_Core_Content extends Controller_Website
         if (Kohana::find_file('views', $full_request)) {
             $main = $full_request;
         } else {
-            $data = Model_Content::getDataByUrl($request);
+            $data = Model_Content::getDataByUrl("/$full_request");
 
             if (!$data) {
                 throw HTTP_Exception::factory(404, 'Document not found!');

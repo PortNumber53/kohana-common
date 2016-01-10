@@ -140,9 +140,19 @@ abstract class Model_Abstract extends Model_Core_Abstract
         return static::_getDataByParentId($parentId, $filters, $limit, $offset);
     }
 
-    public static function _getDataByParentId($parentId, $filters, $limit, $offset)
+    public static function _getDataByParentId($parentId, $filters=array(), $limit, $offset)
     {
-        // TODO: Implement _getDataByParentId() method._saveRow
+        $picture = new Model_Picture();
+        $sort = array(
+            'sequence' => 'ASC',
+            'uploaded' => 'ASC',
+        );
+        $filter = array(
+            array(static::$_parent_key, '=', $parentId,),
+        );
+        $filter = array_merge($filters, $filter);
+        $picture_result = $picture->filter($filter, $sort, $limit, $offset);
+        return $picture_result;
     }
 
     public function get_by_associated_id($associated_id, &$options = array())

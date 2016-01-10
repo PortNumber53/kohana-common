@@ -9,12 +9,12 @@
 class Model_Gallery extends Model_Abstract
 {
     public static $_table_name = 'gallery';
-    public static $_primary_key = '_id';
+    public static $_primary_key = 'galleryid';
 
     public static $_columns = array(
+        'galleryid' => 0,
         '_id' => '',
         'url' => '',
-        'object_id' => 0,
         'category_id' => 0,
         'status' => '',
         'name' => '',

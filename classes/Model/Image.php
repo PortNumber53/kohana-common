@@ -25,7 +25,7 @@ class Model_Image extends Model_Abstract
         'tags' => '',
     );
 
-    public function _before_save(&$data = array())
+    public static function _before_save(&$data = array())
     {
         parent::_before_save($data);
         if (empty($data['object_id'])) {
