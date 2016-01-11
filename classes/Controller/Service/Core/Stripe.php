@@ -1,14 +1,13 @@
 <?php defined('SYSPATH') or die('No direct script access.');
+
 /**
- * Created by IntelliJ IDEA.
- * User: mauricio
- * Date: 8/18/2015
- * Time: 1:44 AM
+ * Class Controller_Service_Core_Stripe
  */
+class Controller_Service_Core_Stripe extends Controller_Service_Service
+{
 
-class Controller_Service_Core_Stripe extends Controller_Service_Service {
-
-    public function action_webhook() {
+    public function action_webhook()
+    {
         echo ".";
     }
 }

@@ -162,7 +162,8 @@ class Controller_Common_Core_Website extends Controller_Template
                 'controller' => 'product',
                 'action' => 'browse',
             )), true);
-            $menu['gallery_url'] = URL::Site(Route::get('blog-actions')->uri(array('',)), true);
+            //$menu['gallery_url'] = URL::Site(Route::get('blog-actions')->uri(array('',)), true);
+            $menu['gallery_url'] = '/something_else';
             $menu['profile_url'] = URL::Site(Route::get('account-actions')->uri(array('action' => 'profile',)), true);
             $menu['privacy_url'] = URL::Site(Route::get('html-content')->uri(array(
                 'request' => 'privacy-policy',

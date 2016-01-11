@@ -5,6 +5,11 @@
  */
 class Controller_Common_Core_Gallery extends Controller_Website
 {
+    public function action_index()
+    {
+        $this->action_browse();
+    }
+
     public function action_browse()
     {
         $page = (int)Arr::path($_GET, 'page', 1);
@@ -14,7 +19,7 @@ class Controller_Common_Core_Gallery extends Controller_Website
         $limit = 15;
         $offset = ($page - 1) * $limit;;
         $sort = array(
-            'object_id' => 'ASC',
+            'created_at' => 'DESC',
         );
         $filter = array(//array('account_id', '=', $account_data['object_id']),
         );
@@ -32,9 +37,11 @@ class Controller_Common_Core_Gallery extends Controller_Website
 
         View::bind_global('gallery_array', $filtered_gallery['rows']);
         View::bind_global('page_links', $page_links);
+        echo " ASSDA";
     }
 
-    public function action_edit()
+    public
+    function action_edit()
     {
         $object_id = $this->request->param('id');
         $gallery_data = Gallery::get_by_object_id($object_id);
@@ -52,7 +59,8 @@ class Controller_Common_Core_Gallery extends Controller_Website
         View::bind_global('gallery_array', $gallery_array);
     }
 
-    public function action_ajax_edit()
+    public
+    function action_ajax_edit()
     {
         $this->output = array(
             'posted' => $_POST,
@@ -89,7 +97,8 @@ class Controller_Common_Core_Gallery extends Controller_Website
     }
 
 
-    public function action_manage()
+    public
+    function action_manage()
     {
         $object_id = $this->request->param('id');
         $gallery_data = Gallery::get_by_object_id($object_id);
@@ -107,7 +116,8 @@ class Controller_Common_Core_Gallery extends Controller_Website
         View::bind_global('gallery_array', $gallery_array);
     }
 
-    public function action_ajax_manage()
+    public
+    function action_ajax_manage()
     {
         $error = false;
         $this->output = array(
@@ -131,7 +141,8 @@ class Controller_Common_Core_Gallery extends Controller_Website
     }
 
 
-    public function action_ajax_update()
+    public
+    function action_ajax_update()
     {
         $error = false;
         $this->output = array(
