@@ -15,8 +15,8 @@
             <div class="form-group">
                 <div class="thumbnail dropbox-unique">
                     <div id="dropbox" class="text-center center-block" data-field="profile_avatar">
-                        <img src="<?php echo empty(Arr::path($data,
-                            'profile_avatar')) ? 'http://placehold.it/240x300' : URL::site(Arr::path($data,
+                        <img src="<?php echo empty(Arr::path($account_data,
+                            'profile_avatar')) ? 'http://placehold.it/240x300' : URL::site(Arr::path($account_data,
                             'profile_avatar')[0], true); ?>" alt="...">
                     </div>
                 </div>
@@ -28,16 +28,8 @@
                 <label for="inputEmail1" class="col-sm-2  control-label">Email</label>
 
                 <div class="col-sm-10">
-                    <input type="email" class="form-control" id="inputEmail1" placeholder="Email" name="email"
-                           value="<?php echo Arr::path($data, 'email'); ?>">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="inputName" class="col-sm-2  control-label">Name</label>
-
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" id="inputName" placeholder="Name" name="name"
-                           value="<?php echo Arr::path($data, 'name'); ?>">
+                    <input type="email" class="form-control" id="username" placeholder="Email" name="username"
+                           value="<?php echo Arr::path($account_data, 'username'); ?>">
                 </div>
             </div>
             <div class="form-group">
@@ -45,7 +37,7 @@
 
                 <div class="col-sm-10">
                     <input type="text" class="form-control" id="inputDisplayName" placeholder="Name" name="display_name"
-                           value="<?php echo Arr::path($data, 'display_name'); ?>">
+                           value="<?php echo Arr::path($account_data, 'display_name'); ?>">
                 </div>
             </div>
             <div class="form-group">
