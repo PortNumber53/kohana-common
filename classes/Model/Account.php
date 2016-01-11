@@ -11,8 +11,8 @@ class Model_Account extends Model_Abstract
     public static $_primary_key = 'accountid';
 
     public static $_columns = array(
-        '_id' => '',
         'accountid' => 0,
+        '_id' => '',
         'profile' => '',
         'username' => '',
         'password' => '',

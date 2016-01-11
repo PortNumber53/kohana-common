@@ -52,7 +52,7 @@
                                 true); ?>"> Sign up here</a>
                         </label>
                         <label>
-                            <a href="<?php echo URL::Site(Route::get('account-actions')->uri(array('action' => 'reset',)),
+                            <a href="<?php echo URL::Site(Route::get('account-actions')->uri(array('action' => 'forgot',)),
                                 true); ?>"> Reset password</a>
                         </label>
                     </div>

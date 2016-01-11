@@ -191,7 +191,7 @@ class Controller_Common_Core_Account extends Controller_Website
 
     public function action_ajax_forgot()
     {
-        $queue_name = Environment::level() . '-' . 'forgot-message';
+        $queue_name = Arr::path(self::$settings, 'website.domain_name') . '-'. Environment::level() . '-' . 'forgot-message';
         $this->output['_DEBUG'] = $_POST;
 
         $email = filter_var($_POST['email'], FILTER_SANITIZE_STRING);
@@ -200,7 +200,7 @@ class Controller_Common_Core_Account extends Controller_Website
         $account_data = $model_account->getAccountByUsername($email);
 
         if ($account_data) {
-            $hash = md5($account_data['accountid'] . Arr::path(self::$settings, 'website.cookie_salt', time()));
+            $hash = md5($account_data['accountid'] . Arr::path(self::$settings, 'website.cookie_salt', time()) . time());
             $account_data['hash'] = $hash;
             $options = array();
             $model_account->save($account_data, $options);
@@ -212,6 +212,8 @@ class Controller_Common_Core_Account extends Controller_Website
                 'email' => $email,
                 'template' => 'forgot-password',
                 'hash' => $hash,
+                'link' => URL::Site(Route::get('account-actions')->uri(array('action' => 'reset',)),
+                        true) . '?hash=' . $hash,
             );
 
             $queue_settings = Arr::path(self::$settings, 'rabbitmq');
