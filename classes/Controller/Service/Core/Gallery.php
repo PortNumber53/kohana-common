@@ -13,7 +13,7 @@ class Controller_Service_Core_Gallery extends Controller_Service_Core_Service
             'posted' => $_POST,
         );
 
-        $result = Gallery::delete_by_object_id((int)$_POST['what'], $error);
+        $result = Gallery::deleteById((int)$_POST['what'], $error);
         if ($result) {
             $this->output['redirect_url'] = $_POST['back_url'];
         }

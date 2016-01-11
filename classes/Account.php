@@ -273,5 +273,4 @@ class Account extends Abstracted
         Cookie::delete('account');
         return false;
     }
-
 }

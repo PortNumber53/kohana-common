@@ -37,7 +37,6 @@ class Controller_Common_Core_Gallery extends Controller_Website
 
         View::bind_global('gallery_array', $filtered_gallery['rows']);
         View::bind_global('page_links', $page_links);
-        echo " ASSDA";
     }
 
     public

@@ -1,10 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Date: 10/27/13
- * Time: 6:29 PM
- * Something meaningful about this file
- *
+ * Class Product
  */
 class Product
 {
@@ -33,5 +30,4 @@ class Product
         }
         return $product_array;
     }
-
 }

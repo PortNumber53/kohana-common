@@ -412,9 +412,9 @@ abstract class Model_Abstract extends Model_Core_Abstract
         return $filter_data;
     }
 
-    public function delete_by_id($_id)
+    public static function deleteById($primary_id)
     {
-        $query = DB::delete($this::$_table_name)->where($this::$_primary_key, '=', $_id);
+        $query = DB::delete(static::$_table_name)->where(static::$_primary_key, '=', $primary_id);
         return $query->execute();
     }
 
