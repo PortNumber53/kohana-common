@@ -33,6 +33,15 @@ abstract class Core_Abstract implements iAbstractTable
         return $result;
     }
 
+    public static function getById($primaryid, &$options = array())
+    {
+        $class = 'Model_' . get_called_class();
+        $oTable = new $class;
+        echo "$class ID: $primaryid";
+        $result = $oTable->get_by_id($primaryid);
+        return $result;
+    }
+
     public static function get_by_object_id($object_id, &$options = array())
     {
         $class = 'Model_' . get_called_class();

@@ -48,6 +48,14 @@ class Gallery extends Abstracted
         }
     }
 
+    public static function deleteById($primary_id, &$error)
+    {
+        $ogallery = new Model_Gallery();
+        $result = $ogallery->deleteById($primary_id, $error);
+
+        return $result;
+    }
+
     public static function delete_by_object_id($object_id, &$error)
     {
         $ogallery = new Model_Gallery();

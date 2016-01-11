@@ -23,7 +23,7 @@ class Controller_Service_Core_Gallery extends Controller_Service_Core_Service
 
         $filter = array();
         $gallery_array = Gallery::filter($filter);
-        View::set_global('gallery_array', $gallery_array);
+        View::bind_global('gallery_array', $gallery_array);
         $this->output['table_body'] = View::factory('gallery/ajax_browse')->render();
     }
 }

@@ -11,7 +11,7 @@
       action="<?php echo URL::Site(Route::get('default')->uri(array(
               'controller' => 'gallery',
               'action' => 'edit',
-              'id' => $gallery_data['object_id'],
+              'id' => $gallery_data['galleryid'],
           )), true) . '/'; ?>" data-dropbox-mode="gallery">
     <div class="form-group">
         <label for="inputName" class="col-lg-2 control-label">Name</label>
@@ -41,10 +41,10 @@
                     </div>
                 </li>
                 <?php
-                foreach (Arr::path($gallery_data, 'file_list', array()) as $file) {
-                    echo '<li><div class="preview"><span class="imageHolder"><img src="' . URL::Site($file['image']['url'],
+                foreach ($picture_array['rows'] as $file) {
+                    echo '<li><div class="preview"><span class="imageHolder"><img src="' . URL::Site($file['image_url'],
                             true) . '" /></li>';
-                    echo '<input type="hidden" name="file_list[]" value="' . $file['image']['url'] . '" />';
+                    echo '<input type="hidden" name="file_list[]" value="' . $file['image_url'] . '" />';
                 }
                 ?>
             </ul>
@@ -61,19 +61,19 @@
     <div class="form-group">
         <div class="col-lg-offset-2 col-lg-9">
             <button type="button" class="btn btn-primary btn-xs btn-form-action"
-                    data-object-id="<?php echo $gallery_data['object_id']; ?>"
+                    data-object-id="<?php echo $gallery_data['galleryid']; ?>"
                     data-action-link="<?php echo URL::Site(Route::get('default')->uri(array(
                             'controller' => 'gallery',
                             'action' => 'edit',
-                            'id' => $gallery_data['object_id'],
+                            'id' => $gallery_data['galleryid'],
                         )), true) . '/'; ?>">Back to Edit Gallery
             </button>
             <button type="button" class="btn btn-primary btn-xs btn-form-action"
-                    data-object-id="<?php echo $gallery_data['object_id']; ?>"
+                    data-object-id="<?php echo $gallery_data['galleryid']; ?>"
                     data-action-link="<?php echo URL::Site(Route::get('default')->uri(array(
                             'controller' => 'gallery',
                             'action' => 'update',
-                            'id' => $gallery_data['object_id'],
+                            'id' => $gallery_data['galleryid'],
                         )), true) . '/'; ?>">Update Image List
             </button>
         </div>

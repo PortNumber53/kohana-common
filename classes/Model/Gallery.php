@@ -20,7 +20,7 @@ class Model_Gallery extends Model_Abstract
         'name' => '',
         'description' => '',
         'created_at' => '',
-        'modified_at' => '',
+        'updated_at' => '',
         'extra_json' => '{}',
     );
 

@@ -11,7 +11,7 @@
       action="<?php echo URL::Site(Route::get('default')->uri(array(
               'controller' => 'gallery',
               'action' => 'edit',
-              'id' => $gallery_data['object_id'],
+              'id' => $gallery_data['galleryid'],
           )), true) . '/'; ?>">
     <div class="form-group">
         <label for="inputName" class="col-lg-2 control-label">Name</label>

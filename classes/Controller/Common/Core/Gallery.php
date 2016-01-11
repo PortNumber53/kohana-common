@@ -39,11 +39,10 @@ class Controller_Common_Core_Gallery extends Controller_Website
         View::bind_global('page_links', $page_links);
     }
 
-    public
-    function action_edit()
+    public function action_edit()
     {
         $object_id = $this->request->param('id');
-        $gallery_data = Gallery::get_by_object_id($object_id);
+        $gallery_data = Gallery::get_by_id($object_id);
         if (!$gallery_data) {
             $gallery_data = Gallery::get_empty_row();
         }
@@ -55,11 +54,10 @@ class Controller_Common_Core_Gallery extends Controller_Website
         $filter = array(//array('account_id', '=', $account_data['object_id']),
         );
         $gallery_array = Gallery::filter($filter);
-        View::bind_global('gallery_array', $gallery_array);
+        View::bind_global('gallery_data', $gallery_data);
     }
 
-    public
-    function action_ajax_edit()
+    public function action_ajax_edit()
     {
         $this->output = array(
             'posted' => $_POST,
@@ -95,15 +93,24 @@ class Controller_Common_Core_Gallery extends Controller_Website
         $this->output['result'] = $result;
     }
 
-
-    public
-    function action_manage()
+    public function action_manage()
     {
         $object_id = $this->request->param('id');
-        $gallery_data = Gallery::get_by_object_id($object_id);
-        if (!$gallery_data) {
-            $gallery_data = Gallery::get_empty_row();
+        $gallery_data = Gallery::getById($object_id);
+
+        $model_picture = new Model_Picture();
+
+        $picture_array = $model_picture->getDataByParentId($gallery_data['galleryid']);
+
+        foreach ($picture_array['rows'] as $key=>$picture_data) {
+            $path_parts = pathinfo($picture_data['image_filepath']);
+            $picture_array['rows'][$key]['image_url'] = Url::Site(Route::get('image-actions')->uri(array(
+                'pictureid' => $picture_data['pictureid'],
+                'request' => "gallery/" . $picture_data['folder'] . '/' . $path_parts['filename'],
+                'type' => $path_parts['extension'],
+            )), true);
         }
+
         View::bind_global('gallery_data', $gallery_data);
 
         $main = 'gallery/manage';
@@ -113,10 +120,10 @@ class Controller_Common_Core_Gallery extends Controller_Website
         );
         $gallery_array = Gallery::filter($filter);
         View::bind_global('gallery_array', $gallery_array);
+        View::bind_global('picture_array', $picture_array);
     }
 
-    public
-    function action_ajax_manage()
+    public function action_ajax_manage()
     {
         $error = false;
         $this->output = array(
@@ -139,9 +146,7 @@ class Controller_Common_Core_Gallery extends Controller_Website
 
     }
 
-
-    public
-    function action_ajax_update()
+    public function action_ajax_update()
     {
         $error = false;
         $this->output = array(
@@ -161,6 +166,7 @@ class Controller_Common_Core_Gallery extends Controller_Website
         }
         $gallery_data = array(
             '_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URLify::filter($_POST['name']),
+            'galleryid' => $object_id,
             'object_id' => $object_id,
             'category_id' => 0,
             'status' => $_POST['status'],
