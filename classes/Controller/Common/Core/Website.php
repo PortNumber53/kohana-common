@@ -163,7 +163,6 @@ class Controller_Common_Core_Website extends Controller_Template
                 'action' => 'browse',
             )), true);
             //$menu['gallery_url'] = URL::Site(Route::get('blog-actions')->uri(array('',)), true);
-            $menu['gallery_url'] = '/something_else';
             $menu['profile_url'] = URL::Site(Route::get('account-actions')->uri(array('action' => 'profile',)), true);
             $menu['privacy_url'] = URL::Site(Route::get('html-content')->uri(array(
                 'request' => 'privacy-policy',
@@ -228,7 +227,11 @@ class Controller_Common_Core_Website extends Controller_Template
                     $this->response->body(json_encode($this->output));
                     break;
                 default:
-                    $this->response->body($this->output);
+                    if (is_array($this->output)) {
+                        print_r($this->output);
+                    } else {
+                        $this->response->body($this->output);
+                    }
             }
 
         }
