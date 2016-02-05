@@ -15,11 +15,9 @@ class Controller_Backend_Core_Backend extends Controller_Website
     {
         parent::__construct($request, $response);
 
-        $domain_name = '';
+        $domain_name = Arr::path(self::$settings, 'website.domain_name');
         if (Arr::path(self::$settings, 'website.fake_production')) {
             $domain_name = Arr::path(self::$settings, 'website.old_production_domain_name');
-        } else {
-            $domain_name = Arr::path(self::$settings, 'website.old_domain_name');
         }
 
         if ($this->auto_render) {
