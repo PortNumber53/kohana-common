@@ -26,8 +26,8 @@
             $menu = $site_settings['menu'];
             foreach ($menu as $menu_item) {
                 ?>
-                <li class="<?php echo ($current_url == $menu_item['label']) ? 'active' : ''; ?>"><a
-                        href="<?php echo $menu_item['label']; ?>"><?php echo $menu_item['label']; ?></a></li>
+                <li class="<?php echo ($current_url == $menu_item['href']) ? 'active' : ''; ?>"><a
+                        href="<?php echo $menu_item['href']; ?>"><?php echo $menu_item['label']; ?></a></li>
                 <?php
             }
             ?>
