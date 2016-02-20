@@ -7,7 +7,7 @@ class Controller_Common_Core_Gallery extends Controller_Website
 {
     public function action_index()
     {
-        $this->action_browse();
+        $this->action_view();
     }
 
     public function action_browse()

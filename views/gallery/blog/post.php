@@ -19,7 +19,6 @@ if (!empty($file_list)) {
         <a href="<?php echo $gallery_data['canonical_url']; ?>"><h1><?php echo $gallery_data['name']; ?></h1></a>
     </header>
 
-    <?php echo $gallery_data['canonical_url']; ?>
     <ul class="social-links clearfix">
         <li>
             <div class="fb-share-button" data-href="<?php echo $gallery_data['canonical_url']; ?>"

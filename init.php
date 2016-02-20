@@ -86,7 +86,7 @@ if (!Route::$cache) {
         'action' => 'index',
     ));
 
-/*
+
     //Legacy actions
     Route::set('blog-actions', 'gallery(/<id>(-(<slug>)))(:<page>)', array(
         'id' => '[0-9]+',
@@ -98,5 +98,5 @@ if (!Route::$cache) {
         'page' => 1,
         'action' => 'view',
     ));
-*/
+
 }
