@@ -28,7 +28,6 @@ abstract class Core_Abstract implements iAbstractTable
         if (strpos($_id, DOMAINNAME) === false) {
             $_id = '/' . DOMAINNAME . $_id;
         }
-        echo "$class ID: $_id";
         $result = $oTable->get_by_id($_id);
         return $result;
     }
@@ -37,7 +36,6 @@ abstract class Core_Abstract implements iAbstractTable
     {
         $class = 'Model_' . get_called_class();
         $oTable = new $class;
-        echo "$class ID: $primaryid";
         $result = $oTable->get_by_id($primaryid);
         return $result;
     }
