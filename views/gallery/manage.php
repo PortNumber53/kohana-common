@@ -13,6 +13,8 @@
               'action' => 'edit',
               'id' => $gallery_data['galleryid'],
           )), true) . '/'; ?>" data-dropbox-mode="gallery">
+    <input type="hidden" class="form-control" id="galleryid" name="galleryid"
+           value="<?php echo Arr::path($gallery_data, 'galleryid', ''); ?>">
     <div class="form-group">
         <label for="inputName" class="col-lg-2 control-label">Name</label>
 

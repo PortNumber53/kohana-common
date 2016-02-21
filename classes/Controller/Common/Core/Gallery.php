@@ -165,10 +165,8 @@ class Controller_Common_Core_Gallery extends Controller_Website
             }
         }
         $gallery_data = array(
-            '_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URLify::filter($_POST['name']),
             'galleryid' => $object_id,
-            'object_id' => $object_id,
-            'category_id' => 0,
+            'categoryid' => 0,
             'status' => $_POST['status'],
             'name' => $_POST['name'],
             'tags' => $_POST['tags'],
@@ -177,7 +175,6 @@ class Controller_Common_Core_Gallery extends Controller_Website
         $result = Gallery::update($gallery_data, $error);
 
         if ($result) {
-
         }
 
         $this->output['error'] = $error;
