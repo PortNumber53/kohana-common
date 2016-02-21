@@ -42,7 +42,7 @@ class Controller_Common_Core_Gallery extends Controller_Website
     public function action_edit()
     {
         $object_id = $this->request->param('id');
-        $gallery_data = Gallery::get_by_id($object_id);
+        $gallery_data = Gallery::getById($object_id);
         if (!$gallery_data) {
             $gallery_data = Gallery::getEmptyRow();
         }
@@ -64,27 +64,27 @@ class Controller_Common_Core_Gallery extends Controller_Website
         );
         $error = false;
         $object_id = empty($_POST['object_id']) ? $this->request->param('id') : (int)$_POST['object_id'];
-        if (empty($object_id)) {
-            $object_id = Model_Sequence::nextval();
-        }
         $gallery_data = array(
             '_id' => '/' . DOMAINNAME . '/' . $object_id . '/' . URLify::filter($_POST['name']),
             'object_id' => $object_id,
             'category_id' => 0,
-            'status' => $_POST['status'],
-            'name' => $_POST['name'],
-            'tags' => $_POST['tags'],
+            'status' => filter_var($_POST['status'], FILTER_SANITIZE_STRING),
+            'name' => filter_var($_POST['name'], FILTER_SANITIZE_STRING),
+            'tags' => filter_var($_POST['tags'], FILTER_SANITIZE_STRING),
         );
         if (!empty($_POST['description'])) {
-            $gallery_data['description'] = $_POST['description'];
+            $gallery_data['description'] = filter_var($_POST['description'], FILTER_SANITIZE_STRING);
         }
         $result = Gallery::update($gallery_data, $error);
+
+        $galleryid = $gallery_data['galleryid'];
+
 
         if ($result) {
             $this->output['redirect_url'] = URL::Site(route::get('default')->uri(array(
                 'controller' => 'gallery',
                 'action' => 'edit',
-                'id' => $object_id
+                'id' => $galleryid
             )), true);
             $this->output['message'] = __('Gallery information updated successfully');
             $this->output['dismiss_timer'] = 2;
