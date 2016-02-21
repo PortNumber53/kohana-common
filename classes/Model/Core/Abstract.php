@@ -26,7 +26,7 @@ abstract class Model_Core_Abstract extends Model_Database
         return false;
     }
 
-    abstract public function get_by_object_id($object_id, &$options = array());
+    //abstract public function get_by_object_id($object_id, &$options = array());
 
     public static function getDataByParentId($parentId, $filters = array(), $limit = 0, $offset = 0)
     {

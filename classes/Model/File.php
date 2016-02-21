@@ -1,10 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Date: 11/16/13
- * Time: 1:09 PM
- * Something meaningful about this file
- *
+ * Class Model_File
  */
 class Model_File extends Model_Abstract
 {

@@ -1,4 +1,4 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 /**
  * Class Model_OrderDetail
@@ -15,7 +15,6 @@ class Model_OrderDetail extends Model_Abstract
         'price' => 0,
     );
 
-    public static $_json_columns = array(
-    );
+    public static $_json_columns = array();
 
 }
