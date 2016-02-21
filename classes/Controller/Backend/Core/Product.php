@@ -199,7 +199,7 @@ class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
         );
 
         $product_id = (int)$this->request->post('productid');
-        $category_id = (int)$this->request->post('categoryid');
+        $categoryid = (int)$this->request->post('categoryid');
         $code = filter_var($this->request->post('code'), FILTER_SANITIZE_STRING);
         $name = filter_var($this->request->post('name'), FILTER_SANITIZE_STRING);
         $status = filter_var($this->request->post('status'), FILTER_SANITIZE_STRING);
@@ -211,8 +211,8 @@ class Controller_Backend_Core_Product extends Controller_Backend_Core_Backend
 
         $product = new Model_Product();
         $data['updated'] = date('Y-m-d H:i:s', time());
-        if (!empty($category_id)) {
-            $data['categoryid'] = $category_id;
+        if (!empty($categoryid)) {
+            $data['categoryid'] = $categoryid;
         }
         if (!empty($code)) {
             $data['code'] = $code;
