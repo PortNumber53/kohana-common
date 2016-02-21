@@ -44,7 +44,7 @@ class Controller_Common_Core_Gallery extends Controller_Website
         $object_id = $this->request->param('id');
         $gallery_data = Gallery::get_by_id($object_id);
         if (!$gallery_data) {
-            $gallery_data = Gallery::get_empty_row();
+            $gallery_data = Gallery::getEmptyRow();
         }
         View::bind_global('gallery_data', $gallery_data);
 
@@ -102,7 +102,7 @@ class Controller_Common_Core_Gallery extends Controller_Website
 
         $picture_array = $model_picture->getDataByParentId($gallery_data['galleryid']);
 
-        foreach ($picture_array['rows'] as $key=>$picture_data) {
+        foreach ($picture_array['rows'] as $key => $picture_data) {
             $path_parts = pathinfo($picture_data['image_filepath']);
             $picture_array['rows'][$key]['image_url'] = Url::Site(Route::get('image-actions')->uri(array(
                 'pictureid' => $picture_data['pictureid'],

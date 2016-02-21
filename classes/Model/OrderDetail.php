@@ -15,6 +15,6 @@ class Model_OrderDetail extends Model_Abstract
         'price' => 0,
     );
 
-    public static $_json_columns = array();
+    protected static $_json_columns = array();
 
 }

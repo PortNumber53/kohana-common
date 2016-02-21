@@ -5,10 +5,10 @@
  */
 class Model_Sequence extends Model_Abstract
 {
-    public static $_table_name = 'sequence';
-    public static $_primary_key = '_id';
+    protected static $_table_name = 'sequence';
+    protected static $_primary_key = '_id';
 
-    public static $_columns = array(
+    protected static $_columns = array(
         '_id' => '',
     );
 

@@ -5,10 +5,10 @@
  */
 class Model_Settings extends Model_Abstract
 {
-    private static $_table_name = 'settings';
-    private static $_primary_key = '_id';
+    protected static $_table_name = 'settings';
+    protected static $_primary_key = '_id';
 
-    private static $_columns = array(
+    protected static $_columns = array(
         '_id' => 0,
         'account_id' => 0,
         'data' => '',

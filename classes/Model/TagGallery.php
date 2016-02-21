@@ -1,19 +1,18 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Class Model_Tag
+ * Class Model_Tag_Gallery
  */
-class Model_Tag extends Model_Abstract
+class Model_TagGallery extends Model_Abstract
 {
-    protected static $_table_name = 'tag';
-    protected static $_primary_key = 'tagid';
+    protected static $_table_name = 'tag_gallery';
+    protected static $_primary_key = array('tagid', 'galleryid');
 
     protected static $_columns = array(
         'tagid' => '',
         'galleryid' => 0,
-        'tag' => '',
         'created_at' => '',
-        'updated_at' => '',
+        'modified_at' => '',
         'extra_json' => '{}',
     );
 

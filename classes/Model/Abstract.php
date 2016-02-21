@@ -162,7 +162,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
         $cache_key = '/' . $this::$_table_name . ':row:' . $associated_id;
         $data = Cache::instance('redis')->get($cache_key);
         if (empty($data)) {
-            $query = DB::select()->from($this::$_table_name)->where('associated_id', '=', $associated_id);
+            $query = DB::select()->from($this::$_table_name)->where('galleryid', '=', $associated_id);
             $data = $query->execute()->as_array();
             if (count($data) > 0) {
                 Cache::instance('redis')->set($cache_key, json_encode($data));
@@ -218,7 +218,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
             } else {
                 if (!empty($data[static::$_primary_key])) {
                     $exists = $this->get_by_id($data[static::$_primary_key]);
-                    $update_filter = '_id';
+                    //$update_filter = '_id';
                 }
             }
         }
@@ -226,6 +226,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
             $data = array_merge($exists, $data);
         }
 
+        $original_data = $data;
         $json_data = array_diff_key($data, $this::$_columns);
         $data = array_intersect_key($data, $this::$_columns);
         if (empty($options['no_extra_json'])) {
@@ -238,6 +239,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
                 //Update
                 $data['updated_at'] = date('Y-m-d H:i:s');
                 if (is_array(static::$_primary_key)) {
+                    //echo "TABLE:  " . $this::$_table_name. " \n";print_r($data);
                     $query = DB::update($this::$_table_name)->set($data);
                     foreach (static::$_primary_key as $loop_key) {
                         $query->where($loop_key, '=', $data[$loop_key]);
@@ -263,57 +265,8 @@ abstract class Model_Abstract extends Model_Core_Abstract
             //    $cache_key = '/' . $this::$_table_name . ':row:' . $data['_id'];
             //    Cache::instance('redis')->delete($cache_key);
             //}
+            $this->_after_save($original_data);
 
-            //Handle tagging
-            if (!empty($json_data['tags'])) {
-                $oTagged = new Model_Tagged();
-                $oTag = new Model_Tag();
-                //Get current tags
-                //print_r($data);
-                //$tag_array = $oTagged->get_by_id($data[static::$_primary_key]);
-                $tag_array = $oTagged->get_by_associated_id($data[static::$_primary_key]);
-                //print_r($data[static::$_primary_key]); echo  "\n";
-                //print_r($data);
-                foreach (explode(',', $json_data['tags']) as $tag) {
-                    $filter = array(
-                        array('tag', '=', $tag,),
-                    );
-                    $tag_result = $oTag->filter($filter);
-                    //print_r($tag_result);
-                    if ($tag_result['count'] == 0) {
-                        //Create tag
-                        $new_tag_data = array(
-                            '_id' => '/' . DOMAINNAME . '/' . URL::title($tag),
-                            'object_id' => $data[static::$_primary_key],
-                            'tag' => $tag,
-                        );
-                        //echo "NEW===\n";
-                        $result = $oTag->save($new_tag_data, $error);
-                        //print_r($result);
-                        //die();
-                    } else {
-                        //echo "ALREADY===\n";
-                        $new_tag_data = array_shift($tag_result['rows']);
-                        //print_r($new_tag_data);
-                    }
-                    //Link object to tag
-                    $tagged_data = array(
-                        '_id' => '/' . $data[static::$_primary_key] . '/' .
-                            $new_tag_data['object_id'],
-                        'object_id' => $new_tag_data['object_id'], //Tag_id
-                        'associated_id' => $data[static::$_primary_key],
-                    );
-                    $result_tagged = $oTagged->save($tagged_data, $error);
-                    foreach ($tag_array as $key => $value) {
-                        if ($tag_array[$key]['_id'] == $tagged_data['_id']) {
-                            unset($tag_array[$key]);
-                        }
-                    }
-                }
-                foreach ($tag_array as $key => $value) {
-                    $oTagged->deleteById($value['_id']);
-                }
-            }
         } catch (Exception $e) {
             $error = array(
                 'error' => $e->getCode(),

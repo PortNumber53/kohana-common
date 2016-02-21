@@ -28,6 +28,6 @@ class Model_Order extends Model_Abstract
         'updated_at' => '',
     );
 
-    public static $_json_columns = array();
+    protected static $_json_columns = array();
 
 }

@@ -23,7 +23,7 @@ class Controller_Common_Core_File extends Controller_Website
 		$file_data = File::get_by_object_id($object_id);
 		if ( ! $file_data)
 		{
-			$file_data = File::get_empty_row();
+			$file_data = File::getEmptyRow();
 		}
 		View::bind_global('file_data', $file_data);
 

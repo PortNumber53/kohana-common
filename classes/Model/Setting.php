@@ -5,10 +5,10 @@
  */
 class Model_Setting extends Model_Abstract
 {
-    public static $_table_name = 'setting';
-    public static $_primary_key = 'settingid';
+    protected static $_table_name = 'setting';
+    protected static $_primary_key = 'settingid';
 
-    public static $_columns = array(
+    protected static $_columns = array(
         'settingid' => 0,
         'name' => '',
         'extra_json' => '',
@@ -16,7 +16,7 @@ class Model_Setting extends Model_Abstract
         'updated_at' => '',
     );
 
-    public static $_json_columns = array();
+    protected static $_json_columns = array();
 
 
     public static function getDataByName($name)

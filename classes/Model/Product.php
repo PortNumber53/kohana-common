@@ -35,7 +35,7 @@ class Model_Product extends Model_Abstract
         'image_filepath' => '',
     );
 
-    public static $_json_columns = array(
+    protected static $_json_columns = array(
         'tags' => '',
     );
 
