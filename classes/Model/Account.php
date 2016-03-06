@@ -1,16 +1,14 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Date: 5/15/13
- * Time: 11:16 PM
- *
+ * Class Model_Account
  */
 class Model_Account extends Model_Abstract
 {
-    public static $_table_name = 'account';
-    public static $_primary_key = 'accountid';
+    protected static $_table_name = 'account';
+    protected static $_primary_key = 'accountid';
 
-    public static $_columns = array(
+    protected static $_columns = array(
         'accountid' => 0,
         '_id' => '',
         'profile' => '',
@@ -25,7 +23,7 @@ class Model_Account extends Model_Abstract
         'extra_json' => '',
     );
 
-    public static $_json_columns = array();
+    protected static $_json_columns = array();
 
     public static function _before_save(&$data = array())
     {

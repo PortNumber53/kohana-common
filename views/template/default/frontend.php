@@ -10,34 +10,33 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title><?php
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php
         echo (isset($page_title) && $page_title !== '') ? "$page_title - " : '';
-		echo Arr::path($site_settings, 'site_name', '{config::site_name}');
-		?></title>
-	<link rel="canonical" href="<?php echo empty($canonical_url) ? URL::site('/', TRUE) : str_replace('/.html', '/', $canonical_url); ?>" />
+        echo Arr::path($site_settings, 'site_name', '{config::site_name}');
+        ?></title>
+    <link rel="canonical"
+          href="<?php echo empty($canonical_url) ? URL::site('/', TRUE) : str_replace('/.html', '/', $canonical_url); ?>"/>
 
-	<?php Masher::instance('top_head')->add_css('3.0.0/bootstrap.min.css'); ?>
-	<?php Masher::instance('top_head')->add_css('/template/'.Arr::path($site_settings, 'template.selected', 'default') . '/css/bootstrap.css'); ?>
-	<?php Masher::instance('top_head')->add_css('/template/'.Arr::path($site_settings, 'template.selected', 'default') . '/css/style.css'); ?>
-	<?php echo Masher::instance('top_head')->mark_css(); ?>
+    <?php Masher::instance('top_head')->add_css('3.0.0/bootstrap.min.css'); ?>
+    <?php Masher::instance('top_head')->add_css('/template/' . Arr::path($site_settings, 'template.selected', 'default') . '/css/bootstrap.css'); ?>
+    <?php Masher::instance('top_head')->add_css('/template/' . Arr::path($site_settings, 'template.selected', 'default') . '/css/style.css'); ?>
+    <?php echo Masher::instance('top_head')->mark_css(); ?>
 
-	<?php Masher::instance('top_head')->add_js('jquery-2.0.3.min.js'); ?>
-	<?php echo Masher::instance('top_head')->mark_js(); ?>
+    <?php Masher::instance('top_head')->add_js('jquery-2.0.3.min.js'); ?>
+    <?php echo Masher::instance('top_head')->mark_js(); ?>
 
-	<?php
-	if (isset(View::$_global_data['og:tags']))
-	{
-		foreach (View::$_global_data['og:tags'] as $tag=>$value)
-		{
-			if ( ! empty($value))
-			{
-				?><meta property="<?php echo $tag; ?>" content="<?php echo $value; ?>" /><?php
-			}
-		}
-	}
-	?>
+    <?php
+    if (isset(View::$_global_data['og:tags'])) {
+        foreach (View::$_global_data['og:tags'] as $tag => $value) {
+            if (!empty($value)) {
+                ?>
+                <meta property="<?php echo $tag; ?>" content="<?php echo $value; ?>" /><?php
+            }
+        }
+    }
+    ?>
 </head>
 
 <body ng-app="app">
@@ -50,12 +49,10 @@ echo empty($template['header']) ? '{template.header}' : View::factory($template[
 <div id="view" ng-view></div>
 
 <div class="container">
-	<?php
-	echo empty($main) ? '{no $main content}' : View::factory($main)->render();
-	?>
+    <?php
+    echo empty($main) ? '{no $main content}' : View::factory($main)->render();
+    ?>
 </div>
-
-
 
 
 <?php

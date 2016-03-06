@@ -16,6 +16,10 @@ abstract class Model_Core_Abstract extends Model_Database
 
     abstract public function get_by_id($_id, &$options = array());
 
+    public static function getEmptyRow() {
+        return static::$_columns;
+    }
+
     public static function getDataById($id)
     {
         return static::_getDataById($id);
@@ -26,7 +30,7 @@ abstract class Model_Core_Abstract extends Model_Database
         return false;
     }
 
-    abstract public function get_by_object_id($object_id, &$options = array());
+    //abstract public function get_by_object_id($object_id, &$options = array());
 
     public static function getDataByParentId($parentId, $filters = array(), $limit = 0, $offset = 0)
     {
@@ -46,6 +50,12 @@ abstract class Model_Core_Abstract extends Model_Database
 
     public static function _before_save(&$data = array())
     {
+        return $data;
+    }
+
+    public static function _after_save(&$data = array())
+    {
+        return $data;
     }
 
     abstract public function save(&$data, &$error, &$options = array());

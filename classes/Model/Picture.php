@@ -1,10 +1,7 @@
-<?php
+<?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Created by IntelliJ IDEA.
- * User: mauricio
- * Date: 6/13/2015
- * Time: 10:15 PM
+ * Class Model_Picture
  */
 class Model_Picture extends Model_Abstract
 {

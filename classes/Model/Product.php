@@ -1,10 +1,7 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Date: 10/27/13
- * Time: 6:01 PM
- * Something meaningful about this file
- *
+ * Class Model_Product
  */
 class Model_Product extends Model_Abstract
 {
@@ -38,11 +35,11 @@ class Model_Product extends Model_Abstract
         'image_filepath' => '',
     );
 
-    public static $_json_columns = array(
+    protected static $_json_columns = array(
         'tags' => '',
     );
 
-    public static function _getDataByParentId($parentId, $filters=array(), $limit, $offset)
+    public static function _getDataByParentId($parentId, $filters = array(), $limit, $offset)
     {
         $product = new Model_Product();
         $sort = array(
@@ -100,7 +97,7 @@ class Model_Product extends Model_Abstract
         }
     }
 
-    public function getProductByScore($method=1, $limit = array(), $offset = array())
+    public function getProductByScore($method = 1, $limit = array(), $offset = array())
     {
         $row = false;
         try {
@@ -108,7 +105,7 @@ class Model_Product extends Model_Abstract
             $row = Cache::instance('redis')->get($cache_key);
             if (true || empty($row)) {
                 $query = DB::select()->from(static::$_table_name)->join('scoring')->on('product.productid', '=', 'scoring.productid')
-                ->where('scoring.methodid', '=', $method)->order_by('score');
+                    ->where('scoring.methodid', '=', $method)->order_by('score');
 
                 $pagination_query = clone $query;
                 $count = $pagination_query->select(DB::expr('COUNT(*) AS mycount'))->execute()->get('mycount');

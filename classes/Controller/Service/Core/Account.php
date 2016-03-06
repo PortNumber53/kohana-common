@@ -15,7 +15,7 @@ class Controller_Service_Core_Account extends Controller_Service_Core_Service
     {
         $profile = Account::profile();
         if ($profile['profile'] === 'ADMIN') {
-            $this->output = array('menu' => Website::get('menu', array()));
+            $this->output = array('menu' => Website::get('logged_menu', array()));
 
         } else {
             $this->output = array('menu' => array(),);

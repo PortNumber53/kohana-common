@@ -18,7 +18,6 @@
                 'logged_in': true
             },
             success: function (response) {
-
                 var html = '';
                 for (loop = 0; loop < response.menu.length; loop++) {
                     //html += '<ul role="menu" class="dropdown-menu">';

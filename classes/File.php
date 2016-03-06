@@ -33,11 +33,6 @@ class File
         return $result;
     }
 
-    public static function get_empty_row()
-    {
-        $ofile = new Model_file();
-        return $ofile::$_columns;
-    }
 
     public static function get_author($_id)
     {

@@ -1,11 +1,8 @@
-<?php
-/**
- * Created by IntelliJ IDEA.
- * User: mauricio
- * Date: 6/21/2015
- * Time: 3:31 PM
- */
+<?php defined('SYSPATH') or die('No direct script access.');
 
+/**
+ * Class Model_Order
+ */
 class Model_Order extends Model_Abstract
 {
     protected static $_table_name = 'order';
@@ -31,7 +28,6 @@ class Model_Order extends Model_Abstract
         'updated_at' => '',
     );
 
-    public static $_json_columns = array(
-    );
+    protected static $_json_columns = array();
 
 }

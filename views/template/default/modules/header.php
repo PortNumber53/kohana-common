@@ -4,7 +4,6 @@
  * Time: 3:22 AM
  *
  */
-
 ?>
 <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -23,14 +22,15 @@
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav">
             <li><a href="#" class="hidden back-link">Back</a></li>
-            <!--
-			<li class="<?php echo ($current_url == $menu['product_url']) ? 'active' : ''; ?>"><a href="<?php echo $menu['product_url']; ?>">Products</a></li>
-			<li class="<?php echo ($current_url == $menu['content_url']) ? 'active' : ''; ?>"><a href="<?php echo $menu['content_url']; ?>">Content</a></li>
-			-->
-            <li class="<?php echo ($current_url == $menu['gallery_url']) ? 'active' : ''; ?>"><a
-                    href="<?php echo $menu['gallery_url']; ?>">Gallery</a></li>
-            <li class="<?php echo ($current_url == $menu['privacy_url']) ? 'active' : ''; ?>"><a
-                    href="<?php echo $menu['privacy_url']; ?>">Privacy Policy</a></li>
+            <?php
+            $menu = $site_settings['menu'];
+            foreach ($menu as $menu_item) {
+                ?>
+                <li class="<?php echo ($current_url == $menu_item['href']) ? 'active' : ''; ?>"><a
+                        href="<?php echo $menu_item['href']; ?>"><?php echo $menu_item['label']; ?></a></li>
+                <?php
+            }
+            ?>
         </ul>
         <form class="navbar-form navbar-left hidden" role="search">
             <div class="form-group">

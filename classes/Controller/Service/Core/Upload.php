@@ -14,6 +14,8 @@ class Controller_Service_Core_Upload extends Controller_Service_Core_Service
         $upload_dir = DATAPATH . 'upload' . DIRECTORY_SEPARATOR;
         $allowed_ext = array('jpg', 'jpeg', 'png', 'gif');
 
+        $postid = isset($_POST['galleryid']) ? (int) $_POST['galleryid'] : 0;
+
         if (strtolower($_SERVER['REQUEST_METHOD']) != 'post') {
             $this->output['status'] = 'Error! Wrong HTTP method!';
             return;
@@ -52,15 +54,13 @@ class Controller_Service_Core_Upload extends Controller_Service_Core_Service
             }
 
             $group = str_pad($matched['id'] % 1000, 3, '0', STR_PAD_LEFT);
-            $extra = strtolower($matched['controller'] . DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR . $matched['id'] . DIRECTORY_SEPARATOR);
-            if (!is_dir($upload_dir . $extra)) {
-                mkdir($upload_dir . $extra, 0755, true);
+            $extra_folder = strtolower($matched['controller'] . DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR . $matched['id'] . DIRECTORY_SEPARATOR);
+            if (!is_dir($upload_dir . $extra_folder)) {
+                mkdir($upload_dir . $extra_folder, 0755, true);
             }
-            $this->output['subfolder'] = $extra;
-            //$this->output['route'] = $matched;
-            //$this->output['routes'] = $routes;
+            $this->output['subfolder'] = $extra_folder;
 
-            $target_file = $upload_dir . $extra . $pic['name'];
+            $target_file = $upload_dir . $extra_folder . $pic['name'];
             if (move_uploaded_file($pic['tmp_name'], $target_file)) {
                 $path_parts = pathinfo($target_file);
 
@@ -74,7 +74,8 @@ class Controller_Service_Core_Upload extends Controller_Service_Core_Service
                     case "image/jpeg":
                     case "image/png":
                         $image = new Imagick($target_file);
-                        $good_name = $extra . URLify::filter($path_parts['filename']) . '.' . $path_parts['extension'];
+                        $good_name = $extra_folder . URLify::filter($path_parts['filename']) . '.' . $path_parts['extension'];
+                        $md5_hash = md5_file($target_file);
 
                         $format = $image->getImageFormat();
                         if ($format == 'GIF') {
@@ -104,10 +105,27 @@ class Controller_Service_Core_Upload extends Controller_Service_Core_Service
                             $this->output['different'] = 'UNLINK';
                             unlink($target_file);
                         }
+
+                        $picture_model = new Model_Picture();
+                        $error = false;
+                        $options = array();
+                        $data = array(
+                            'postid' => $postid,
+                            'filesize' => filesize($upload_dir . $good_name),
+                            'folder' => $group . DIRECTORY_SEPARATOR . $matched['id'] . DIRECTORY_SEPARATOR,
+                            'image_filepath' => URLify::filter($path_parts['filename']) . '.' . $path_parts['extension'],
+                            'thumb_filepath' => URLify::filter($path_parts['filename']) . '.' . $path_parts['extension'],
+                            'md5_hash' => $md5_hash,
+                        );
+                        $result = $picture_model->save($data, $error, $options);
+                        $picture_id = $result[0];
+
+
                         $this->output['status'] = 'File was uploaded successfuly!';
                         $this->output['dismiss_timer'] = 1;
                         $this->output['filename'] = $good_name;
                         $this->output['referrer'] = URL::site($this->request->headers('Referer'), false);
+
                         break;
                     default:
                 }

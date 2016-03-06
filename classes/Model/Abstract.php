@@ -115,6 +115,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
         return $data;
     }
 
+    /*
     public function get_by_object_id($object_id, &$options = array())
     {
         $cache_key = '/' . $this::$_table_name . ':row:' . $object_id;
@@ -134,13 +135,14 @@ abstract class Model_Abstract extends Model_Core_Abstract
         }
         return $data;
     }
+    */
 
     public static function getDataByParentId($parentId, $filters = array(), $limit = 0, $offset = 0)
     {
         return static::_getDataByParentId($parentId, $filters, $limit, $offset);
     }
 
-    public static function _getDataByParentId($parentId, $filters=array(), $limit, $offset)
+    public static function _getDataByParentId($parentId, $filters = array(), $limit, $offset)
     {
         $picture = new Model_Picture();
         $sort = array(
@@ -160,7 +162,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
         $cache_key = '/' . $this::$_table_name . ':row:' . $associated_id;
         $data = Cache::instance('redis')->get($cache_key);
         if (empty($data)) {
-            $query = DB::select()->from($this::$_table_name)->where('associated_id', '=', $associated_id);
+            $query = DB::select()->from($this::$_table_name)->where('galleryid', '=', $associated_id);
             $data = $query->execute()->as_array();
             if (count($data) > 0) {
                 Cache::instance('redis')->set($cache_key, json_encode($data));
@@ -201,10 +203,10 @@ abstract class Model_Abstract extends Model_Core_Abstract
             }
         }
 
-        $update_filter = 'object_id';
-        if (!empty($data['object_id'])) {
-            $exists = $this->get_by_object_id($data['object_id']);
-        }
+        //$update_filter = 'object_id';
+        //if (!empty($data['object_id'])) {
+        //    $exists = $this->get_by_object_id($data['object_id']);
+        //}
         if (!$exists) {
             if (is_array(static::$_primary_key)) {
                 $filter = array();
@@ -216,7 +218,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
             } else {
                 if (!empty($data[static::$_primary_key])) {
                     $exists = $this->get_by_id($data[static::$_primary_key]);
-                    $update_filter = '_id';
+                    //$update_filter = '_id';
                 }
             }
         }
@@ -224,6 +226,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
             $data = array_merge($exists, $data);
         }
 
+        $original_data = $data;
         $json_data = array_diff_key($data, $this::$_columns);
         $data = array_intersect_key($data, $this::$_columns);
         if (empty($options['no_extra_json'])) {
@@ -236,6 +239,7 @@ abstract class Model_Abstract extends Model_Core_Abstract
                 //Update
                 $data['updated_at'] = date('Y-m-d H:i:s');
                 if (is_array(static::$_primary_key)) {
+                    //echo "TABLE:  " . $this::$_table_name. " \n";print_r($data);
                     $query = DB::update($this::$_table_name)->set($data);
                     foreach (static::$_primary_key as $loop_key) {
                         $query->where($loop_key, '=', $data[$loop_key]);
@@ -247,54 +251,22 @@ abstract class Model_Abstract extends Model_Core_Abstract
                 $result = $query->execute();
             } else {
                 //Insert
+                //echo "INSERT: " . $this::$_table_name ."\n";print_r($data);
                 $result = DB::insert($this::$_table_name, array_keys($data))->values($data)->execute();
+                //print_r($result);
                 if (!is_array(static::$_primary_key)) {
                     $data[static::$_primary_key] = $result[0];
                 }
+                if (is_array($result)) {
+                    $data[static::$_primary_key] = $result[0];
+                }
             }
-            if (!empty($data['object_id'])) {
-                $cache_key = '/' . $this::$_table_name . ':row:' . $data['_id'];
-                Cache::instance('redis')->delete($cache_key);
-            }
+            //if (!empty($data['object_id'])) {
+            //    $cache_key = '/' . $this::$_table_name . ':row:' . $data['_id'];
+            //    Cache::instance('redis')->delete($cache_key);
+            //}
+            $this->_after_save($original_data);
 
-            //Handle tagging
-            if (!empty($json_data['tags'])) {
-                $oTagged = new Model_Tagged();
-                $oTag = new Model_Tag();
-                //Get current tags
-                $tag_array = $oTagged->get_by_associated_id($data['object_id']);
-                foreach (explode(',', $json_data['tags']) as $tag) {
-                    $filter = array(
-                        array('tag', '=', $tag,),
-                    );
-                    $tag_result = $oTag->filter($filter);
-                    if ($tag_result['count'] == 0) {
-                        //Create tag
-                        $new_tag_data = array(
-                            '_id' => '/' . DOMAINNAME . '/' . URL::title($tag),
-                            'tag' => $tag,
-                        );
-                        $result = $oTag->save($new_tag_data, $error);
-                    } else {
-                        $new_tag_data = $tag_result['rows'][0];
-                    }
-                    //Link object to tag
-                    $tagged_data = array(
-                        '_id' => '/' . $data['object_id'] . '/' . $new_tag_data['object_id'],
-                        'object_id' => $new_tag_data['object_id'], //Tag_id
-                        'associated_id' => $data['object_id'],
-                    );
-                    $result_tagged = $oTagged->save($tagged_data, $error);
-                    foreach ($tag_array as $key => $value) {
-                        if ($tag_array[$key]['_id'] == $tagged_data['_id']) {
-                            unset($tag_array[$key]);
-                        }
-                    }
-                }
-                foreach ($tag_array as $key => $value) {
-                    $oTagged->delete_by_id($value['_id']);
-                }
-            }
         } catch (Exception $e) {
             $error = array(
                 'error' => $e->getCode(),
@@ -418,9 +390,11 @@ abstract class Model_Abstract extends Model_Core_Abstract
         return $query->execute();
     }
 
+    /*
     public function delete_by_object_id($object_id, &$error)
     {
         $query = DB::delete($this::$_table_name)->where('object_id', '=', $object_id);
         return $query->execute();
     }
+    */
 }

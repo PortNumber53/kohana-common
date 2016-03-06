@@ -5,10 +5,10 @@
  */
 class Model_SEO extends Model_Abstract
 {
-    public static $_table_name = 'seo';
-    public static $_primary_key = '_id';
+    protected static $_table_name = 'seo';
+    protected static $_primary_key = '_id';
 
-    public static $_columns = array(
+    protected static $_columns = array(
         '_id' => '',
         'object_id' => '',
         'extra_json' => '',
@@ -16,6 +16,6 @@ class Model_SEO extends Model_Abstract
         'modified_at' => '',
     );
 
-    public static $_json_columns = array();
+    protected static $_json_columns = array();
 
 }

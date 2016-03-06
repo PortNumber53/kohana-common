@@ -17,10 +17,10 @@ class Gallery extends Abstracted
         return $obj;
     }
 
-    public static function get_empty_row()
+    public static function getEmptyRow()
     {
         $ogallery = new Model_Gallery();
-        return $ogallery::$_columns;
+        return $ogallery::getEmptyRow();
     }
 
     public static function get_author($_id)

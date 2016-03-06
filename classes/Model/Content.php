@@ -1,16 +1,14 @@
 <?php defined('SYSPATH') or die('No direct script access.');
 
 /**
- * Date: 5/17/13
- * Time: 1:26 AM
- *
+ * Class Model_Content
  */
 class Model_Content extends Model_Abstract
 {
-    public static $_table_name = 'content';
-    public static $_primary_key = 'contentid';
+    protected static $_table_name = 'content';
+    protected static $_primary_key = 'contentid';
 
-    public static $_columns = array(
+    protected static $_columns = array(
         'contentid' => '',
         'object_id' => 0,
         'author_id' => '',
