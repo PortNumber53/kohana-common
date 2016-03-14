@@ -86,24 +86,24 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $this->page_title = 'Shopping cart';
         $main = 'shopping/cart';
 
-        if (empty($this->_cookie_data['product'])) {
-            $this->_cookie_data['product'] = array();
+        if (empty(static::$_cookie_data['product'])) {
+            static::$_cookie_data['product'] = array();
         }
-        if (empty($this->_cookie_data['details'])) {
-            $this->_cookie_data['details'] = array();
+        if (empty(static::$_cookie_data['details'])) {
+            static::$_cookie_data['details'] = array();
         }
 
         $model_order = new Model_Order();
         $options = array();
-        $data['orderid'] = (int)Arr::path($this->_cookie_data, 'orderid');
+        $data['orderid'] = (int)Arr::path(static::$_cookie_data, 'orderid');
         $data['type'] = 'sale';
 
         $result = $model_order->save($data, $error, $options);
-        if (empty($this->_cookie_data['orderid'])) {
-            $this->_cookie_data['orderid'] = (int)$result[0];
+        if (empty(static::$_cookie_data['orderid'])) {
+            static::$_cookie_data['orderid'] = (int)$result[0];
         }
 
-        foreach ($this->_cookie_data['product'] as $key => $status) {
+        foreach (static::$_cookie_data['product'] as $key => $status) {
             $product_data = Model_Product::getDataById($key);
 
             $product_array['rows'][$key] = $product_data;
@@ -119,7 +119,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
 
         $this->page_title = 'Checkout';
 
-        if (Account::isGuestUser() && (empty($this->_cookie_data['checkout-as-guest']))) {
+        if (Account::isGuestUser() && (empty(static::$_cookie_data['checkout-as-guest']))) {
             $main = 'shopping/guest_user';
         } else {
 
@@ -135,24 +135,24 @@ class Controller_Common_Core_Shopping extends Controller_Website
             View::bind_global('picture_array', $picture_array);
 
 
-            if (empty($this->_cookie_data['product'])) {
-                $this->_cookie_data['product'] = array();
+            if (empty(static::$_cookie_data['product'])) {
+                static::$_cookie_data['product'] = array();
             }
-            if (empty($this->_cookie_data['details'])) {
-                $this->_cookie_data['details'] = array();
+            if (empty(static::$_cookie_data['details'])) {
+                static::$_cookie_data['details'] = array();
             }
             $product_array = array(
                 'rows' => array(),
             );
 
             $order_array = array(
-                'orderid' => Arr::path($this->_cookie_data, 'orderid', 0),
+                'orderid' => Arr::path(static::$_cookie_data, 'orderid', 0),
             );
             $total = 0;
             $shipping = 0;
             $tax = 0;
             $discount = 0;
-            foreach ($this->_cookie_data['product'] as $key => $status) {
+            foreach (static::$_cookie_data['product'] as $key => $status) {
                 $product_data = Model_Product::getDataById($key);
                 $picture_data = Model_Picture::getDataById($product_data['thumbnailid']);
                 $product_data['full_url'] = URL::Site(Route::get('image-actions')->uri(array(
@@ -172,7 +172,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
             }
 
             $data = array(
-                'type' => empty($this->_cookie_data['type']) ? 'sale' : filter_var($this->_cookie_data['type'],
+                'type' => empty(static::$_cookie_data['type']) ? 'sale' : filter_var(static::$_cookie_data['type'],
                     FILTER_SANITIZE_STRING),
                 'accountid' => empty(self::$account['id']) ? -1 : self::$account['id'],
                 'contact_email' => empty(self::$account['username']) ? 'guest' : self::$account['username'],
@@ -181,14 +181,14 @@ class Controller_Common_Core_Shopping extends Controller_Website
                 'tax' => $tax,
                 'discount' => $discount,
             );
-            if (!empty($this->_cookie_data['orderid'])) {
-                $data['orderid'] = (int)$this->_cookie_data['orderid'];
+            if (!empty(static::$_cookie_data['orderid'])) {
+                $data['orderid'] = (int)static::$_cookie_data['orderid'];
             }
             $errors = false;
             $result = Model_Order::saveRow($data, $errors);
 
             // Check orders details
-            $order_detail_array = empty($this->_cookie_data['order_detail']) ? array() : $this->_cookie_data['order_detail'];
+            $order_detail_array = empty(static::$_cookie_data['order_detail']) ? array() : static::$_cookie_data['order_detail'];
 
             $order_detail_array['total'] = $total;
             $order_detail_array['shipping'] = $shipping;
@@ -196,26 +196,26 @@ class Controller_Common_Core_Shopping extends Controller_Website
             $order_detail_array['discount'] = $discount;
 
             if (!empty($result['orderid'])) {
-                $this->_cookie_data['orderid'] = $result['orderid'];
+                static::$_cookie_data['orderid'] = $result['orderid'];
                 $order_detail_array['orderid'] = $result['orderid'];
 
                 $detail_result = Model_OrderDetail::getDataByParentId($result['orderid']);
                 // Store Detailed information
                 $errors_detail = array();
-                if (isset($this->_cookie_data['products']) && is_array($this->_cookie_data['products'])) {
-                    foreach ($this->_cookie_data['products'] as $productid => $product_status) {
-                        $detailid = isset($this->_cookie_data['details'][$productid]) ? $this->_cookie_data['details'][$productid] : 0;
+                if (isset(static::$_cookie_data['products']) && is_array(static::$_cookie_data['products'])) {
+                    foreach (static::$_cookie_data['products'] as $productid => $product_status) {
+                        $detailid = isset(static::$_cookie_data['details'][$productid]) ? static::$_cookie_data['details'][$productid] : 0;
 
                         if (!$product_data = Model_Product::getDataById($productid)) {
-                            unset($this->_cookie_data['details'][$productid]);
+                            unset(static::$_cookie_data['details'][$productid]);
                         }
                         if ($detailid && (!$check_detail_exists = Model_OrderDetail::getDataById($detailid))) {
-                            unset($this->_cookie_data['details'][$productid]);
+                            unset(static::$_cookie_data['details'][$productid]);
                         }
 
                         $detail_data = array(
                             'detailid' => $detailid,
-                            'orderid' => $this->_cookie_data['orderid'],
+                            'orderid' => static::$_cookie_data['orderid'],
                             'productid' => $productid,
                             'description' => empty($product_data['description']) ? '' : $product_data['description'],
                         );
@@ -223,7 +223,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
                             'no_extra_json' => true,
                         ));
 
-                        $this->_cookie_data['details'][$productid] = $update_detail['detailid'];
+                        static::$_cookie_data['details'][$productid] = $update_detail['detailid'];
                         $order_detail_array['details'][$productid] = $detail_data;
                     }
                 }
@@ -245,14 +245,14 @@ class Controller_Common_Core_Shopping extends Controller_Website
     {
         $this->output['POST'] = $this->json;
 
-        $this->_cookie_data['checkout-as-guest'] = 1;
+        static::$_cookie_data['checkout-as-guest'] = 1;
     }
 
     public function action_ajax_cashstore()
     {
         $this->output['POST'] = $this->json;
 
-        $this->_cookie_data['action_ajax_cashstore'] = 1;
+        static::$_cookie_data['action_ajax_cashstore'] = 1;
     }
 
 
@@ -266,6 +266,9 @@ class Controller_Common_Core_Shopping extends Controller_Website
 
     public function action_browse()
     {
+        $page_description = '';
+        $image_url = '';
+
         $categorySeo = '';
         $categoryData = false;
         $product_array = false;
@@ -294,10 +297,11 @@ class Controller_Common_Core_Shopping extends Controller_Website
                 array('status', '=', 'available'),
             );
             $product_array = Model_Product::getDataByParentId($categoryData['categoryid'], $filters,
-                $this->_cookie_data[Constants::LIMIT], $this->_cookie_data[Constants::OFFSET]);
+                Arr::path(static::$_cookie_data, Constants::LIMIT, 15),
+                Arr::path(static::$_cookie_data, Constants::OFFSET, 0));
             $this->page_title = $categoryData['name'];
 
-            $product_array = Product::setReservedField($product_array, $this->_cookie_data, static::$account);
+            $product_array = Product::setReservedField($product_array, static::$_cookie_data, static::$account);
 
             $pagination_array = array(
                 'count' => $product_array['count'],
@@ -310,9 +314,26 @@ class Controller_Common_Core_Shopping extends Controller_Website
 
         $picture_limit = 1000;
         $picture_offset = 0;
+
+        //$cookie_data = json_decode(Cookie::get('product'), true);
+
         if (isset($product_array['rows'])) {
             $filter_picture = array();
             $picture_array = $picture->filter($filter_picture, $sort, $picture_limit, $picture_offset);
+            $copy_product_array = $product_array;
+            $copy_product_array  = array_pop($copy_product_array['rows']);
+
+            $image_url = URL::Site(Route::get('image-actions')->uri(array(
+                'action' => 'resize',
+                'width' => '266',
+                'height' => '380',
+                'method' => 'crop',
+                'pictureid' => $copy_product_array['thumbnailid'],
+                'request' => $copy_product_array['thumbnail_detail']['md5_hash'],
+                'type' => 'jpg',
+            )), true);
+
+
             $main = 'shopping/browse';
         } else {
             $product_array['reserved'] = 'cart' . Arr::path(static::$account, 'id', '??');
@@ -321,6 +342,18 @@ class Controller_Common_Core_Shopping extends Controller_Website
             );
             $picture_array = $picture->filter($filter_picture, $sort, $picture_limit, $picture_offset);
             $product_array['thumbnail_detail'] = $picture_array['rows'][$product_array['thumbnailid']];
+
+            $page_description = $product_array['description'];
+            $image_url = URL::Site(Route::get('image-actions')->uri(array(
+                'action' => 'resize',
+                'width' => '266',
+                'height' => '380',
+                'method' => 'crop',
+                'pictureid' => $product_array['thumbnailid'],
+                'request' => $product_array['thumbnail_detail']['md5_hash'],
+                'type' => 'jpg',
+            )), true);
+
             $main = 'shopping/product_detail';
         }
 
@@ -335,6 +368,15 @@ class Controller_Common_Core_Shopping extends Controller_Website
                 'type' => 'jpg',
             )), true);
         }
+
+        self::$og_tags = array_merge(self::$og_tags, array(
+            'fb:app_id' => Arr::path(self::$settings, 'facebook.app_id'),
+            'og:type' => 'website',
+            'og:title' => 'Third Generation Antiques',
+            'og:description' => $page_description,
+            'og:url' => URL::site(Request::detect_uri(), true) . URL::query(),
+            'og:image' => $image_url,
+        ));
 
         View::bind_global('categoryData', $categoryData);
         View::bind_global('product_array', $product_array);
@@ -351,12 +393,14 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $result = array();
 
         $product_id = (int)$_POST['productId'];
-        $this->_cookie_data['product'][$product_id] = 'added';
 
-        $result['cart'] = $this->_cookie_data;
 
-        $result['error'] = in_array($product_id, $this->_cookie_data);
-        $result['cookie_data'] = $this->_cookie_data;
+        static::$_cookie_data['product'][$product_id] = 'added';
+
+        $result['cart'] = static::$_cookie_data;
+
+        $result['error'] = in_array($product_id, static::$_cookie_data);
+        $result['cookie_data'] = static::$_cookie_data;
 
         $this->output = $result;
     }
@@ -366,11 +410,11 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $result = array();
 
         $product_id = (int)$_POST['productId'];
-        unset($this->_cookie_data['product'][$product_id]);
+        unset(static::$_cookie_data['product'][$product_id]);
 
-        $result['cart'] = $this->_cookie_data;
+        $result['cart'] = static::$_cookie_data;
 
-        $result['error'] = in_array($product_id, $this->_cookie_data);
+        $result['error'] = in_array($product_id, static::$_cookie_data);
 
         $this->output = $result;
     }
@@ -486,11 +530,11 @@ class Controller_Common_Core_Shopping extends Controller_Website
 
     private function shoppingCartData()
     {
-        if (empty($this->_cookie_data['product'])) {
-            $this->_cookie_data['product'] = array();
+        if (empty(static::$_cookie_data['product'])) {
+            static::$_cookie_data['product'] = array();
         }
-        if (empty($this->_cookie_data['details'])) {
-            $this->_cookie_data['details'] = array();
+        if (empty(static::$_cookie_data['details'])) {
+            static::$_cookie_data['details'] = array();
         }
 
         $sub_total = 0;
@@ -498,7 +542,7 @@ class Controller_Common_Core_Shopping extends Controller_Website
         $shipping = 0;
         $product_array = array();
 
-        foreach ($this->_cookie_data['product'] as $key => $status) {
+        foreach (static::$_cookie_data['product'] as $key => $status) {
             $product_data = Model_Product::getDataById($key);
 
             $product_array['rows'][$key] = $product_data;

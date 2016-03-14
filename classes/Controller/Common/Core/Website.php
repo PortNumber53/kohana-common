@@ -20,7 +20,7 @@ class Controller_Common_Core_Website extends Controller_Template
     public $json = null;
     public $canonical_url = null;
 
-    protected $_cookie_data = null;
+    public static $_cookie_data = null;
 
     public static $settings = array();
     protected $frontend_cookie = null;
@@ -87,19 +87,18 @@ class Controller_Common_Core_Website extends Controller_Template
 
     public function before()
     {
-        $this->_cookie_data = json_decode(Cookie::get('data'), true);
-        $cookie_limit = empty(Arr::path($this->_cookie_data, Constants::LIMIT, 9)) ? 9 : Arr::path($this->_cookie_data,
+        $cookie_limit = empty(Arr::path(static::$_cookie_data, Constants::LIMIT, 9)) ? 9 : Arr::path(static::$_cookie_data,
             Constants::LIMIT, 9);
 
         $limit = empty($this->request->query(Constants::LIMIT)) ? $cookie_limit : $this->request->query(Constants::LIMIT);
         $offset = empty($this->request->query(Constants::OFFSET)) ? 0 : $this->request->query(Constants::OFFSET);
-        $this->_cookie_data[Constants::LIMIT] = $this->_per_page = $limit;
-        $this->_cookie_data[Constants::OFFSET] = $offset;
+        static::$_cookie_data[Constants::LIMIT] = $this->_per_page = $limit;
+        static::$_cookie_data[Constants::OFFSET] = $offset;
 
 
         if ($this->auto_render) {
-            View::bind_global('limit', $this->_cookie_data[Constants::LIMIT]);
-            View::bind_global('offset', $this->_cookie_data[Constants::OFFSET]);
+            View::bind_global('limit', static::$_cookie_data[Constants::LIMIT]);
+            View::bind_global('offset', static::$_cookie_data[Constants::OFFSET]);
         }
 
         if (empty($this->template_name)) {
@@ -134,7 +133,7 @@ class Controller_Common_Core_Website extends Controller_Template
 
 
         View::bind_global('account', static::$account);
-        View::bind_global('cookie_data', $this->_cookie_data);
+        View::bind_global('cookie_data', static::$_cookie_data);
 
         View::set_global('current_path',
             strtolower(Request::current()->directory() . '/' . Request::current()->controller() . '/' . Request::current()->action()));
@@ -235,7 +234,7 @@ class Controller_Common_Core_Website extends Controller_Template
             }
 
         }
-        Cookie::set('data', json_encode($this->_cookie_data));
+        Cookie::set('data', json_encode(static::$_cookie_data));
         parent::after();
     }
 
